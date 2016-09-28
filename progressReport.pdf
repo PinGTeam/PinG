@@ -1,0 +1,18 @@
+# This file will contain:
+
+# User stories implemented. Refer to the user stories in milestone 2 document.
+   - Mention any new user stories implemented.
+   
+# What group members were paired with whom.
+
+# Which parts of the project are implemented by which pair.
+    - Additionally, document this in source code as well; e.g., /* Implemented by: John and Bob */
+    
+# Have any design changes or unit test changes been made from earlier milestones?
+
+# Include whatever else might be considered important.
+
+# Include a print screen (or several) of te history of the wiki page update.
+   - Wiki pages on github have wiki edit history, including the author of the change and the time of the change. *include this*
+   
+# At the end of this pdf, copy-paste the git log from the repository. (the longer it is, the better; and the more commits, the better)
