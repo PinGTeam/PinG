@@ -17,6 +17,6 @@ CREATE TABLE `sirotto_db`.`users` (
   INDEX `userID_idx` (`userID` ASC),
   CONSTRAINT `userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `sirotto`.`users` (`userID`)
+    REFERENCES `sirotto_db`.`users` (`userID`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION);
