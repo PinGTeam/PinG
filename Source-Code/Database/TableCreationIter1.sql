@@ -7,11 +7,11 @@ CREATE TABLE `sirotto_db`.`users` (
   
   CREATE TABLE `sirotto_db`.`eventtable` (
   `eventID` BIGINT NOT NULL AUTO_INCREMENT,
-  `userID` BIGINT NULL,
-  `latitude` DOUBLE NULL,
-  `longitude` DOUBLE NULL,
-  `eventName` VARCHAR(255) NULL,
-  `time` DATETIME NULL,
+  `userID` BIGINT NOT NULL,
+  `latitude` DOUBLE NOT NULL,
+  `longitude` DOUBLE NOT NULL,
+  `eventName` VARCHAR(255) NOT NULL,
+  `time` DATETIME NOT NULL,
   `description` VARCHAR(1024) NULL,
   PRIMARY KEY (`eventID`),
   INDEX `userID_idx` (`userID` ASC),
