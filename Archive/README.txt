@@ -21,4 +21,4 @@ Meet with Adrian, Andrew, or Ibrahim at the same time/day/place as the previous 
 you did not yet do so, register at:
 
 https://docs.google.com/document/d/1kXwzpr3Q3tgmJl9nW89Sf4E24ajDKTO3_l9a6Oc_YzM
-Also available on Blackboard -> project -> Schedule meeting with class sta
+Also available on Blackboard -> project -> Schedule meeting with class staff
