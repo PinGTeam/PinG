@@ -1,0 +1,465 @@
+commit 7ecd26c6e2df5be736629b270d2205ce9d018057
+Author: jt14s <jt14s@my.fsu.edu>
+Date:   Wed Oct 5 11:41:33 2016 -0400
+
+    Add files via upload
+
+commit 1cdece96902bc36375377cd671f4613af11e03b0
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 10:07:18 2016 -0400
+
+    Update Meeting Log for PinG!.txt
+
+commit f91051aa72f92377444e12c348671f8dacb57870
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:50:35 2016 -0400
+
+    typo
+
+commit 6f5ad21bac6006b56d0cfa5536de50b41c040043
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:49:57 2016 -0400
+
+    Update README.txt
+
+commit 030426fa3d0093833b0d2bf7908cb6bd28e08cef
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:49:23 2016 -0400
+
+    Rename Archive/Best-Team/Milestone 3.txt to Archive/README.txt
+
+commit 0eea2a44170b4b0baf5cd47473015a7774abb4a0
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:48:58 2016 -0400
+
+    moving README.txt to Best-Team Archive
+
+commit 7a6bd327809f893e928e7d979a714d22663c0d3c
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:48:32 2016 -0400
+
+    upload progressReport.pdf example
+
+commit 9b9667a2b75a16da0b2d80f2d18d35c44b8dc5e8
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:48:14 2016 -0400
+
+    Delete progressReport.pdf
+
+commit a8286cd52392780d87cebca21763a9569f86126f
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:47:43 2016 -0400
+
+    Delete placeholder.txt
+
+commit 84a8426e70e11e32b5472209459506d00efd8444
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:47:01 2016 -0400
+
+    move milestone3.txt to best-team archive
+
+commit a51caa5091284a0949c237c69ab5c60e80aba4f4
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:46:34 2016 -0400
+
+    Create placeholder.txt
+
+commit 51daa88299526fe5c725c8761fc66443ae48bed0
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:45:32 2016 -0400
+
+    upload requirements for milestone 3
+
+commit 099a0f050ab9f889dae994499ec1ddcc7f5c9787
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:40:06 2016 -0400
+
+    moving README.txt to Archive Dir
+
+commit 1bd46745e81967b98576581bd88e324f02895771
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:39:40 2016 -0400
+
+    upload progressReport.pdf example
+
+commit 3594ec07b99037d7f3c5fd477e4afb64fcb5d450
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:38:26 2016 -0400
+
+    Delete Milestone3_Archive
+
+commit 735a0a079d4a70595c287a47282f9f527f26fe79
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:38:15 2016 -0400
+
+    Create placeholder.txt
+
+commit 5fb7f831b831471b7e71708c965158ea5c697062
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:36:48 2016 -0400
+
+    Create Milestone3_Archive
+
+commit 20406a5470a1828b20ab6884c03e81fb4c247f67
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:36:31 2016 -0400
+
+    Delete progressReport.pdf
+
+commit 3e58784e0bba9085e49e76a1ae57d2d5a06fa801
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:36:04 2016 -0400
+
+    Updated progressReport example
+
+commit 4180813016f160e2b92b785cb842bdcf33195fc6
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:16:38 2016 -0400
+
+    Delete blank.txt
+
+commit 771846e184166e47899cba0f462b4605a24144da
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:16:27 2016 -0400
+
+    host event GUI button and PinG logo
+
+commit 7b84c26d74d96870cb3844737d80945ce33499fa
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Oct 5 09:15:27 2016 -0400
+
+    Create blank.txt
+
+commit cf3ac14927460c671a33eab7192e4af99888fba9
+Author: jt14s <jt14s@my.fsu.edu>
+Date:   Wed Oct 5 00:18:17 2016 -0400
+
+    Update Meeting Log for PinG!.txt
+
+commit 1e77562449d390f75352e9e9d37aff24879dd598
+Author: jt14s <jt14s@my.fsu.edu>
+Date:   Wed Oct 5 00:17:52 2016 -0400
+
+    Update Meeting Log for PinG!.txt
+
+commit 56bd018b59df8327055c02cb33f8c65da6444bb8
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Tue Oct 4 20:04:54 2016 -0400
+
+    Added map view of PinG
+
+commit 236f44f072b1de92b7f601466c60b162f484cb0f
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Mon Oct 3 07:23:54 2016 -0400
+
+    added 10-4-16 group meeting agenda to wiki
+
+commit 0ae0d11afd1162e7c137cb317c25c7aa73454f81
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Mon Oct 3 07:03:26 2016 -0400
+
+    Delete SprintBacklog.txt
+
+commit ef7948e9006168b76da55ee74201bf6ed238d065
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Mon Oct 3 07:03:09 2016 -0400
+
+    sprint backlog 10 3 2016
+
+commit 86c22b79de67a8640e21d75959725473d8061040
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Mon Oct 3 07:02:41 2016 -0400
+
+    Update README.txt
+
+commit 299d3138c17f5eeabfc138e8a66f19f4c3cdcef7
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Mon Oct 3 07:02:09 2016 -0400
+
+    Delete SprintBacklog10_2_2016.pdf
+
+commit 9d7b4f5be68cc1db6e49661bcf2c003a8d011885
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Mon Oct 3 07:01:41 2016 -0400
+
+    Add files via upload
+
+    sprint backlog 10 2 2016
+
+commit 694a4ed84851d038d861ac17edebb0dc4ba0f012
+Author: Juan Francisco Alfaro <franciscoalfaro2008@gmail.com>
+Date:   Sun Oct 2 21:53:35 2016 -0400
+
+    backlog 10 2 2016
+
+commit 384a5a2718b4bea09cc479f982124848b5d9fe2e
+Author: Juan Francisco Alfaro <franciscoalfaro2008@gmail.com>
+Date:   Sun Oct 2 21:53:10 2016 -0400
+
+    Delete SrintBacklog10_2_2016.pdf
+
+commit 22dc99cc574eb969ee2b3b2747b8effa4b53c1c7
+Author: Juan Francisco Alfaro <franciscoalfaro2008@gmail.com>
+Date:   Sun Oct 2 21:52:24 2016 -0400
+
+    backlog 10 2 2016
+
+commit 2cd42abd21e01c7215a40ee1ce00eed4429b1b03
+Author: Juan Francisco Alfaro <franciscoalfaro2008@gmail.com>
+Date:   Sun Oct 2 21:51:53 2016 -0400
+
+    Create README.txt
+
+commit a997cda45218a13e4492bff5086448310d63de89
+Author: Juan Francisco Alfaro <franciscoalfaro2008@gmail.com>
+Date:   Sun Oct 2 21:40:42 2016 -0400
+
+    Delete SrintBacklog10_2_2016.pdf
+
+commit 56eabf319003305e26f5c224924e40e48ed8712f
+Author: Juan Francisco Alfaro <franciscoalfaro2008@gmail.com>
+Date:   Sun Oct 2 21:39:27 2016 -0400
+
+    SprintBacklog of october 2 2016
+
+commit a0be41c82ea4ade60834dbf47466a480093b6169
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 15:34:45 2016 -0400
+
+    Add files via upload
+
+commit ec4d1961bbd93417aadc14b0a64354a28db37beb
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 15:34:23 2016 -0400
+
+    Delete Iteration1 E-R and Relational Schema.pdf
+
+commit 8ded749c06ef77fc150c3cb3cc3c5a7a825b5730
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 15:13:39 2016 -0400
+
+    Update Meeting Log for PinG!
+
+commit 5ea7413d2d1ba23f761ef21bead1010c3c0bdf65
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 15:07:34 2016 -0400
+
+    Rename Source-Code/Database/TableCreationIter1.sql to Source-Code/Database/I                                                                             teration1/TableCreation.sql
+
+commit 3f5129c743c1debc87a3c8246bb56944d2191f70
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 15:07:07 2016 -0400
+
+    Rename Source-Code/Database/InsertUserIter1.sql to Source-Code/Database/Iter                                                                             ation1/InsertUser.sql
+
+commit fb827a2b74a14cb5be02e563f4d2c1a84bb224b2
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 15:06:30 2016 -0400
+
+    Delete InsertEventIter1.sql
+
+commit 20f6679613d1f3faccd0b8df664cc15cf0d94ffa
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 15:06:16 2016 -0400
+
+    Create InsertEvent.sql
+
+commit 81d3edbded095aefd2c8e5c70de08dc2fb7df24c
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 14:50:38 2016 -0400
+
+    Update SprintBacklog.txt
+
+commit 08b6ae2846a7aab59a2e8403dbd08be5f6efd76a
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 14:40:29 2016 -0400
+
+    Create SprintBacklog.txt
+
+commit 5a36508c3b78239c5011bf09aebd20aca18d34e6
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 14:39:48 2016 -0400
+
+    Delete Srint Backlog.xlsx
+
+commit 4ced4eb1fe7522e1709752d95e8a3f5ee5c9f64f
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 14:33:24 2016 -0400
+
+    Add files via upload
+
+commit d9547ecbd877a6a950e0d507ea189ae5b078c50d
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 14:15:15 2016 -0400
+
+    Update InsertEventIter1.sql
+
+commit 3aa62c2046b8a1805a634db03f73d1b4ae8dcb9d
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 14:07:18 2016 -0400
+
+    Update Meeting Log for PinG!
+
+commit e7e9c240b1062f5eee6d781a2b058d9f409f339b
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Sun Oct 2 14:05:35 2016 -0400
+
+    Create Meeting Log for PinG!
+
+commit fa598aa1c618771ff50ad63002dee4bb762453c6
+Author: tyther9 <tyther9@nettally.com>
+Date:   Sun Oct 2 14:02:15 2016 -0400
+
+    Create InsertEventIter1.sql
+
+    For inserting events.
+
+commit d5c4c66ef99d4ce6498a772d060b0ec36fa79ada
+Author: tyther9 <tyther9@nettally.com>
+Date:   Sun Oct 2 13:21:43 2016 -0400
+
+    Create InsertUserIter1.sql
+
+    Use CALL <procedure name> (username -requested, firstname, lastname); Will r                                                                             eturn the userid created or tied tousername
+
+commit 547af3220c0122405cdd965b0b94f3b4e518ae37
+Author: tyther9 <tyther9@nettally.com>
+Date:   Sun Oct 2 12:50:58 2016 -0400
+
+    Update TableCreationIter1.sql
+
+    Updated eventtable creation to have not null on most columns
+
+commit ba040f4b0da6f875685b4e516c8ab8efca8dd35d
+Author: tyther9 <tyther9@nettally.com>
+Date:   Sun Oct 2 12:45:40 2016 -0400
+
+    Update TableCreationIter1.sql
+
+commit f9cb51af592aa929d2b4711604707f8eadeccd80
+Author: tyther9 <tyther9@nettally.com>
+Date:   Sun Oct 2 12:42:18 2016 -0400
+
+    Create TableCreationIter1.sql
+
+    For creating/recreating the MySQL schema for iteration 1
+
+commit 81f6855828b335425df44f6c0acdcf1bfeffc7f8
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 14:37:22 2016 -0400
+
+    Add files via upload
+
+commit 8eb06cf497d86733e5dd7fa6b5d8c6091bf5f410
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 14:36:58 2016 -0400
+
+    Delete ping1.png
+
+commit d8a97f296dd098f5018be5082b238fbd3752d56f
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 14:36:35 2016 -0400
+
+    Add files via upload
+
+commit e5004b5cc65a586382f02baf2c5e6c17a94aa345
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:43:21 2016 -0400
+
+    Add files via upload
+
+commit 16c3725deffa976f4deabbf6038d219a4e849c37
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:40:47 2016 -0400
+
+    Delete userInterfaceIteration1.png
+
+commit bd889f840beb91bfd242863b2447aab1205f86e2
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:40:07 2016 -0400
+
+    Add files via upload
+
+commit 9909cb87e224f6993cf2bbaeb7e424003f1f9ace
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:39:45 2016 -0400
+
+    Delete userInterfaceIteration1.png
+
+commit 858e545b1b36172fbae721e186ccd47543a74e09
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:39:29 2016 -0400
+
+    Add files via upload
+
+commit 9192aee42bfb35be970aba9623f191d9fc966a1b
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:39:13 2016 -0400
+
+    Delete userInterfaceIteration1.png
+
+commit 2d3bbbc92e69802cc5a53ffd86440169676e87bf
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:31:07 2016 -0400
+
+    Add files via upload
+
+commit 4e98a5eb0ee2cf7f6fb7c0b003229bae6c70297a
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Fri Sep 30 00:16:58 2016 -0400
+
+    Add files via upload
+
+commit c2402583ddbce7c1fd3d0c588ebab1db019ccd41
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:49:34 2016 -0400
+
+    Create placeholder.txt
+
+commit 252741b5885bf0cd01a39cfac8851a307d19e7f1
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:48:20 2016 -0400
+
+    Create placeholder.txt
+
+commit 3560cd44a9c37206fe9be593ead1771866e51fe3
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:47:43 2016 -0400
+
+    Create placeholder.txt
+
+commit fc2c72309e1d1b4b33b940629f5c656cdacfbc9b
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:42:35 2016 -0400
+
+    Add files via upload
+
+commit 172572d80b0bf1416c2ecee68ad8bb8f41c8b576
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:42:17 2016 -0400
+
+    Delete progressReport.pdf
+
+commit f672932d95bbe4a980aa5b0685690345c997116a
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:40:38 2016 -0400
+
+    Create progressReport.pdf
+
+commit 13c4dcc5c9a42324377dbf6ab10862a35eaca7ef
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:37:21 2016 -0400
+
+    Update README.txt
+
+commit b2e1ed50d4652b57fde3f95f8988cd5941b6484f
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 28 10:37:08 2016 -0400
+
+    Update and rename README.md to README.txt
+
+commit 8d45af6f7ebd90bca442d4b9d5822013e84a5cf5
+Author: zes15 <zes15@my.fsu.edu>
+Date:   Wed Sep 21 15:03:29 2016 -0400
+
+    Initial commit
