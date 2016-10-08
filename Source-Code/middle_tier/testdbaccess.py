@@ -1,4 +1,8 @@
 
+#need run flask with following command
+#flask run --host=0.0.0.0
+#need to access http://162.243.15.139:5000/ to get response
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -12,6 +16,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.config['MYSQL_DATABASE_HOST'] = 'dbsrv2.cs.fsu.edu:3306'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://alforo:Be+HQ2Nj@anywheredb.clt1czfvlzlc.us-east-1.rds.amazonaws.com/alforo_db'
 db = SQLAlchemy(app)
+
+
+
+@app.route('/')
+def hello_world():
+    str = ""
+    results = users.query.all()
+    for ev in results:
+        str = str + ev.userName + " ,"
+    return str
+
+
 
 class users(db.Model):
     __tablename__ = 'users'
