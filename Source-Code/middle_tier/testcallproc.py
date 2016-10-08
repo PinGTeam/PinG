@@ -4,6 +4,7 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import *
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/ping'
@@ -17,13 +18,36 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+
+@app.route('/work')
+def tryout():
+    engine = create_engine('mysql://juan:alfaro@localhost/ping')
+    connection = engine.raw_connection()
+#try:
+    cursor = connection.cursor()
+    cursor.callproc("InsertUser", ["John123", "John", "Doe"])
+    result = list(cursor.fetchall())
+    cursor.close()
+    connection.commit()
+#finally:
+    connection.close()
+
+
+
 @app.route('/')
 def hello_world():
     str = ""
     results = users.query.all()
     for ev in results:
-        str = str + ev.userName + " ,"
+      str = str + ev.userName + " ,"
     return str
+
+#@app.route('/workbitch')
+#def ejemplo():
+#	stri = ""
+#	for row in resultado:
+#		stri = stri + row.userName + "," + row.firstName + "," + row.lastName + "\n"
+#	return resultado
 
 
 
@@ -42,5 +66,15 @@ class users(db.Model):
         #return '<Job %r>' % self.job_name
 
 
-args = (123, "Miami Game", 1.2, 1.3, 2, "Watch game")
-cursor.callproc('InsertEvent', args)
+#args = (123, 'Miami Game', 1.2, 1.3, '23:59:59', 'Watch game')
+
+#queryx = 'call  InsertEvent(123, %s, 1.2, 1.3, %s, %s)', 'Miami Game', '23:59:59','Watch Game'
+
+
+#return "it is printing\n"
+
+#cursor = connection.cursor()
+#cursor.callproc('InsertEvent', args)
+#results = list(cursor.fetchall())
+#cursor.close()
+#print results
