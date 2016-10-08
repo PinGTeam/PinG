@@ -5,7 +5,7 @@ CREATE PROCEDURE `GetEvents`(topLatitude double,  topLongitude double,  bottomLa
 BEGIN
 
 	SELECT 
-		eventID, FirstName, LastName, latitude, longitude, eventName, time
+		eventID, FirstName, LastName, latitude, longitude, eventName, time, description
 	FROM 
 		eventtable
 	inner join 
