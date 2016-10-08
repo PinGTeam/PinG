@@ -1,4 +1,7 @@
-CREATE DEFINER=`richard`@`localhost` PROCEDURE `GetEvents`(topLatitude double,  topLongitude double,  bottomLatitude double,  bottomLongitude double)
+USE `ping`;
+DROP procedure IF EXISTS `GetEvents`;
+DELIMITER $$
+CREATE PROCEDURE `GetEvents`(topLatitude double,  topLongitude double,  bottomLatitude double,  bottomLongitude double)
 BEGIN
 
 	SELECT 
@@ -25,4 +28,5 @@ BEGIN
             ELSE
 				0
 		END) = 1;
-END
+END$$
+DELIMITER ;
