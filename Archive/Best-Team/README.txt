@@ -13,7 +13,10 @@ placeholder
 ------------------------------------------------------
 - MySQL Unit Tests and Flask Unit Tests:
   * Windows:
-     A portable putty.exe is included. 
+     A portable putty.exe is included.
+     IP: 162.243.15.139
+     username: ` test `
+     password: ` test `
   * Linux / MAC OS:
      ssh 162.243.15.139
      username: ` test `
