@@ -28,11 +28,15 @@ def getusers():
 
 #ADDING USER
 #Calling InsertUser Stored procedure
-@app.route('/adduser',methods=['GET'])
+#Using POST method
+@app.route('/adduser',methods=['POST'])
 def insertuser():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    cursor.callproc("InsertUser", [request.args.get('userName'),request.args.get('firstName'),request.args.get('lastName')])
+    username = request.form['UserName']
+    name = request.form['Name']
+    lname = request.form['LName']
+    cursor.callproc("InsertUser", [username, name,lname])
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
@@ -72,8 +76,8 @@ def event_to_geojson(x,y,userID,eventName,time,description):
     return Feature(geometry=Point((x,y)),properties={"userID":userID,"eventName":eventName,"time":time,"description":description})
 
 with app.test_request_context():
-    #print url_for('getusers')
-    #print url_for('insertuser', userName='John Doe', firstName='asd',lastName='asd')
+    print url_for('getusers')
+    print url_for('insertuser', userName='John Doe', firstName='asd',lastName='asd')
     print url_for('getnearevents',topLatitude=8,topLongitude=-176,bottomLatitude=-8,bottomLongitude=170)
 
 class users(db.Model):
