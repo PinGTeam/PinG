@@ -1,4 +1,5 @@
 import geojson
+import json
 from geojson import Feature, Point, FeatureCollection
 from flask import Flask, url_for, request
 from flask_sqlalchemy import SQLAlchemy
@@ -43,6 +44,24 @@ def insertuser():
     connection.close()
     return str(results[0][0])
 
+#ADDING EVENT
+#Calling InsertEvent Stored procedure
+#Using POST method
+#CALL InsertEvent(userID <int[25]>, EventName <string[255]>, Latitude <double>, Longitude <double>, Date/Time <year-month-day hour:min:second>, Description <string[1024]>);
+@app.route('/addevent',methods=['POST'])
+def insertevent():
+    connection = engine.raw_connection()
+    cursor = connection.cursor()
+    location = request.form['location']
+    locfeat = json.loads(location)
+    cursor.callproc("InsertEvent", [locfeat['properties']['userID'],locfeat['properties']['eventName'],locfeat['geometry']['coordinates'][0],locfeat['geometry']['coordinates'][1],locfeat['properties']['time'],locfeat['properties']['description']])
+    results = list(cursor.fetchall())
+    cursor.close()
+    connection.commit()
+    connection.close()
+    return "hello"
+
+
 #GET EVENTS
 #Quering list of events from the database
 @app.route('/getallevents')
@@ -74,12 +93,13 @@ def allgeojson(eventtable):
 
 def event_to_geojson(x,y,userID,eventName,time,description):
     return Feature(geometry=Point((x,y)),properties={"userID":userID,"eventName":eventName,"time":time,"description":description})
-
+'''
 with app.test_request_context():
     print url_for('getusers')
     print url_for('insertuser', userName='John Doe', firstName='asd',lastName='asd')
     print url_for('getnearevents',topLatitude=8,topLongitude=-176,bottomLatitude=-8,bottomLongitude=170)
-
+    print url_for('insertevent',userID=1,EventName="name",Latitude=12,Longitude=8,Datetime="2000-12-12 15:50:20",Description="reasdasd")
+'''
 class users(db.Model):
     __tablename__ = 'users'
     userID = db.Column('userid',db.Integer, primary_key=True)
@@ -96,3 +116,7 @@ class eventtable(db.Model):
     eventName = db.Column('eventName',db.Unicode,unique=False)
     time = db.Column('time',db.DateTime,unique=False)
     description = db.Column('description',db.Unicode,unique=False)
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
