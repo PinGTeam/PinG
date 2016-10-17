@@ -33,15 +33,33 @@
                                 <state key="normal" title="Login"/>
                                 <connections>
                                     <action selector="loginPressedWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2EQ-uV-JoU"/>
-                                    <segue destination="RHr-IX-k6y" kind="presentation" id="ap4-hE-76S"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="AoL-fz-KDx">
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="First Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MhV-dJ-sHp">
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="wl8-ZA-9ET"/>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Iwf-Ks-gT9" firstAttribute="top" secondItem="L64-pQ-EIx" secondAttribute="bottom" constant="8" id="170-S5-tef"/>
+                            <constraint firstItem="AoL-fz-KDx" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2vq-cy-IuX"/>
                             <constraint firstAttribute="trailingMargin" secondItem="E1w-ZI-BOr" secondAttribute="trailing" id="4x4-22-gED"/>
+                            <constraint firstItem="AoL-fz-KDx" firstAttribute="top" secondItem="MhV-dJ-sHp" secondAttribute="bottom" constant="8" id="B4H-R6-VH0"/>
                             <constraint firstAttribute="leadingMargin" secondItem="E1w-ZI-BOr" secondAttribute="leading" id="INi-z5-hdI"/>
+                            <constraint firstItem="wl8-ZA-9ET" firstAttribute="top" secondItem="Iwf-Ks-gT9" secondAttribute="bottom" constant="7.5" id="NMZ-lT-QOL"/>
+                            <constraint firstItem="MhV-dJ-sHp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="RXx-h8-M4L"/>
+                            <constraint firstItem="AoL-fz-KDx" firstAttribute="width" secondItem="E1w-ZI-BOr" secondAttribute="width" id="YG7-0v-w92"/>
+                            <constraint firstItem="wl8-ZA-9ET" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ZW5-TE-oo5"/>
+                            <constraint firstItem="MhV-dJ-sHp" firstAttribute="width" secondItem="AoL-fz-KDx" secondAttribute="width" id="a7V-2h-JLv"/>
+                            <constraint firstItem="E1w-ZI-BOr" firstAttribute="top" secondItem="AoL-fz-KDx" secondAttribute="bottom" constant="8.5" id="dV6-v8-HNk"/>
                             <constraint firstItem="L64-pQ-EIx" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="f0z-Rd-ROp"/>
                             <constraint firstItem="L64-pQ-EIx" firstAttribute="width" secondItem="E1w-ZI-BOr" secondAttribute="width" id="h6m-61-VhA"/>
                             <constraint firstItem="Iwf-Ks-gT9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="hav-zz-TKp"/>
@@ -51,6 +69,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="firstnameTextField" destination="MhV-dJ-sHp" id="4Li-bd-Lfl"/>
+                        <outlet property="lastnameTextField" destination="AoL-fz-KDx" id="4Xl-36-3Xg"/>
                         <outlet property="passTextField" destination="L64-pQ-EIx" id="7wI-LL-ghA"/>
                         <outlet property="usernameTextField" destination="E1w-ZI-BOr" id="7l2-9W-q1p"/>
                     </connections>
@@ -62,7 +82,7 @@
         <!--Navigation Controller-->
         <scene sceneID="jVg-dg-onJ">
             <objects>
-                <navigationController id="RHr-IX-k6y" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="nav" id="RHr-IX-k6y" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="sGV-0U-RSF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -78,7 +98,7 @@
         <!--PinG!-->
         <scene sceneID="q7A-eL-s82">
             <objects>
-                <viewController id="jBb-Pl-UT0" customClass="MapViewController" customModule="PinG" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="pingMap" id="jBb-Pl-UT0" customClass="MapViewController" customModule="PinG" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="FiH-EU-JxY"/>
                         <viewControllerLayoutGuide type="bottom" id="mH1-hm-Rea"/>
@@ -87,10 +107,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Qx7-oJ-Mbb"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Qx7-oJ-Mbb">
+                                <frame key="frameInset" width="1000" height="1000"/>
+                            </mapView>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZiG-sh-ZvY">
                                 <frame key="frameInset" minX="295" minY="583" width="64" height="64"/>
                                 <state key="normal" image="PingButton"/>
+                                <connections>
+                                    <action selector="pingButtonPressedWithSender:" destination="jBb-Pl-UT0" eventType="touchUpInside" id="BgP-nR-bNh"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

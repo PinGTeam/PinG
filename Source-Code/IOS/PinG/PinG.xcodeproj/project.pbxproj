@@ -18,6 +18,10 @@
 		EB0642BB1DAB2B4100BDFEDC /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0642BA1DAB2B4100BDFEDC /* LoginViewController.swift */; };
 		EB0642BD1DAB317600BDFEDC /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0642BC1DAB317600BDFEDC /* MapViewController.swift */; };
 		EB0642BF1DAB44F100BDFEDC /* default.gpx in Resources */ = {isa = PBXBuildFile; fileRef = EB0642BE1DAB44F100BDFEDC /* default.gpx */; };
+		EB066A851DB4709900FC8C93 /* PingAddView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB066A841DB4709900FC8C93 /* PingAddView.xib */; };
+		EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB066A861DB4710000FC8C93 /* PingAddView.swift */; };
+		EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8B2DD21DAD943900920A81 /* Ping.swift */; };
+		EBE463DC1DB04BAE00882D8C /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE463DB1DB04BAE00882D8C /* Shared.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +59,10 @@
 		EB0642BA1DAB2B4100BDFEDC /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ../LoginViewController.swift; sourceTree = "<group>"; };
 		EB0642BC1DAB317600BDFEDC /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		EB0642BE1DAB44F100BDFEDC /* default.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = default.gpx; path = ../../Downloads/default.gpx; sourceTree = "<group>"; };
+		EB066A841DB4709900FC8C93 /* PingAddView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PingAddView.xib; path = ../PingAddView.xib; sourceTree = "<group>"; };
+		EB066A861DB4710000FC8C93 /* PingAddView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PingAddView.swift; path = ../PingAddView.swift; sourceTree = "<group>"; };
+		EB8B2DD21DAD943900920A81 /* Ping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ping.swift; sourceTree = "<group>"; };
+		EBE463DB1DB04BAE00882D8C /* Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,13 +117,16 @@
 		EB0642841DAB20D400BDFEDC /* PinG */ = {
 			isa = PBXGroup;
 			children = (
+				EB066A881DB4711700FC8C93 /* PingAddView */,
 				EB0642851DAB20D500BDFEDC /* AppDelegate.swift */,
 				EB0642BA1DAB2B4100BDFEDC /* LoginViewController.swift */,
 				EB0642BC1DAB317600BDFEDC /* MapViewController.swift */,
+				EB8B2DD21DAD943900920A81 /* Ping.swift */,
 				EB0642891DAB20D500BDFEDC /* Main.storyboard */,
 				EB06428C1DAB20D500BDFEDC /* Assets.xcassets */,
 				EB06428E1DAB20D500BDFEDC /* LaunchScreen.storyboard */,
 				EB0642911DAB20D500BDFEDC /* Info.plist */,
+				EBE463DB1DB04BAE00882D8C /* Shared.swift */,
 			);
 			path = PinG;
 			sourceTree = "<group>";
@@ -145,6 +156,15 @@
 				EB0642B41DAB20E900BDFEDC /* CoreLocation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EB066A881DB4711700FC8C93 /* PingAddView */ = {
+			isa = PBXGroup;
+			children = (
+				EB066A841DB4709900FC8C93 /* PingAddView.xib */,
+				EB066A861DB4710000FC8C93 /* PingAddView.swift */,
+			);
+			name = PingAddView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,6 +277,7 @@
 				EB0642901DAB20D500BDFEDC /* LaunchScreen.storyboard in Resources */,
 				EB0642BF1DAB44F100BDFEDC /* default.gpx in Resources */,
 				EB06428D1DAB20D500BDFEDC /* Assets.xcassets in Resources */,
+				EB066A851DB4709900FC8C93 /* PingAddView.xib in Resources */,
 				EB06428B1DAB20D500BDFEDC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,9 +303,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EBE463DC1DB04BAE00882D8C /* Shared.swift in Sources */,
 				EB0642BB1DAB2B4100BDFEDC /* LoginViewController.swift in Sources */,
 				EB0642BD1DAB317600BDFEDC /* MapViewController.swift in Sources */,
 				EB0642861DAB20D500BDFEDC /* AppDelegate.swift in Sources */,
+				EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */,
+				EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,6 +553,7 @@
 				EB0642AC1DAB20D500BDFEDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EB0642AD1DAB20D500BDFEDC /* Build configuration list for PBXNativeTarget "PinGTests" */ = {
 			isa = XCConfigurationList;
@@ -537,6 +562,7 @@
 				EB0642AF1DAB20D500BDFEDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EB0642B01DAB20D500BDFEDC /* Build configuration list for PBXNativeTarget "PinGUITests" */ = {
 			isa = XCConfigurationList;
@@ -545,6 +571,7 @@
 				EB0642B21DAB20D500BDFEDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
