@@ -4,6 +4,7 @@ from geojson import Feature, Point, FeatureCollection
 from flask import Flask, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
+from sqlalchemy.orm import *
 from datetime import datetime
 
 #need run flask with following command
@@ -12,10 +13,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/ping'
+engine = create_engine('mysql://juan:alfaro@localhost/ping')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
-engine = create_engine('mysql://juan:alfaro@localhost/ping')
 
 #LIST OF USERS
 #Quering list of users from the database
@@ -25,7 +25,10 @@ def getusers():
     results = users.query.all()
     for ev in results:
       str = str + ev.userName + " ,"
-    return str
+    if str == "":
+        return "NoUsers"
+    else:
+        return str
 
 #ADDING USER
 #Calling InsertUser Stored procedure
@@ -66,7 +69,11 @@ def insertevent():
 #Quering list of events from the database
 @app.route('/getallevents')
 def getevents():
-    return geojson.dumps(allgeojson(eventtable),sort_keys=True)
+    events = eventtable.query.all()
+    event_list = []
+    for event in events:
+        event_list.append(event_to_geojson(event.latitude,event.longitude,event.userID,event.eventName,str(event.time),event.description))
+    return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #GET EVENTS
 #Calling GetEvents Stored procedure
@@ -84,15 +91,19 @@ def getnearevents():
         event_list.append(event_to_geojson(event[2],event[3],event[1],event[4],str(event[5]),evenT[6]))
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
+#HELPER FUNCTIONS
+'''
 def allgeojson(eventtable):
     events = eventtable.query.all()
     event_list = []
     for event in events:
         event_list.append(event_to_geojson(event.latitude,event.longitude,event.userID,event.eventName,str(event.time),event.description))
     return FeatureCollection(event_list)
-
+'''
+#takes an info to make a json feature that represents an event
 def event_to_geojson(x,y,userID,eventName,time,description):
     return Feature(geometry=Point((x,y)),properties={"userID":userID,"eventName":eventName,"time":time,"description":description})
+
 '''
 with app.test_request_context():
     print url_for('getusers')
@@ -100,23 +111,33 @@ with app.test_request_context():
     print url_for('getnearevents',topLatitude=8,topLongitude=-176,bottomLatitude=-8,bottomLongitude=170)
     print url_for('insertevent',userID=1,EventName="name",Latitude=12,Longitude=8,Datetime="2000-12-12 15:50:20",Description="reasdasd")
 '''
+
+#TABLES
+#Users table
 class users(db.Model):
     __tablename__ = 'users'
-    userID = db.Column('userid',db.Integer, primary_key=True)
-    userName = db.Column('userName',db.Unicode, unique=False)
-    firstName = db.Column('firstName',db.Unicode, unique=False)
-    lastName = db.Column('lastName',db.Unicode, unique=False)
+    userID = db.Column('userID',db.BigInteger, primary_key=True, autoincrement=True)
+    userName = db.Column('userName',db.String(20), nullable=False)
+    firstName = db.Column('firstName',db.String(25), nullable=False)
+    lastName = db.Column('lastName',db.String(25), nullable=False)
 
+    def __repr__(self):
+        return '<User {}>'.format(self.userID)
+
+#Events table
 class eventtable(db.Model):
     __tablename__ = 'eventtable'
-    eventID = db.Column('eventID',db.Integer,primary_key=True)
-    userID = db.Column('userID',db.Integer,unique=False)
-    latitude = db.Column('latitude',db.Float,unique=False)
-    longitude = db.Column('longitude',db.Float,unique=False)
-    eventName = db.Column('eventName',db.Unicode,unique=False)
-    time = db.Column('time',db.DateTime,unique=False)
-    description = db.Column('description',db.Unicode,unique=False)
+    eventID = db.Column('eventID',db.BigInteger,primary_key=True, autoincrement=True)
+    userID = db.Column('userID',db.BigInteger,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
+    latitude = db.Column('latitude',db.Float,nullable=False)
+    longitude = db.Column('longitude',db.Float,nullable=False)
+    eventName = db.Column('eventName',db.String(255),nullable=False)
+    time = db.Column('time',db.DateTime,nullable=False)
+    description = db.Column('description',db.String(1024),nullable=True)
 
+    def __repr__(self):
+        return '<User {}>'.format(self.userID)
 
+#Run App
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
