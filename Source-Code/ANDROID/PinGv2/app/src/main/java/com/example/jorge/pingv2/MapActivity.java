@@ -1,5 +1,7 @@
 package com.example.jorge.pingv2;
 
+//yo
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 
@@ -341,7 +342,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                 for(int i = 0; i < points.length(); i++) {
                     JSONObject marker = points.getJSONObject(i);
-
                     System.out.println("EventName: " + marker.getString("geometry"));
                 }
                 //geoData is JSONArray
