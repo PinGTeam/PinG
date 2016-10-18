@@ -1,6 +1,6 @@
 package com.example.jorge.pingv2;
 
-//yo also
+//yo also wefgd
 
 import android.app.Dialog;
 import android.content.Intent;
