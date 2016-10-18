@@ -17,6 +17,9 @@ engine = create_engine('mysql://juan:alfaro@localhost/ping')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+'''
+#NOT INCLUDED IN ITERATION - FUNCTION MADE FOR TESTING - MARKED FOR DELETION
+'''
 #LIST OF USERS
 #Quering list of users from the database
 @app.route('/')
@@ -29,6 +32,7 @@ def getusers():
         return "NoUsers"
     else:
         return str
+
 
 #ADDING USER
 #Calling InsertUser Stored procedure
@@ -88,7 +92,7 @@ def getnearevents():
     connection.close()
     event_list = []
     for event in results:
-        event_list.append(event_to_geojson(event[2],event[3],event[1],event[4],str(event[5]),evenT[6]))
+        event_list.append(event_to_geojson(event[4],event[3],event[0],event[5],str(event[6]),event[7]))
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #HELPER FUNCTIONS
