@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.cocoahero.android.geojson.GeoJSONObject;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -342,12 +343,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                 for(int i = 0; i < points.length(); i++) {
                     JSONObject marker = points.getJSONObject(i);
+                    JSONArray coord = marker.getJSONArray("geometry");
+
+                    for(int j = 0; j < coord.length(); j++) {
+                        JSONObject geoData = marker.getJSONObject(j);
+                    }
+
                     System.out.println("EventName: " + marker.getString("geometry"));
+
                 }
-                //geoData is JSONArray
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
         }
     }
 }
