@@ -1,7 +1,5 @@
 package com.example.jorge.pingv2;
 
-//yolo big
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,8 +13,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-
-import com.cocoahero.android.geojson.GeoJSONObject;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,16 +29,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Objects;
-
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -68,9 +59,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     JSONArray geoData;
 
-    @Override
+    @Override   //when the screen is created
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //null out all strings
+        eName = null;
+        eDescription = null;
+        eTime = null;
+        userID = null;
+        allEventsString = null;
 
         //get userID from logIn activity
         Intent data = getIntent();
@@ -107,18 +105,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int isAvailable = api.isGooglePlayServicesAvailable(this);
 
+        //is available
         if (isAvailable == ConnectionResult.SUCCESS)
             return true;
+        //not available, but can install
         else if (api.isUserResolvableError(isAvailable)) {
             Dialog box = api.getErrorDialog(this, isAvailable, 0);
             box.show();
+        //is not available
         } else {
             Toast.makeText(this, "Cannot connect to Google Play Services", Toast.LENGTH_LONG).show();
         }
         return false;
     }
 
-    //when the map is ready
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -150,7 +150,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mLocReq.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocReq.setInterval(100000);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, mLocReq, this);
@@ -193,11 +195,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             topLeftCoords = vRegion.farLeft;
             bottomRightCoords = vRegion.nearRight;
 
-            //they seem to be correct <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            System.out.println("TopLeft: " + topLeftCoords + "BottomRight: "+ bottomRightCoords);
-
+            //focus camera onto current location
             moveToLocation(loc.latitude, loc.longitude, 18);
 
+            //once map is updated, place pings on map via mid-tier
             new GetMarkerData().execute();
         }
     }
@@ -246,10 +247,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         @Override
         protected Void doInBackground(Void... params) {
 
-            System.out.println("Coords Lat: " + theCoords.latitude + " Coords Lng: " + theCoords.longitude);
-
-
-
+            //create json object and stitch all data together
             JSONObject geometry = new JSONObject();
             try {
                 JSONArray coord = new JSONArray("[" + theCoords.longitude + ", " + theCoords.latitude + "]");
@@ -280,6 +278,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 e.printStackTrace();
             }
 
+            //connect to mid-tier
             OkHttpClient client = new OkHttpClient();
 
             RequestBody formBody = new FormBody.Builder()
@@ -293,6 +292,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             System.out.println(geoJSON.toString());
 
+            //send and get back response
             try {
                 Response response= client.newCall(request).execute();
                 if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
@@ -315,11 +315,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         @Override
         protected Void doInBackground(Void... params) {
 
+            //connect to mid-tier
             OkHttpClient client = new OkHttpClient();
             Request request = new  Request.Builder()
                     .url("http://162.243.15.139/getallevents")
                     .build();
 
+            //get geoJSON string back from mid-tier
             try {
                 Response response = client.newCall(request).execute();
                 if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
@@ -335,19 +337,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             return null;
         }
 
+        //once we have all the
         @Override
         protected void onPostExecute(Void aVoid) {
-            try {
+
+
+        }
+    }
+}
+
+/*
+try {
                 JSONObject obj = new JSONObject(allEventsString);
                 JSONArray points = obj.getJSONArray("features");
 
                 for(int i = 0; i < points.length(); i++) {
                     JSONObject marker = points.getJSONObject(i);
-                    JSONArray coord = marker.getJSONArray("geometry");
-
-                    for(int j = 0; j < coord.length(); j++) {
-                        JSONObject geoData = marker.getJSONObject(j);
-                    }
+                    JSONObject coord = marker.getJSONObject("geometry");
+                    JSONArray cord = coord.getJSONArray("coordinates");
+                    Iterator<Double> itr =
 
                     System.out.println("EventName: " + marker.getString("geometry"));
 
@@ -356,7 +364,4 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-        }
-    }
-}
+ */

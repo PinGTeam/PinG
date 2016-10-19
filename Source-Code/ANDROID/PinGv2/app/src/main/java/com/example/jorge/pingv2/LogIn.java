@@ -17,15 +17,21 @@ import okhttp3.Response;
 
 public class LogIn extends AppCompatActivity {
 
-    String userCode;   //stores userID sent back from middle tier
-    Button logIn;
+    String userCode;    //stores userID sent back from middle tier
+    Button logIn;       //log in button
 
-    String Fid, Fname, Flast;
+    String Fid, Fname, Flast;   //stores user input
 
-    @Override
+    @Override   //when the screen is first created
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+
+        //null out all of our strings
+        userCode = null;
+        Fid = null;
+        Fname = null;
+        Flast = null;
 
         //create button on click listener
         logIn = (Button) findViewById(R.id.logInButton);
@@ -55,9 +61,10 @@ public class LogIn extends AppCompatActivity {
     }
 
     private class SendUserData extends AsyncTask<Void, Void, Void> {
-        @Override
+        @Override   //running in background thread
         protected Void doInBackground(Void... params) {
 
+            //connect to mid-tier
             OkHttpClient client = new OkHttpClient();
 
             RequestBody formBody = new FormBody.Builder()
@@ -70,6 +77,7 @@ public class LogIn extends AppCompatActivity {
                     .post(formBody)
                     .build();
 
+                //get response
                 try {
                     Response response= client.newCall(request).execute();
                     if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
@@ -84,10 +92,10 @@ public class LogIn extends AppCompatActivity {
             return null;
         }
 
-        //once the middle-tier sends us back the response, go to map and send user code with it
-        @Override
+        @Override   //once we get the full response, then we go to map activity
         protected void onPostExecute(Void aVoid) {
             Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+            //pass userID to map activity
             intent.putExtra("key", userCode);
             startActivity(intent);
         }
