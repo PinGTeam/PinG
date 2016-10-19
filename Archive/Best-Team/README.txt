@@ -3,13 +3,6 @@
 
 # Concrete instuctions on how to compile:
 -----------------------------------------
-Back-End MySQL Database:
-* Does not require compilation.
-* If you wish to duplicate the state of the database on an external MySQL DB, a mysql dump is included in the archive.
-
-Middle-Tier Flask Application:
-* Does not require compilation.
-
 Mobile Android Application:
 * 
 
@@ -28,7 +21,10 @@ Mobile iOS Application:
 
 # Concrete commands on how to run the unit test cases:
 ------------------------------------------------------
-- MySQL Unit Tests and Flask Unit Tests:
+- MySQL Unit Tests:
+  * The file unittest.sql contains all SQL tests for the back-end database.
+    However, if you would like to run the test cases proceed to the following instructions:
+    
   If you use Windows:
      A portable putty.exe is included. Use it to SSH to our Ubuntu server with the following criteria:
      IP: 162.243.15.139
@@ -44,9 +40,11 @@ Mobile iOS Application:
      You can type via command line: ` ssh test@162.243.15.139 ` then enter password: test)
      
      Once logged into test@162.243.15.139, type:
-     make              <- runs sql and flask tests
-     make sqltests      <- runs sql tests
-     make flasktests    <- runs flask tests
+     make              <- runs sql tests
+       
+       
+- Flask Unit Tests:
+
        
 - Android Unit Tests:
 
