@@ -45,7 +45,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="wl8-ZA-9ET"/>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="wl8-ZA-9ET"/>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -69,6 +69,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="wl8-ZA-9ET" id="eud-ok-WSt"/>
                         <outlet property="firstnameTextField" destination="MhV-dJ-sHp" id="4Li-bd-Lfl"/>
                         <outlet property="lastnameTextField" destination="AoL-fz-KDx" id="4Xl-36-3Xg"/>
                         <outlet property="passTextField" destination="L64-pQ-EIx" id="7wI-LL-ghA"/>

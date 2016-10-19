@@ -3,6 +3,7 @@
 //  PinG
 //
 //  Created by Koji Tilley on 10/9/16.
+//  Worked on by Koji Tilley and Jordan Harlow
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
@@ -14,6 +15,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passTextField: UITextField!
     @IBOutlet weak var firstnameTextField: UITextField!
     @IBOutlet weak var lastnameTextField: UITextField!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     
     override func viewDidLoad() {
@@ -37,6 +39,7 @@ class LoginViewController: UIViewController {
         //local vars
         var done = false
         var succ = false    //S U C C
+        var err = false
         
         //Verify fields
         
@@ -44,6 +47,8 @@ class LoginViewController: UIViewController {
         print("Login button pressed")
         print("Username: %s", usernameTextField.text)
         print("Password: %s", passTextField.text)
+        
+        activityIndicator.startAnimating()
         
         //HTTP Post method
         var request = URLRequest(url: URL(string: "http://162.243.15.139/adduser")!)
@@ -64,6 +69,7 @@ class LoginViewController: UIViewController {
                 print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
                 print("response = \(response)")
                 done = true
+                err = true
             }
             
             let responseString = String(data: data, encoding: .utf8)
@@ -79,9 +85,11 @@ class LoginViewController: UIViewController {
             Thread.sleep(forTimeInterval: 0.25)
         }
         
-        if succ {
+        if (succ && !err){
             self.switchView()
         }
+        
+        activityIndicator.stopAnimating()
     }
     
 

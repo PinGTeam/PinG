@@ -3,6 +3,7 @@
 //  PinG
 //
 //  Created by Koji Tilley on 10/16/16.
+//  Worked on by Koji Tilley and Jordan Harlow
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 

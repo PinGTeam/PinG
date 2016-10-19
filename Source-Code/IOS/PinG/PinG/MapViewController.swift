@@ -3,6 +3,7 @@
 //  PinG
 //
 //  Created by Koji Tilley on 10/9/16.
+//  Worked on by Koji Tilley and Jordan Harlow
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
@@ -53,7 +54,65 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func refresh() {
         print("Refresh method called")
-        // Grab pings from database and populate map
+        // Grab pings from database and populate dictionary
+        var fin = false
+        print("Testing request")
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/getallevents")!)
+        request.httpMethod = "GET"
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
+            print("error=\(error)")
+            fin = true
+            return
+            
+            }
+            let httpStatus = response as! HTTPURLResponse
+            print("In url session method")
+            
+            if httpStatus.statusCode != 200 {
+                print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                print("response = \(response)")
+                fin = true
+            }
+            else {
+                //Parse jason
+                print("Begin retrieving json")
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
+                    
+                    if let features = json["features"] as? [[String: AnyObject]] {
+                        
+                        for feature in features {
+                            
+                            let point = feature["geometry"]?["coordinates"] as? NSArray
+                            let description = feature["properties"]?["description"] as! String
+                            let eventName = feature["properties"]?["eventName"] as! String
+                            let userID = feature["properties"]?["userID"] as! Int
+                            
+                            print("\(eventName) at (\(point?[0]),\(point?[1]))")
+                            //Populate local ping map
+                            let ping = Ping(uid: userID, coord: CLLocationCoordinate2DMake(point?[0] as! CLLocationDegrees, point?[1] as! CLLocationDegrees))
+                            ping.title = eventName
+                            ping.subtitle = description
+                            self.pingMap[userID] = ping
+                        }
+                        
+                    }
+                    
+                    fin = true
+                    
+                } catch {
+                    print("Error with JSON: \(error)")
+                }
+                
+            }
+            
+            
+        }
+        task.resume()
+        //Bock main thread until ping refresh complete
+        while !fin {
+            Thread.sleep(forTimeInterval: 0.1)
+        }
         
         //Refresh map by removing all annotations but the user location
         self.mapView.annotations.forEach {
@@ -63,26 +122,29 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
         
         // show pings
-        if !pingMap.isEmpty {
-            for (ids, coordinates) in pingMap {
-                if pingMap[ids]?.added == false {
-                    pingMap[ids]?.added = true
+        if !self.pingMap.isEmpty {
+            print("Number of pings in local storage: \(pingMap.count)")
+            for (ids, coordinates) in self.pingMap {
+                if self.pingMap[ids]?.added == false {
+                    //pingMap[ids]?.added = true
                     let annotation = MKPointAnnotation()
-                    annotation.coordinate = (pingMap[ids]?.location)!
-                    annotation.title = pingMap[ids]?.title
-                    annotation.subtitle = pingMap[ids]?.subtitle
-                    mapView.addAnnotation(annotation)
+                    annotation.coordinate = (self.pingMap[ids]?.location)!
+                    annotation.title = self.pingMap[ids]?.title
+                    annotation.subtitle = self.pingMap[ids]?.subtitle
+                    self.mapView.addAnnotation(annotation)
+                    print("Added ping at ")
                 }
             }
         }
+        
     }
     
     func centerView() {
         if currentCoordinate != nil {
             mapView.setCenter(currentCoordinate, animated: true)
         }
-        let viewRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(currentCoordinate, 2*METERS_MILE, 2*METERS_MILE)
-        mapView.setRegion(viewRegion, animated: true)
+        let viewRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(currentCoordinate, 4*METERS_MILE, 4*METERS_MILE)
+        //mapView.setRegion(viewRegion, animated: true)
         
     }
     
@@ -100,12 +162,53 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         alert.view.addSubview(customView)
         
         func addHandler(actionTarget: UIAlertAction) {
-            let ping = Ping(uid: uID, coord: currentCoordinate)
-            ping.username = user
-            ping.title = customView.eventName
-            ping.subtitle = customView.eventDescription
-            pingMap[uID] = ping
-            print("Ping added")
+            //Set up date formatter for string date
+            let date = customView.fromDate
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let dateString = df.string(from: date)
+            
+            //Create json string from dictionary
+            let geojson = ["geometry": ["coordinates": [currentCoordinate.latitude, currentCoordinate.longitude], "type": "Point"], "properties": ["description": customView.eventDescription!, "eventName": customView.eventName!, "time": dateString, "userID": uID], "type": "Feature"] as [String : Any]
+            
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))
+                let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)
+                var succ = false
+                
+                //Prepare to use http post method to add the jsonText on the server
+                var request = URLRequest(url: URL(string: "http://162.243.15.139/addevent")!)
+                request.httpMethod = "POST"
+                //Create post string
+                let postString = "location=" + jsonText!
+                print("\(postString)")
+                request.httpBody = postString.data(using: .utf8)
+                let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
+                    print("error=\(error)")
+                    return
+                    
+                    }
+                    
+                    if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                        print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                        print("response = \(response)")
+                        succ = true
+                    }
+                    
+                    let responseString = String(data: data, encoding: .utf8)
+                    print("responseString = \(responseString)")
+                    
+                    succ = true
+                }
+                task.resume()
+                
+                while !succ {
+                    Thread.sleep(forTimeInterval: 0.1)
+                }
+                
+            } catch {
+                print(error.localizedDescription)
+            }
             refresh()
         }
         
