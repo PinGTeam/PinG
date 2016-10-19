@@ -4,7 +4,8 @@ The archive will contain:
 
 1 The Source code.
 2 The unit test cases.
-3 A makefile to build code together with the test cases.
+3 Diagrams directory.
+3 Makefiles to build code and/or test cases.
 4 The README.txt file.
 5 The progressReport.pdf file
 
