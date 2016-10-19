@@ -1,3 +1,4 @@
+#Implemented by: Juan and Monica
 import os
 import requestmngr
 import unittest
@@ -5,18 +6,17 @@ import tempfile
 from sqlalchemy import *
 
 
-'''
---Testing for Middle-Tier | Iteration One --
-    Tests:
-        1. Database is empty [EmptyDatabaseTestCase]
-            - Tests getallevents and getnearevents
-        2. Database with some data [NonEmptyDatabaseTestCase]
-            - Tests getallevents and getnearevents
-        3. Adding with "adduser" and checking if users have been added [EmptyDatabaseWithAddUserTestCase]
-            - Tests adduser
-        4. Adding with "addevent" and checking if event has been added [EmptyDatabaseWithAddEventTestCase]
-            - Tests adduser, addevent, getallevents and getnearevents
-'''
+
+#--Testing for Middle-Tier | Iteration One --
+#    Tests:
+#        1. Database is empty [EmptyDatabaseTestCase]
+#            - Tests getallevents and getnearevents
+#        2. Database with some data [NonEmptyDatabaseTestCase]
+#            - Tests getallevents and getnearevents
+#        3. Adding with "adduser" and checking if users have been added [EmptyDatabaseWithAddUserTestCase]
+#            - Tests adduser
+#        4. Adding with "addevent" and checking if event has been added [EmptyDatabaseWithAddEventTestCase]
+#            - Tests adduser, addevent, getallevents and getnearevents
 
 
 class EmptyDatabaseTestCase(unittest.TestCase):
@@ -47,9 +47,6 @@ class EmptyDatabaseTestCase(unittest.TestCase):
         assert '{"features": [], "type": "FeatureCollection"}' in rv.data
 
 
-'''
-HARDCODING TEST CASE, NOT SURE WHAT IS BEST INPUT HERE
-'''
 class NonEmptyDatabaseTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -71,30 +68,10 @@ class NonEmptyDatabaseTestCase(unittest.TestCase):
 
     def test_getallevent_db(self):
         rv = self.app.get('/getallevents')
-        #strtest = ""
-        #for rn in rv.data:
-            #strtest = strtest + rn
-        #print strtest
         assert '{"features": [{"geometry": {"coordinates": [12.0, 120.0], "type": "Point"}, "properties": {"description": "testdesc", "eventName": "testevent", "time": "2016-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
     def test_getnearevent_db(self):
         rv = self.app.get('/getnearevents?topLongitude=110&topLatitude=14&bottomLongitude=120&bottomLatitude=10')
-        #strtest = ""
-        #for rn in rv.data:
-            #strtest = strtest + rn
-        #print strtest
         assert '{"features": [{"geometry": {"coordinates": [120.0, 12.0], "type": "Point"}, "properties": {"description": "testdesc", "eventName": "testevent", "time": "2016-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
-'''
-#NOT INCLUDED IN ITERATION - FUNCTION MADE FOR TESTING - MARKED FOR DELETION
-    def test_getusers_db(self):
-        rv = self.app.get('/')
-        assert 'testname' in rv.data
-'''
-'''
-#NOT INCLUDED IN ITERATION - FUNCTION MADE FOR TESTING - MARKED FOR DELETION
-    def test_getusers_db(self):
-        rv = self.app.get('/')
-        assert 'testname' in rv.data
-'''
 
 
 '''

@@ -1,3 +1,4 @@
+# Implemented by: Juan and Monica
 import geojson
 import json
 from geojson import Feature, Point, FeatureCollection
@@ -17,9 +18,9 @@ engine = create_engine('mysql://juan:alfaro@localhost/ping')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-'''
+
 #NOT INCLUDED IN ITERATION - FUNCTION MADE FOR TESTING - MARKED FOR DELETION
-'''
+
 #LIST OF USERS
 #Quering list of users from the database
 @app.route('/')
@@ -68,7 +69,6 @@ def insertevent():
     connection.close()
     return "hello"
 
-
 #GET EVENTS
 #Quering list of events from the database
 @app.route('/getallevents')
@@ -96,25 +96,10 @@ def getnearevents():
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #HELPER FUNCTIONS
-'''
-def allgeojson(eventtable):
-    events = eventtable.query.all()
-    event_list = []
-    for event in events:
-        event_list.append(event_to_geojson(event.latitude,event.longitude,event.userID,event.eventName,str(event.time),event.description))
-    return FeatureCollection(event_list)
-'''
+
 #takes an info to make a json feature that represents an event
 def event_to_geojson(x,y,userID,eventName,time,description):
     return Feature(geometry=Point((x,y)),properties={"userID":userID,"eventName":eventName,"time":time,"description":description})
-
-'''
-with app.test_request_context():
-    print url_for('getusers')
-    print url_for('insertuser', userName='John Doe', firstName='asd',lastName='asd')
-    print url_for('getnearevents',topLatitude=8,topLongitude=-176,bottomLatitude=-8,bottomLongitude=170)
-    print url_for('insertevent',userID=1,EventName="name",Latitude=12,Longitude=8,Datetime="2000-12-12 15:50:20",Description="reasdasd")
-'''
 
 #TABLES
 #Users table
