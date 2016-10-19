@@ -60,7 +60,19 @@ Mobile iOS Application:
        
        
 - Flask Unit Tests:
+ *The file requestmngr_tests.py contains the flask tests for the middle tier communication between the database and the app on both Android and iOS
+  
+  Tests:
+        1. Database is empty [EmptyDatabaseTestCase]
+            - Tests getallevents and getnearevents
+        2. Database with some data [NonEmptyDatabaseTestCase]
+            - Tests getallevents and getnearevents
+        3. Adding with "adduser" and checking if users have been added [EmptyDatabaseWithAddUserTestCase]
+            - Tests adduser
+        4. Adding with "addevent" and checking if event has been added [EmptyDatabaseWithAddEventTestCase]
+            - Tests adduser, addevent, getallevents and getnearevents
 
+  To run tests, type in the command line "python requestmngr_tests.py".
        
 - Android Unit Tests:
 
