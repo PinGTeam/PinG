@@ -100,6 +100,40 @@ class PinGTests: XCTestCase {
             let responseString = String(data: data, encoding: .utf8)
             print("responseString = \(responseString)")
             
+            XCTAssert(responseString == "5")
+            succ = true
+        }
+        task.resume()
+        
+        while !succ {
+            Thread.sleep(forTimeInterval: 0.1)
+        }
+    }
+    
+    func testPOSTRequestFail() {
+        var succ = false
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/adduser")!)
+        request.httpMethod = "POST"
+        //Create post string via string concatenation
+        var postString = "UserName=" + "BigNice"
+        postString += "&Name=" + "Koji"
+        postString += "&LName=" + "Harlow"
+        request.httpBody = postString.data(using: .utf8)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
+            print("error=\(error)")
+            return
+            
+            }
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                print("response = \(response)")
+            }
+            
+            let responseString = String(data: data, encoding: .utf8)
+            print("responseString = \(responseString)")
+            
+            XCTAssert(responseString == "6")
             succ = true
         }
         task.resume()
@@ -126,11 +160,13 @@ class PinGTests: XCTestCase {
         let geojson = ["geometry": ["coordinates": [-3.5123, 175.5], "type": "Point"], "properties": ["description": "This is a test event", "eventName": "Party_at_Juans_House", "time": dateString, "userID": 1], "type": "Feature"] as [String : Any]
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))
-            let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)
-            print(jsonText)
+            let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)!
+            print("\(jsonText)")
         } catch {
             print(error.localizedDescription)
         }
+        
+        
     }
     
     func testPerformanceExample() {
