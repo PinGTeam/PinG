@@ -1,3 +1,5 @@
+//Code by Jorge Torres-Aldana & Arthur Karapateas
+
 package com.example.jorge.pingv2;
 
 import android.app.Dialog;
