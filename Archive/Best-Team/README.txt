@@ -13,7 +13,9 @@ Mobile Android Application:
 
 
 Mobile iOS Application:
-* 
+- Get XCode 8
+- Code is compiled as it is written on XCode. Look below on how to run it. 
+- The product is technically "built" every time the Play button is pressed. 
 
 
 # Concrete instructions on how to run our code:
@@ -24,7 +26,13 @@ Mobile Android Application:
 - App is now ready for use.
 
 Mobile iOS Application:
-* 
+- Open up PinG.xcodeproj
+- Select iPhone6s as the target simulator environment
+- Run the code by hitting the Play button on the top left of XCode. App is ready to be simulated.
+- Enable a simulated location by clicking on the Simulate Location button above the console.
+  - Feel free to use the default.gpx file to simulate Strozier library.
+  - If this is the first time running on the specified environment, the app will request Location access permissions.
+- App is now ready for use. 
 
 
 # Concrete commands on how to run the unit test cases:
@@ -52,12 +60,27 @@ Mobile iOS Application:
        
        
 - Flask Unit Tests:
+ *The file requestmngr_tests.py contains the flask tests for the middle tier communication between the database and the app on both Android and iOS
+  
+  Tests:
+        1. Database is empty [EmptyDatabaseTestCase]
+            - Tests getallevents and getnearevents
+        2. Database with some data [NonEmptyDatabaseTestCase]
+            - Tests getallevents and getnearevents
+        3. Adding with "adduser" and checking if users have been added [EmptyDatabaseWithAddUserTestCase]
+            - Tests adduser
+        4. Adding with "addevent" and checking if event has been added [EmptyDatabaseWithAddEventTestCase]
+            - Tests adduser, addevent, getallevents and getnearevents
 
+  To run tests, type in the command line "python requestmngr_tests.py".
        
 - Android Unit Tests:
 
 
 - iOS Unit Tests:
+Open up PinG.xcodeproj
+Within the project tree, there should be a folder named PinGTests
+Unit tests are ran through XCode by clicking the diamond by each function in the PinGTests.swift file. That's about it.
 
 
 # And acceptance tests for an external person to try (i.e., what inputs to use and what outputs are expected).
@@ -75,7 +98,7 @@ Mobile Android Application:
 - The map will load if the user followed the correct set up stages found at the top of this document and the view will
   center to the user current location.
 - The view will be locked to the user and no zooming is allowed. Rotation and titlting is available.
-- At the top left of the screen there is a compas button that will reset the tilt and rotation of the camera when clicked.
+- At the top left of the screen there is a compass button that will reset the tilt and rotation of the camera when clicked.
 - At the top right of the screen there is a go to current location button that returns the view to the user current location.
 - The map will refresh and return to user current location every 10 seconds or on location changed.
 - On the bottom right of the screen there is the ping button that when clicked brings up the Event Information Screen.
@@ -91,5 +114,17 @@ Mobile Android Application:
 - Once a ping has been placed on the map, a user can click on the ping to see detailed information about the ping.
 
 Mobile iOS Application:
-
+- Make a First name, Last name, and Username. Password is not needed for now. 
+  - If connection successful, the map would be shown. Pings from the database are loaded
+- Add events by pressing the Add Ping button on the bottom right. Be sure that a simulated location is enabled. 
+- Enter an event name, description, and event start time on the action sheet shown. toTime is not implemented but shown. 
+- Finish ping creation by hitting the "Ping" button on the action sheet. 
+- Pings will load every time a refresh method is called. The method can be called manually by pressing the refresh button.
+  - Refreshing the map would center the map view.
+- As of now, the map is zoomed out all the way. This is for ease of testing with simulated locations. 
+- Feel free to change the simulated location and add new pings. 
+- Only one ping can be added per user. If the current user has an existing ping, a confirmation message will show up notifying the user. 
+- Every time a new ping is created, it is added to the database, regardless of if the user has already added a ping or not.
+  - Only the most recent ping is shown, though, since pings are stored locally on a dictionary, where the userID is the key, and the ping object is the value for that key.
+- Users can tap on pings to see the Event name and description. 
 

@@ -7,6 +7,10 @@ The archive will contain:
 3 The README.txt file.
 4 The progressReport.pdf file
   - List github repository on progressReport.pdf
+  
+  
+  https://docs.google.com/document/d/1PaybisjuWzAyk2vHw3U7R6AbuGseJt6V0arVZHCcRqk/edit
+  Progress Report ^^^
 
 -----------------------------------------------------------------------------------------------------------
 Upload at: Blackboard -> project -> Milestone 3
