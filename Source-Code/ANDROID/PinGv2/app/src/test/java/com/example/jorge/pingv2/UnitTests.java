@@ -24,7 +24,7 @@ import okhttp3.Response;
 import static org.junit.Assert.*;
 
 /**
- * Created by arthu on 10/19/2016.
+ * Created by arthu and jorge on 10/19/2016.
  */
 public class UnitTests {
     @Before
