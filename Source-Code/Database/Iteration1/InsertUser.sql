@@ -1,26 +1,25 @@
-USE `sirotto_db`;
+USE `ping`;
 DROP procedure IF EXISTS `InsertUser`;
 
 DELIMITER $$
-USE `sirotto_db`$$
-CREATE PROCEDURE `InsertUser`(parmUserName varchar(20), parmFirstName varchar(25), parmLastName varchar(25))
+USE `ping`$$
+CREATE PROCEDURE `InsertUser`(parmUserName varchar(20), parmPassword varchar(60), parmFirstName varchar(25), parmLastName varchar(25), parmEmail varchar(256))
 BEGIN
-		IF NOT exists(SELECT * FROM users where userName = parmUserName) THEN
+		IF NOT exists(SELECT * FROM users where userName = parmUserName OR email = parmEmail) THEN
         	insert into users
-				(userName, firstName, lastName)
+				(userName, password, firstName, lastName, email)
 			VALUES
-				(parmUserName, parmFirstName, parmLastName);
-        
+				(parmUserName,parmPassword, parmFirstName, parmLastName, parmEmail);
+
         END IF;
-        
-        SELECT 
+
+        SELECT
 			userID
         FROM
-			users 
-		where 
-			userName = parmUserName;  
+			users
+		where
+			userName = parmUserName;
 
 END$$
 
 DELIMITER ;
-

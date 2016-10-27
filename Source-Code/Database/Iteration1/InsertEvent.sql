@@ -1,8 +1,8 @@
-USE `sirotto_db`;
+USE `ping`;
 DROP procedure IF EXISTS `InsertEvent`;
 
 DELIMITER $$
-USE `sirotto_db`$$
+USE `ping`$$
 CREATE PROCEDURE `InsertEvent` (
 	parmUserID bigint, parmEventName varchar(255), parmLatitude double, parmLongitude double,
     parmWhenStart datetime, parmWhenEnd datetime, parmDescription varchar(1024))

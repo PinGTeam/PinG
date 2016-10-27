@@ -1,8 +1,11 @@
 CREATE TABLE `users` (
   `userID` BIGINT NOT NULL AUTO_INCREMENT,
   `userName` VARCHAR(20) NOT NULL,
+  `password` VARCHAR(60) NOT NULL,
   `firstName` VARCHAR(25) NOT NULL,
   `lastName` VARCHAR(25) NOT NULL,
+  `email` VARCHAR(320) NOT NULL,
+
   PRIMARY KEY (`userID`));
 
   CREATE TABLE `eventtable` (
