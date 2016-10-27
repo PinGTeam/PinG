@@ -4,14 +4,15 @@ CREATE TABLE `users` (
   `firstName` VARCHAR(25) NOT NULL,
   `lastName` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`userID`));
-  
+
   CREATE TABLE `eventtable` (
   `eventID` BIGINT NOT NULL AUTO_INCREMENT,
   `userID` BIGINT NOT NULL,
   `latitude` DOUBLE NOT NULL,
   `longitude` DOUBLE NOT NULL,
   `eventName` VARCHAR(255) NOT NULL,
-  `time` DATETIME NOT NULL,
+  `startTime` DATETIME NOT NULL,
+  `endTime` DATETIME NOT NULL,
   `description` VARCHAR(1024) NULL,
   PRIMARY KEY (`eventID`),
   INDEX `userID_idx` (`userID` ASC),
