@@ -43,9 +43,11 @@ def insertuser():
     connection = engine.raw_connection()
     cursor = connection.cursor()
     username = request.form['UserName']
-    name = request.form['Name']
+    name = request.form['FName']
     lname = request.form['LName']
-    cursor.callproc("InsertUser", [username,name,lname])
+    password = request.form['Password']
+    email = request.form['Email']
+    cursor.callproc("InsertUser", [username,password,name,lname,email])
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
@@ -60,7 +62,7 @@ def insertuser():
 def insertevent():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    location = request.form['location']
+    location = request.form['Event']
     locfeat = json.loads(location)
     cursor.callproc("InsertEvent", [locfeat['properties']['userID'],locfeat['properties']['eventName'],locfeat['geometry']['coordinates'][0],locfeat['geometry']['coordinates'][1],locfeat['properties']['endTime'],locfeat['properties']['startTime'],locfeat['properties']['description']])
     results = list(cursor.fetchall())
@@ -99,7 +101,7 @@ def getnearevents():
 #HELPER FUNCTIONS
 
 #takes an info to make a json feature that represents an event
-def event_to_geojson(x,y,userID,eventName,time,description):
+def event_to_geojson(x,y,userID,eventName,startTime,endTime,description):
     return Feature(geometry=Point((x,y)),properties={"userID":userID,"eventName":eventName,"startTime":startTime,"endTime":endTime,"description":description})
 
 #TABLES
@@ -108,8 +110,10 @@ class users(db.Model):
     __tablename__ = 'users'
     userID = db.Column('userID',db.BigInteger, primary_key=True, autoincrement=True)
     userName = db.Column('userName',db.String(20), nullable=False)
+    password = db.Column('password',db.String(60), nullable=False)
     firstName = db.Column('firstName',db.String(25), nullable=False)
     lastName = db.Column('lastName',db.String(25), nullable=False)
+    email = db.Column('email',db.String(320), nullable=False)
 
     def __repr__(self):
         return '<User {}>'.format(self.userID)
