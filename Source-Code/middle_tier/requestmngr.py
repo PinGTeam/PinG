@@ -1,6 +1,7 @@
 # Implemented by: Juan and Monica
 import geojson
 import json
+import base64
 from geojson import Feature, Point, FeatureCollection
 from flask import Flask, url_for, request
 from flask_sqlalchemy import SQLAlchemy
@@ -34,6 +35,17 @@ def getusers():
     else:
         return str
 
+#LOGIN
+#Checking login
+@app.route('/login',methods=['POST'])
+def login():
+    username = request.form['userName']
+    password = base64.b64encode(request.form['password'])
+    results = users.query.filter_by(userName = username,password = password).first()
+    if not results:
+        return "-1"
+    else:
+        return str(results)
 
 #ADDING USER
 #Calling InsertUser Stored procedure
@@ -42,11 +54,11 @@ def getusers():
 def insertuser():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    username = request.form['UserName']
-    name = request.form['FName']
-    lname = request.form['LName']
-    password = request.form['Password']
-    email = request.form['Email']
+    username = request.form['userName']
+    name = request.form['firstName']
+    lname = request.form['lastName']
+    password = request.form['password']
+    email = request.form['email']
     cursor.callproc("InsertUser", [username,password,name,lname,email])
     results = list(cursor.fetchall())
     cursor.close()
@@ -62,14 +74,14 @@ def insertuser():
 def insertevent():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    location = request.form['Event']
-    locfeat = json.loads(location)
+    event = request.form['Event']
+    locfeat = json.loads(event)
     cursor.callproc("InsertEvent", [locfeat['properties']['userID'],locfeat['properties']['eventName'],locfeat['geometry']['coordinates'][0],locfeat['geometry']['coordinates'][1],locfeat['properties']['endTime'],locfeat['properties']['startTime'],locfeat['properties']['description']])
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
     connection.close()
-    return "hello"
+    return "1"
 
 #GET EVENTS
 #Quering list of events from the database
@@ -78,7 +90,7 @@ def getevents():
     events = eventtable.query.all()
     event_list = []
     for event in events:
-        event_list.append(event_to_geojson(event.latitude,event.longitude,event.userID,event.eventName,str(event.startTime),str(event.endTime),event.description))
+        event_list.append(event.json_repr())
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #GET EVENTS
@@ -116,7 +128,7 @@ class users(db.Model):
     email = db.Column('email',db.String(320), nullable=False)
 
     def __repr__(self):
-        return '<User {}>'.format(self.userID)
+        return '{{"userID":{},"userName":"{}","firstName":"{}","lastName":"{}"}}'.format(self.userID,self.userName,self.firstName,self.lastName)
 
 #Events table
 class eventtable(db.Model):
@@ -130,8 +142,12 @@ class eventtable(db.Model):
     endTime = db.Column('endTime',db.DateTime,nullable=False)
     description = db.Column('description',db.String(1024),nullable=True)
 
+    def json_repr(self):
+        return Feature(geometry=Point((self.latitude,self.longitude)),properties={"userID":self.userID,"eventName":self.eventName,"startTime":str(self.startTime),"endTime":str(self.endTime),"description":self.description})
+
     def __repr__(self):
-        return '<User {}>'.format(self.userID)
+        geojson_rep = json_repr()
+        return geojson.dumps(geojson_rep,sort_keys=True)
 
 #Run App
 if __name__ == "__main__":
