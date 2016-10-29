@@ -83,6 +83,28 @@ def insertevent():
     connection.close()
     return "1"
 
+#EDITING EVENT
+#In a future implementation we can reduce overhead by updating
+#individual elements of the event rather than all the elements
+@app.route('/editevent',methods=['POST'])
+def editevent():
+    eventID = request.form['eventID']
+    latitude = request.form['latitude']
+    longitude = request.form['longitude']
+    eventname = request.form['eventName']
+    starttime = request.form['startTime']
+    endtime = request.form['endTime']
+    description = request.form['description']
+    event = eventtable.query.filter_by(eventID = eventID).first()
+    event.latitude = latitude
+    event.longitude = longitude
+    event.eventName = eventname
+    event.startTime = starttime
+    event.endTime = endtime
+    event.description = description
+    db.session.commit()
+    return "1"
+
 #GET EVENTS
 #Quering list of events from the database
 @app.route('/getallevents')
@@ -146,7 +168,7 @@ class eventtable(db.Model):
         return Feature(geometry=Point((self.latitude,self.longitude)),properties={"userID":self.userID,"eventName":self.eventName,"startTime":str(self.startTime),"endTime":str(self.endTime),"description":self.description})
 
     def __repr__(self):
-        geojson_rep = json_repr()
+        geojson_rep = self.json_repr()
         return geojson.dumps(geojson_rep,sort_keys=True)
 
 #Run App
