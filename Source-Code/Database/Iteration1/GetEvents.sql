@@ -15,6 +15,8 @@ users
 on
 eventtable.userid = users.userid
 where
+(endTime > NOW()) AND
+
 (latitude <= topLatitude AND
         latitude >= bottomLatitude) AND
         (
