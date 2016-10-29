@@ -74,7 +74,7 @@ def insertuser():
 def insertevent():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    event = request.form['Event']
+    event = request.form['event']
     locfeat = json.loads(event)
     cursor.callproc("InsertEvent", [locfeat['properties']['userID'],locfeat['properties']['eventName'],locfeat['geometry']['coordinates'][0],locfeat['geometry']['coordinates'][1],locfeat['properties']['endTime'],locfeat['properties']['startTime'],locfeat['properties']['description']])
     results = list(cursor.fetchall())
