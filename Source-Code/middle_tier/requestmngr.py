@@ -76,7 +76,16 @@ def insertevent():
     cursor = connection.cursor()
     event = request.form['event']
     locfeat = json.loads(event)
-    cursor.callproc("InsertEvent", [locfeat['properties']['userID'],locfeat['properties']['eventName'],locfeat['geometry']['coordinates'][0],locfeat['geometry']['coordinates'][1],locfeat['properties']['endTime'],locfeat['properties']['startTime'],locfeat['properties']['description']])
+
+    cursor.callproc("InsertEvent",\
+    [locfeat['properties']['userID'],\
+    locfeat['properties']['eventName'],\
+    locfeat['geometry']['coordinates'][0],\
+    locfeat['geometry']['coordinates'][1],\
+    locfeat['properties']['startTime'],\
+    locfeat['properties']['endTime'],\
+    locfeat['properties']['description']])
+
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
@@ -112,7 +121,8 @@ def getevents():
     events = eventtable.query.all()
     event_list = []
     for event in events:
-        event_list.append(event.json_repr())
+        if event.endTime > datetime.utcnow():
+            event_list.append(event.json_repr())
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #GET EVENTS
@@ -121,7 +131,13 @@ def getevents():
 def getnearevents():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    cursor.callproc("GetEvents", [request.args.get('topLatitude'),request.args.get('topLongitude'),request.args.get('bottomLatitude'),request.args.get('bottomLongitude')])
+
+    cursor.callproc("GetEvents",\
+    [request.args.get('topLatitude'),\
+    request.args.get('topLongitude'),\
+    request.args.get('bottomLatitude'),\
+    request.args.get('bottomLongitude')])
+
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
@@ -136,7 +152,12 @@ def getnearevents():
 
 #takes an info to make a json feature that represents an event
 def event_to_geojson(x,y,userID,eventName,startTime,endTime,description):
-    return Feature(geometry=Point((x,y)),properties={"userID":userID,"eventName":eventName,"startTime":startTime,"endTime":endTime,"description":description})
+    return Feature(geometry=Point((x,y)),\
+    properties={"userID":userID,\
+    "eventName":eventName,\
+    "startTime":startTime,\
+    "endTime":endTime,\
+    "description":description})
 
 #TABLES
 #Users table
@@ -165,7 +186,13 @@ class eventtable(db.Model):
     description = db.Column('description',db.String(1024),nullable=True)
 
     def json_repr(self):
-        return Feature(geometry=Point((self.latitude,self.longitude)),properties={"userID":self.userID,"eventName":self.eventName,"startTime":str(self.startTime),"endTime":str(self.endTime),"description":self.description})
+        return Feature(geometry=Point((self.latitude,self.longitude)),\
+        properties={\
+        "userID":self.userID,\
+        "eventName":self.eventName,\
+        "startTime":str(self.startTime),\
+        "endTime":str(self.endTime),\
+        "description":self.description})
 
     def __repr__(self):
         geojson_rep = self.json_repr()
