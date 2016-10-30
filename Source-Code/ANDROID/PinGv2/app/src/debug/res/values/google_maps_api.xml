@@ -16,7 +16,7 @@
     string in this file.
     -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-        <!--jorge's key: AIzaSyAmbMng68lTfkhLYyebDwcakM7vNmi6610-->
-        <!--zach's key:--> AIzaSyAbNLGa_u98l2fQSxQnrEK1_aLGcTTyZb8
+        <!--jorge's key AIzaSyAmbMng68lTfkhLYyebDwcakM7vNmi6610-->
+        <!--zach's key--> AIzaSyAbNLGa_u98l2fQSxQnrEK1_aLGcTTyZb8
     </string>
 </resources>
