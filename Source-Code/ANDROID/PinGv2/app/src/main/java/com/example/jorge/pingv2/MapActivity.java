@@ -59,8 +59,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     String userID;
     String allEventsString;
 
-    JSONArray geoData;
-
     @Override   //when the screen is created
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -253,8 +251,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             JSONObject geometry = new JSONObject();
             try {
                 JSONArray coord = new JSONArray("[" + theCoords.longitude + ", " + theCoords.latitude + "]");
-                //need to get rid of the "" around coordinates
-
                 geometry.put("coordinates", coord);
                 geometry.put("type", "Point");
             } catch (JSONException e) {
@@ -343,27 +339,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         @Override
         protected void onPostExecute(Void aVoid) {
 
-
         }
     }
 }
-
-/*
-try {
-                JSONObject obj = new JSONObject(allEventsString);
-                JSONArray points = obj.getJSONArray("features");
-
-                for(int i = 0; i < points.length(); i++) {
-                    JSONObject marker = points.getJSONObject(i);
-                    JSONObject coord = marker.getJSONObject("geometry");
-                    JSONArray cord = coord.getJSONArray("coordinates");
-                    Iterator<Double> itr =
-
-                    System.out.println("EventName: " + marker.getString("geometry"));
-
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
- */

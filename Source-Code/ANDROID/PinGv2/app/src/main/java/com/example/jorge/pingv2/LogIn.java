@@ -16,7 +16,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
 public class LogIn extends AppCompatActivity {
 
     String userCode;    //stores userID sent back from middle tier
