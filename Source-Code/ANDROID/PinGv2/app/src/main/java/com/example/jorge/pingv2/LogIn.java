@@ -116,7 +116,7 @@ public class LogIn extends AppCompatActivity {
 
             String failedRes = "-1";
             if(Objects.equals(middleTierResponse, failedRes)) {
-                Toast.makeText(LogIn.this, "Log in failed, retry or sing up instead", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LogIn.this, "Log in failed, retry or sign up instead", Toast.LENGTH_SHORT).show();
             }
             //if successful go to map activity
             else {
