@@ -45,7 +45,12 @@ public class LogIn extends AppCompatActivity {
                     byte[] enPass = Base64.encode(userPass.getBytes("UTF-8"), Base64.DEFAULT);
                     encodedPass = new String(enPass);
 
-                    System.out.println("encodedPASS: " + encodedPass);
+                    encodedPass = encodedPass.replaceAll(System.getProperty("line.separator"), "");
+
+                    System.out.println("encodedPASS: " + encodedPass);    //A NEW LINE IS BEING PUT IN AT THE END
+                    System.out.println("userName: " + userName);
+
+
 
                     new SendUserData().execute();
 
