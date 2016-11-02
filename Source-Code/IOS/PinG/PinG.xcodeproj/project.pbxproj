@@ -21,6 +21,7 @@
 		EB066A851DB4709900FC8C93 /* PingAddView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB066A841DB4709900FC8C93 /* PingAddView.xib */; };
 		EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB066A861DB4710000FC8C93 /* PingAddView.swift */; };
 		EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8B2DD21DAD943900920A81 /* Ping.swift */; };
+		EB8B84721DC2B1F700893744 /* NewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8B84711DC2B1F700893744 /* NewUserViewController.swift */; };
 		EBE463DC1DB04BAE00882D8C /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE463DB1DB04BAE00882D8C /* Shared.swift */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,7 @@
 		EB066A841DB4709900FC8C93 /* PingAddView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PingAddView.xib; path = ../PingAddView.xib; sourceTree = "<group>"; };
 		EB066A861DB4710000FC8C93 /* PingAddView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PingAddView.swift; path = ../PingAddView.swift; sourceTree = "<group>"; };
 		EB8B2DD21DAD943900920A81 /* Ping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ping.swift; sourceTree = "<group>"; };
+		EB8B84711DC2B1F700893744 /* NewUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NewUserViewController.swift; path = ../NewUserViewController.swift; sourceTree = "<group>"; };
 		EBE463DB1DB04BAE00882D8C /* Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,6 +122,7 @@
 				EB066A881DB4711700FC8C93 /* PingAddView */,
 				EB0642851DAB20D500BDFEDC /* AppDelegate.swift */,
 				EB0642BA1DAB2B4100BDFEDC /* LoginViewController.swift */,
+				EB8B84711DC2B1F700893744 /* NewUserViewController.swift */,
 				EB0642BC1DAB317600BDFEDC /* MapViewController.swift */,
 				EB8B2DD21DAD943900920A81 /* Ping.swift */,
 				EB0642891DAB20D500BDFEDC /* Main.storyboard */,
@@ -309,6 +312,7 @@
 				EB0642861DAB20D500BDFEDC /* AppDelegate.swift in Sources */,
 				EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */,
 				EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */,
+				EB8B84721DC2B1F700893744 /* NewUserViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
