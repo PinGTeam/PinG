@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">PinGv2</string>
+    <string name="app_name">PinG</string>
     <string name="title_activity_map">Map</string>
+    <string name="title_activity_signup">SignupActivity</string>
 </resources>
