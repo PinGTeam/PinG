@@ -40,7 +40,7 @@ def getusers():
 @app.route('/login',methods=['POST'])
 def login():
     username = request.form['userName']
-    password = base64.b64encode(request.form['password'])
+    password = request.form['password']
     results = users.query.filter_by(userName = username,password = password).first()
     if not results:
         return "-1"
@@ -132,11 +132,9 @@ def getnearevents():
     connection = engine.raw_connection()
     cursor = connection.cursor()
 
-    cursor.callproc("GetEvents",\
-    [request.args.get('topLatitude'),\
-    request.args.get('topLongitude'),\
-    request.args.get('bottomLatitude'),\
-    request.args.get('bottomLongitude')])
+    cursor.callproc("GetEvents3",\
+    [request.args.get('latitude'),\
+    request.args.get('longitude')])
 
     results = list(cursor.fetchall())
     cursor.close()
