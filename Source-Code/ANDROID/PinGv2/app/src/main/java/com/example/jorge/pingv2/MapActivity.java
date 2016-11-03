@@ -50,7 +50,6 @@ import okhttp3.Response;
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMarkerClickListener,
         LocationListener,
         MarkerDialog.OnDialogClickListener {
 
@@ -166,11 +165,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
-        return false;
-    }
-
-    @Override
     public void onLocationChanged(Location location) {
 
         //check for location
@@ -238,6 +232,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         //send marker data to middle tier
         //new PostMarkerData().execute();
     }
+
 
     //post marker information to middle tier
     private class PostMarkerData extends AsyncTask<Void, Void, Void> {

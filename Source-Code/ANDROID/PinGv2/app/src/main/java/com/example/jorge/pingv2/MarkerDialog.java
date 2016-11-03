@@ -45,12 +45,13 @@ public class MarkerDialog extends DialogFragment {
                 String eEndTime = endTime.getText().toString();
                 String eDesc = description.getText().toString();
 
+                //ADD CHECK FOR START TIME AND END TIME HERE
+
                 //call it here
                 mListener.onDialogPositiveClick(eName, eStartTime, eEndTime, eDesc);
                 dismiss();
             }
         })
-
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
