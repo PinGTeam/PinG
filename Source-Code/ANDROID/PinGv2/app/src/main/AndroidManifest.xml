@@ -26,7 +26,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LogIn">
+        <activity android:name=".LogIn"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,9 +52,11 @@
 
         <activity
             android:name=".MapActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_map" />
         <activity
             android:name=".SignupActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_signup"
             android:theme="@style/AppTheme"/>  <!--</activity> -->
     </application>

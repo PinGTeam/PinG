@@ -60,7 +60,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private GoogleApiClient mApiClient;
     private LatLng theCoords, topLeftCoords, bottomRightCoords;
 
-    private String eName, eDescription, eTime;
+    private String eName, eDescription, eStartTime, eEndTime;
     private String userID, userFname, userLname;
     private String allEventsString;
 
@@ -207,7 +207,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     //set marker with data from creation prompt
-    private void setMarker(String title, String time, String snip, double lat, double lng) {
+    private void setMarker(String title, String sTime, String eTime,String snip, double lat, double lng) {
         //remove previous marker
         if (mMarker != null) {
             mMarker.remove();
@@ -215,7 +215,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         //new marker properties
         MarkerOptions options = new MarkerOptions()
                 .position(new LatLng(lat, lng))
-                .title(title + " : " + time)
+                .title(title + " : " + sTime + " - " + eTime)
                 .snippet(snip)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
         mMarker = mMap.addMarker(options);
@@ -223,16 +223,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     //get data from even creation prompt
     @Override
-    public void onDialogPositiveClick(String name, String time, String desc) {
+    public void onDialogPositiveClick(String name, String startTime, String endTime,String desc) {
         eName = name;
-        eTime = time;
+        eStartTime = startTime;
+        eEndTime = endTime;
         eDescription = desc;
 
         //correct coordinates stored
         System.out.println(theCoords.latitude + ":" + theCoords.longitude);
 
         //set marker on the map
-        setMarker( eName, eTime, eDescription, theCoords.latitude, theCoords.longitude);
+        setMarker( eName, eStartTime, endTime, eDescription, theCoords.latitude, theCoords.longitude);
 
         //send marker data to middle tier
         //new PostMarkerData().execute();
@@ -260,7 +261,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             try {
                 properties.put("description", eDescription);
                 properties.put("eventName", eName);
-                properties.put("time", eTime);
+                properties.put("startTime", eStartTime);
+                properties.put("endTime", eEndTime);
                 properties.put("userID", userID);
             } catch (JSONException e) {
                 e.printStackTrace();

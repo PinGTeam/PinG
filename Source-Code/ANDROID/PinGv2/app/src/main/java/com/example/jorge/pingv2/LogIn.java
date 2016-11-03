@@ -45,12 +45,8 @@ public class LogIn extends AppCompatActivity {
                     byte[] enPass = Base64.encode(userPass.getBytes("UTF-8"), Base64.DEFAULT);
                     encodedPass = new String(enPass);
 
+                    //delete tailing newline
                     encodedPass = encodedPass.replaceAll(System.getProperty("line.separator"), "");
-
-                    System.out.println("encodedPASS: " + encodedPass);    //A NEW LINE IS BEING PUT IN AT THE END
-                    System.out.println("userName: " + userName);
-
-
 
                     new SendUserData().execute();
 
@@ -111,9 +107,6 @@ public class LogIn extends AppCompatActivity {
         //once the middle-tier sends us back the response, go to map and send user code with it
         @Override
         protected void onPostExecute(Void aVoid) {
-            //if not successful print error message
-            System.out.println("Response: " + middleTierResponse);
-
             String failedRes = "-1";
             if(Objects.equals(middleTierResponse, failedRes)) {
                 Toast.makeText(LogIn.this, "Log in failed, retry or sign up instead", Toast.LENGTH_SHORT).show();

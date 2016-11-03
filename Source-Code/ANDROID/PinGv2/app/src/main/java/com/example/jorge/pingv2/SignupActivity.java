@@ -59,8 +59,8 @@ public class SignupActivity extends AppCompatActivity {
                     try {
                         byte[] enPass = Base64.encode(uPass.getBytes("UTF-8"), Base64.DEFAULT);
                         encodedPass = new String(enPass);
+                        //delete trailing newline
                         encodedPass = encodedPass.replaceAll(System.getProperty("line.separator"), "");
-                        System.out.println("encodedPASS SignUp: " + encodedPass);
 
                         new SendSignUpData().execute();
 

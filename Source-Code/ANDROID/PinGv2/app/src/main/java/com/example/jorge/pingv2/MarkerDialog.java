@@ -1,11 +1,9 @@
 package com.example.jorge.pingv2;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -19,11 +17,11 @@ import android.widget.EditText;
 public class MarkerDialog extends DialogFragment {
 
     LayoutInflater inflater;
-    EditText name, time, description;
+    EditText name, startTime, endTime, description;
     View v;
 
     public interface OnDialogClickListener {
-        void onDialogPositiveClick(String name, String time, String desc);
+        void onDialogPositiveClick(String name, String startTime, String endTime, String desc);
     }
 
     OnDialogClickListener mListener;
@@ -38,18 +36,21 @@ public class MarkerDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 name = (EditText) v.findViewById(R.id.eventNameInput);
-                time = (EditText) v.findViewById(R.id.eventTimeInput);
+                startTime = (EditText) v.findViewById(R.id.eventTimeInput);
+                endTime = (EditText) v.findViewById(R.id.eventEndTimeInput);
                 description = (EditText) v.findViewById(R.id.eventDescriptionInput);
 
                 String eName = name.getText().toString();
-                String eTime = time.getText().toString();
+                String eStartTime = startTime.getText().toString();
+                String eEndTime = endTime.getText().toString();
                 String eDesc = description.getText().toString();
 
                 //call it here
-                mListener.onDialogPositiveClick(eName, eTime, eDesc);
+                mListener.onDialogPositiveClick(eName, eStartTime, eEndTime, eDesc);
                 dismiss();
             }
         })
+
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
