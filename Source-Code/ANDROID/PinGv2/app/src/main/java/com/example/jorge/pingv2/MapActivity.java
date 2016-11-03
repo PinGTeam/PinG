@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.util.Pair;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.android.gms.vision.text.Text;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -140,6 +142,33 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .addOnConnectionFailedListener(this)
                 .build();
         mApiClient.connect();
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            //get window frame, we use the default
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v = getLayoutInflater().inflate(R.layout.markerlayout, null);
+
+                TextView eventName = (TextView) v.findViewById(R.id.eventNameField);
+                eventName.setText(eName);
+
+                TextView eventStart = (TextView) v.findViewById(R.id.eventStartField);
+                eventStart.setText(eStartTime);
+
+                TextView eventEnd = (TextView) v.findViewById(R.id.eventEndField);
+                eventEnd.setText(eEndTime);
+
+                TextView eventDesc = (TextView) v.findViewById(R.id.eventDescField);
+                eventDesc.setText(eDescription);
+
+                return v;
+            }
+        });
     }
 
     @Override
