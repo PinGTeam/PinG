@@ -23,7 +23,7 @@ SET bottomLongitude = paramLongitude+distMiles/lon2miles;
 SET bottomLatitude = paramLatitude-distMiles/lat2miles;
 
 SELECT
-eventID, FirstName, LastName, latitude, longitude, eventName, startTime, endTime, description
+longitude, latitude, eventtable.userID, eventID, firstName, lastName, eventName, startTime, endTime, description
 FROM
 eventtable
 inner join
