@@ -75,7 +75,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         Intent data = getIntent();
         userID = data.getStringExtra("key");
 
-
         //check if google play service is available
         if (checkGoogleServices()) {
             setContentView(R.layout.activity_map);
@@ -84,6 +83,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
+
+            //MapWrapperLayout initialization
+            MapWrapperLayout wrapperLayout = (MapWrapperLayout)findViewById(R.id.map_relative_layout);
+            mapWrapperLayout.init(mMap, getPixelsFromDp(this, 39 + 20));
 
             //make pinG button
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
