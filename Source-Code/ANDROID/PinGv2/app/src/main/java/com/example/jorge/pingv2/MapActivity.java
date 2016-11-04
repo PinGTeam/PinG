@@ -84,9 +84,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
 
-            //MapWrapperLayout initialization
-            MapWrapperLayout wrapperLayout = (MapWrapperLayout)findViewById(R.id.map_relative_layout);
-            mapWrapperLayout.init(mMap, getPixelsFromDp(this, 39 + 20));
+            final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout)findViewById(R.id.map_relative_layout);
 
             //make pinG button
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
