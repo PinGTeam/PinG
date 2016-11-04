@@ -143,15 +143,18 @@ def getnearevents():
     event_list = []
     for event in results:
         #THIS MIGHT HAVE TO BE FIXED TO TAKE INTO ACCOUNT NEW EVENTTABLE TABLE
-        event_list.append(event_to_geojson(event[4],event[3],event[0],event[5],str(event[6]),str(event[7]),event[8]))
+        event_list.append(event_to_geojson(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9]))
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #HELPER FUNCTIONS
 
 #takes an info to make a json feature that represents an event
-def event_to_geojson(x,y,userID,eventName,startTime,endTime,description):
+def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,endTime,description):
     return Feature(geometry=Point((x,y)),\
     properties={"userID":userID,\
+    "eventID":eventID,\
+    "firstName":firstName,\
+    "lastName":lastName,\
     "eventName":eventName,\
     "startTime":startTime,\
     "endTime":endTime,\
@@ -186,6 +189,7 @@ class eventtable(db.Model):
     def json_repr(self):
         return Feature(geometry=Point((self.latitude,self.longitude)),\
         properties={\
+        "eventID":self.eventID,\
         "userID":self.userID,\
         "eventName":self.eventName,\
         "startTime":str(self.startTime),\
@@ -198,4 +202,4 @@ class eventtable(db.Model):
 
 #Run App
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port="5001")
