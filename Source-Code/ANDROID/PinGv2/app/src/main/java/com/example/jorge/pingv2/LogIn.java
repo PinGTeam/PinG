@@ -41,18 +41,7 @@ public class LogIn extends AppCompatActivity {
                 EditText passwordFiled = (EditText) findViewById(R.id.passInput);
                 userPass = passwordFiled.getText().toString();
 
-                try {
-                    byte[] enPass = Base64.encode(userPass.getBytes("UTF-8"), Base64.DEFAULT);
-                    encodedPass = new String(enPass);
-
-                    //delete tailing newline
-                    encodedPass = encodedPass.replaceAll(System.getProperty("line.separator"), "");
-
-                    new SendUserData().execute();
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                new SendUserData().execute();
             }
         });
 
@@ -71,16 +60,13 @@ public class LogIn extends AppCompatActivity {
     private class SendUserData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-
-
             //create connection client
             OkHttpClient client = new OkHttpClient();
 
-            //form JSON object to send to middle
-            RequestBody formBody = new FormBody.Builder()
-                    .add("userName", userName)
-                    .add("password", encodedPass)
-                    .build();
+            UserData user = new UserData();
+            user.userName = userName;
+
+            RequestBody formBody = user.GetLoginPostData(userPass);
 
             //post that JSON object
             Request request = new Request.Builder()
@@ -88,18 +74,18 @@ public class LogIn extends AppCompatActivity {
                     .post(formBody)
                     .build();
 
-                try {
-                    //try to get a response
-                    Response response= client.newCall(request).execute();
-                    if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            try {
+                //try to get a response
+                Response response= client.newCall(request).execute();
+                if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
-                    //store the response [NOTE: DO NOT USE response.body() BEFORE THIS LINE BECAUSE IT WILL CONSUME THE RETURN]
-                    middleTierResponse = response.body().string();
-                    response.close();
+                //store the response [NOTE: DO NOT USE response.body() BEFORE THIS LINE BECAUSE IT WILL CONSUME THE RETURN]
+                middleTierResponse = response.body().string();
+                response.close();
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             return null;
         }
@@ -113,7 +99,11 @@ public class LogIn extends AppCompatActivity {
             }
             //if successful go to map activity
             else {
+                UserData user = UserData.FromJson(middleTierResponse);
+
                 Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+
+                // TODO: What is needed here? Just UserID or the can it be the entire user object?
                 intent.putExtra("key", middleTierResponse);
                 startActivity(intent);
             }
