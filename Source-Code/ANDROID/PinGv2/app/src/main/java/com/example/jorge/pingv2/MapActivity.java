@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,7 +85,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
 
-            final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout)findViewById(R.id.map_relative_layout);
+            //final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout)findViewById(R.id.map_relative_layout);
 
             //make pinG button
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
