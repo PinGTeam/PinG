@@ -12,6 +12,9 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Objects;
+import java.util.regex.Pattern;
 import org.junit.runner.Request;
 
 import java.io.IOException;
@@ -21,11 +24,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 /**
- * Created by arthu and jorge on 10/19/2016.
- */
+ * Originally introduced by Arthur and Jorge on 10/19/2016.
+ * Ammended and made right by Jorge, Zach, and Richard on 11/08/2016.
+ **/
 public class UnitTests {
     @Before
     public void setUp() throws Exception {
@@ -41,11 +46,11 @@ public class UnitTests {
         //each test method in the class.
     }
 
+    // ---------------- tests that input is not empty or null -----------------------
     @Test
     public void stringValidator(){
         assertThat(testInput("firstname", "lastname", "userId"), is(true));
     }
-
     @Test
     private boolean testInput(String firstname, String lastname, String userId) {
 
@@ -59,17 +64,55 @@ public class UnitTests {
         return false;
     }
 
+    String serverResponse;
+
     @Test
-    protected boolean testMiddletierConnection(Void... params) {
+    protected boolean testMiddletierLogin(Void... params) {
 
         //connect to mid-tier
         OkHttpClient client = new OkHttpClient();
 
         RequestBody formBody = new FormBody.Builder()
-                .add("UserName", assertThat("Name", is(true)))
-                .add("Name", assertThat("Name", is(true))
-                .add("LName", assertThat("Name", is(true))
+                .add("userName", "userName1")
+                .add("password", "dGhlcGFzc3dvcmQ=")
                 .build();
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://162.243.15.139/login")
+                .post(formBody)
+                .build();
+
+        //get response
+        try {
+            Response response= client.newCall(request).execute();
+            if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+            //store the response [NOTE: DO NOT USE response.body() BEFORE THIS LINE BECAUSE IT WILL CONSUME THE RETURN]
+             serverResponse = response.body().string();
+             assertThat(!Objects.equals(serverResponse, "-1"), is(true));
+            response.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return true;
+        }
+
+        return false;
+    }
+
+    @Test
+    protected boolean testMiddletierSetup(Void... params) {
+
+        //connect to mid-tier
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("userName", "userName" + System.currentTimeMillis())
+                .add("firstName", "firstname")
+                .add("lastName", "lastname")
+                .add("password", "dGhlcGFzc3dvcmQ=")
+                .add("email", "email@validemail.com")
+                .build();
+
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url("http://162.243.15.139/adduser")
                 .post(formBody)
@@ -81,8 +124,10 @@ public class UnitTests {
             if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
             //store the response [NOTE: DO NOT USE response.body() BEFORE THIS LINE BECAUSE IT WILL CONSUME THE RETURN]
-            userCode = response.body().string();
+            serverResponse = response.body().string();
+            assertThat(Objects.equals(serverResponse, "1"), is(true));
             response.close();
+
         } catch (IOException e) {
             e.printStackTrace();
             return true;
