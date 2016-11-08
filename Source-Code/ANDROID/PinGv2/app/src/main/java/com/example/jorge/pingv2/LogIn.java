@@ -40,6 +40,7 @@ public class LogIn extends AppCompatActivity {
 
                 EditText passwordFiled = (EditText) findViewById(R.id.passInput);
                 userPass = passwordFiled.getText().toString();
+                //add checks for empty logIn input
 
                 new SendUserData().execute();
             }

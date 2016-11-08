@@ -12,7 +12,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.util.Pair;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +52,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
@@ -71,6 +73,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.userToolBar);
+        setSupportActionBar(myToolbar);
 
         //get userID from logIn activity
         Intent data = getIntent();
@@ -130,6 +135,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setScrollGesturesEnabled(true);   //change this to true
         mMap.getUiSettings().setZoomGesturesEnabled(false);    //
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.userToolBar);
+        setSupportActionBar(myToolbar);
 
         //check if we can access location
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -214,9 +222,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             VisibleRegion vRegion = mMap.getProjection().getVisibleRegion();
             topLeftCoords = vRegion.farLeft;
             bottomRightCoords = vRegion.nearRight;
-
-            //they seem to be correct <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //System.out.println("TopLeft: " + topLeftCoords + "BottomRight: "+ bottomRightCoords);
 
             moveToLocation(loc.latitude, loc.longitude, 18);
 
