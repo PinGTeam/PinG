@@ -97,21 +97,21 @@ def insertevent():
 #individual elements of the event rather than all the elements
 @app.route('/editevent',methods=['POST'])
 def editevent():
-    eventID = request.form['eventID']
-    latitude = request.form['latitude']
-    longitude = request.form['longitude']
-    eventname = request.form['eventName']
-    starttime = request.form['startTime']
-    endtime = request.form['endTime']
-    description = request.form['description']
-    event = eventtable.query.filter_by(eventID = eventID).first()
-    event.latitude = latitude
-    event.longitude = longitude
-    event.eventName = eventname
-    event.startTime = starttime
-    event.endTime = endtime
-    event.description = description
+    event_geojson = request.form['event']
+    print event_geojson
+    print type(event_geojson)
+    locfeat = json.loads(event_geojson)
+
+    event = eventtable.query.filter_by(eventID = locfeat['properties']['eventID']).first()
+
+    event.latitude = locfeat['geometry']['coordinates'][0]
+    event.longitude = locfeat['geometry']['coordinates'][1]
+    event.eventName = locfeat['properties']['eventName']
+    event.startTime = locfeat['properties']['startTime']
+    event.endTime = locfeat['properties']['endTime']
+    event.description = locfeat['properties']['description']
     db.session.commit()
+
     return "1"
 
 #GET EVENTS
