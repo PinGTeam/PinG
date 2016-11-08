@@ -3,6 +3,8 @@ package com.example.jorge.pingv2;
 import android.app.Dialog;
 import android.widget.Toast;
 
+import com.example.jorge.pingv2.MapActivity;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
