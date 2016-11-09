@@ -38,29 +38,30 @@ class LoginViewController: UIViewController {
     @IBAction func loginPressed(sender: UIButton) {
         //local vars
         var done = false
-        var succ = false    //S U C C
-        var err = false
+        var succ = true    //S U C C
         
         //Verify fields
         
         
         print("Login button pressed")
-        print("Username: %s", usernameTextField.text)
-        print("Password: %s", passTextField.text)
-        
+        let utf8str = passTextField.text?.data(using: String.Encoding.utf8)
+        let base64Encoded = utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+        print("password: \(base64Encoded!)")
         activityIndicator.startAnimating()
         
         //HTTP Post method
-        var request = URLRequest(url: URL(string: "http://162.243.15.139/adduser")!)
+        var resString:String?
+        var resData:Data?
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/login")!)
         request.httpMethod = "POST"
         //Create post string via string concatenation
-        var postString = "UserName=" + usernameTextField.text!
-        postString += "&Name=" + firstnameTextField.text!
-        postString += "&LName=" + lastnameTextField.text!
+        var postString = "userName=" + usernameTextField.text!
+        postString += "&password=" + base64Encoded!
         request.httpBody = postString.data(using: .utf8)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
                 print("error=\(error)")
                 done = true
+                succ = false
                 return
             
             }
@@ -69,14 +70,15 @@ class LoginViewController: UIViewController {
                 print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
                 print("response = \(response)")
                 done = true
-                err = true
+                succ = false
             }
             
             let responseString = String(data: data, encoding: .utf8)
             print("responseString = \(responseString)")
+            resString = responseString!
+            resData = data
             done = true
-            succ = true     //good succ is always a success
-            Shared.shared.userID = Int(responseString!)
+            
         }
         task.resume()
             
@@ -84,10 +86,40 @@ class LoginViewController: UIViewController {
         while !done {
             Thread.sleep(forTimeInterval: 0.25)
         }
+        print("password: \(base64Encoded)")
         
-        if (succ && !err){
-            self.switchView()
+        if succ {
+            print("Begin retrieving json")
+            if resString == "-1" {
+                print("login failed xD")
+            }
+            else {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: resData!, options: .allowFragments) as! [String:AnyObject]
+                    
+                    print(json)
+                    print("UserID = \(json["userID"]!)")
+                    print("Username = \(json["userName"]!)")
+                    print("First name = \(json["firstName"]!)")
+                    print("Last name = \(json["lastName"]!)")
+                    
+                    Shared.shared.userID = json["userID"]! as! Int
+                    Shared.shared.username = json["userName"]! as! String
+                    Shared.shared.firstname = json["firstName"]! as! String
+                    Shared.shared.lastname = json["lastName"]! as! String
+                    
+                    self.switchView()
+                    
+                    
+                } catch {
+                    print("Error with JSON: \(error)")
+                }
+                
+                
+            }
+            
         }
+ 
         
         activityIndicator.stopAnimating()
     }

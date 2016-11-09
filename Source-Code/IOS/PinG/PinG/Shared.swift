@@ -13,5 +13,7 @@ final class Shared: NSObject {
     static let shared = Shared()
     
     var username: String!
+    var firstname: String!
+    var lastname: String!
     var userID: Int!
 }
