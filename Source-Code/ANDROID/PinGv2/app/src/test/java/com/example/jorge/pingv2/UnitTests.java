@@ -33,32 +33,33 @@ import static org.junit.Assert.*;
  * Originally introduced by Arthur and Jorge on 10/19/2016.
  * Ammended and made right by Jorge, Zach, and Richard on 11/08/2016.
  **/
+
 public class UnitTests {
     @Before
     public void setUp() throws Exception {
-        setUp();
+        //setUp();
         //this function is called before the invocation of
         //each test method in the class.
     }
 
     @After
     public void tearDown() throws Exception {
-        tearDown();
+        //tearDown();
         //this function is called after the invocation of
         //each test method in the class.
     }
 
     // ---------------- tests that input is not empty or null -----------------------
     @Test
-    public void stringValidator(){
+    public void stringValidator() {
         assertThat(testInput("firstname", "lastname", "userId"), is(true));
     }
-    @Test
+
     private boolean testInput(String firstname, String lastname, String userId) {
 
-        if(firstname != null && !firstname.isEmpty()) {
+        if (firstname != null && !firstname.isEmpty()) {
             if (lastname != null && !lastname.isEmpty()) {
-                if (userId != null && !userId.isEmpty()){
+                if (userId != null && !userId.isEmpty()) {
                     return true;
                 }
             }
@@ -69,7 +70,7 @@ public class UnitTests {
     String serverResponse;
 
     @Test
-    protected boolean testMiddletierLogin(Void... params) {
+    public void testMiddletierLogin() {
 
         //connect to mid-tier
         OkHttpClient client = new OkHttpClient();
@@ -85,24 +86,21 @@ public class UnitTests {
 
         //get response
         try {
-            Response response= client.newCall(request).execute();
-            if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
             //store the response [NOTE: DO NOT USE response.body() BEFORE THIS LINE BECAUSE IT WILL CONSUME THE RETURN]
-             serverResponse = response.body().string();
-             assertThat(!Objects.equals(serverResponse, "-1"), is(true));
+            serverResponse = response.body().string();
+            assertThat(!Objects.equals(serverResponse, "-1"), is(true));
             response.close();
 
         } catch (IOException e) {
             e.printStackTrace();
-            return true;
         }
-
-        return false;
     }
 
     @Test
-    protected boolean testMiddletierSetup(Void... params) {
+    public void testMiddletierSetup() {
 
         //connect to mid-tier
         OkHttpClient client = new OkHttpClient();
@@ -122,8 +120,8 @@ public class UnitTests {
 
         //get response
         try {
-            Response response= client.newCall(request).execute();
-            if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
             //store the response [NOTE: DO NOT USE response.body() BEFORE THIS LINE BECAUSE IT WILL CONSUME THE RETURN]
             serverResponse = response.body().string();
@@ -132,12 +130,11 @@ public class UnitTests {
 
         } catch (IOException e) {
             e.printStackTrace();
-            return true;
         }
-
-        return false;
     }
 
+
+    /*
     @Test
     protected UnitTests(){
         //create json object and stitch all data together
@@ -191,5 +188,5 @@ public class UnitTests {
         }
         return false;
     }
-
+*/
 }
