@@ -18,7 +18,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     // Interface variables
     @IBOutlet var mapView: MKMapView!
-    @IBOutlet var pingButton: UIButton!
+    @IBOutlet var pingButton: UIBarButtonItem!
     
     // Variables
     var user: String?
@@ -163,13 +163,24 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         func addHandler(actionTarget: UIAlertAction) {
             //Set up date formatter for string date
-            let date = customView.fromDate
+            var fdate = customView.fromDate
+            var tdate = customView.toDate
+            
+            if fdate < Date() {
+                fdate = Calendar.current.date(byAdding: .day, value: 1, to: fdate)!
+            }
+            while tdate < fdate {
+                tdate = Calendar.current.date(byAdding: .day, value: 1, to: tdate)!
+            }
+            
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let dateString = df.string(from: date)
+            df.timeZone = TimeZone(abbreviation: "UTC")
+            let fdateString = df.string(from: fdate)
+            let tdateString = df.string(from: tdate)
             
             //Create json string from dictionary
-            let geojson = ["geometry": ["coordinates": [currentCoordinate.latitude, currentCoordinate.longitude], "type": "Point"], "properties": ["description": customView.eventDescription!, "eventName": customView.eventName!, "time": dateString, "userID": uID], "type": "Feature"] as [String : Any]
+            let geojson = ["geometry": ["coordinates": [currentCoordinate.latitude, currentCoordinate.longitude], "type": "Point"], "properties": ["description": customView.eventDescription!, "eventName": customView.eventName!, "startTime": fdateString, "endTime": tdateString, "userID": uID], "type": "Feature"] as [String : Any]
             
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))
@@ -180,9 +191,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 var request = URLRequest(url: URL(string: "http://162.243.15.139/addevent")!)
                 request.httpMethod = "POST"
                 //Create post string
-                let postString = "location=" + jsonText!
+                let postString = "event=" + jsonText!
                 print("\(postString)")
                 request.httpBody = postString.data(using: .utf8)
+                print("Begin post request")
                 let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
                     print("error=\(error)")
                     return
@@ -227,7 +239,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         refresh()
     }
     
-    @IBAction func pingButtonPressed(sender: UIButton) {
+    @IBAction func pingButtonPressed(sender: UIBarButtonItem) {
         print("Ping add function entered")
         if pingMap[uID] == nil {
             // New ping for user
