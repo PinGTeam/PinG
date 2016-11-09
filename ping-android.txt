@@ -1,0 +1,18 @@
+-when a user logs in, when it returns a user id, store it in a local variable
+    -when calling functions use this as input
+
+-general location for events
+    -make it a square for milestone 2
+    -top left, bottom right latitude and longitude
+    -GetEventInArea(beginLatitude, beginLongitude, endLatitude, endLongitude)
+        -Calculate this on our end // calculate the screen width
+    -verify that the ping is near the user
+    -limit the zoom on the map(100x100 miles)
+
+-add a refresh button and settings top bar
+
+-Once in the map:
+	-Press pin button to drop a marker at current location
+		-Open info window to enter desired info.
+	-Press that marker to display information
+	-Replace ping if user moves and places another ping
