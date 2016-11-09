@@ -1,0 +1,16 @@
+CREATE TABLE geom (g GEOMETRY);
+
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(1 1)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(2 2)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(3 3)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(4 4)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(5 5)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(6 6)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(7 7)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(8 8)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(9 9)'));
+
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(8 )'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(-84.281616 30.433243)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(-84.196472 30.433243)'));
+INSERT INTO geom VALUES (ST_GeomFromText('POINT(-83.408203 30.388237)'));

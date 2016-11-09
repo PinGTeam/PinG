@@ -1,8 +1,8 @@
-USE `ping`;
+USE `test_middle`;
 DROP procedure IF EXISTS `InsertEvent`;
 
 DELIMITER $$
-USE `ping`$$
+USE `test_middle`$$
 CREATE PROCEDURE `InsertEvent` (
   parmUserID bigint, parmEventName varchar(255), parmLatitude double, parmLongitude double,
     parmWhenStart datetime, parmWhenEnd datetime, parmDescription varchar(1024))
