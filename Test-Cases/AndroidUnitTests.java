@@ -142,13 +142,11 @@ public class UnitTests {
         try {
             JSONArray coord = new JSONArray("[" + theCoords.longitude + ", " + theCoords.latitude + "]");
             //need to get rid of the "" around coordinates
-
             geometry.put("coordinates", coord);
             geometry.put("type", "Point");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         JSONObject properties = new JSONObject();
         try {
             properties.put("description", eDescription);
@@ -158,7 +156,6 @@ public class UnitTests {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         JSONObject geoJSON = new JSONObject();
         try {
             geoJSON.put("geometry", geometry);
@@ -168,13 +165,11 @@ public class UnitTests {
             e.printStackTrace();
         }
     }
-
     @Test
     //Check Google Play Services Availability
     private boolean checkGoogleServices() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int isAvailable = api.isGooglePlayServicesAvailable(this);
-
         //is available
         if (isAvailable == ConnectionResult.SUCCESS)
             return true;

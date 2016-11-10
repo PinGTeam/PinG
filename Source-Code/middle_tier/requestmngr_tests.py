@@ -33,14 +33,6 @@ class EmptyDatabaseTestCase(unittest.TestCase):
     def tearDown(self):
         requestmngr.db.drop_all()
         requestmngr.db.create_all()
-#NOT INCLUDED IN ITERATION - FUNCTON MADE FOR TESTING - MARKED FOR DELETION
-    def test_getusers_db(self):
-        rv = self.app.get('/')
-        assert 'NoUsers' in rv.data
-
-    def test_getallevents_db(self):
-        rv = self.app.get('/getallevents')
-        assert '{"features": [], "type": "FeatureCollection"}' in rv.data
 
     def test_getnearevent_db(self):
         rv = self.app.get('/getnearevents?topLongitude=12&topLatitude=120&bottomLongitude=12&bottomLatitude=120')
@@ -55,9 +47,9 @@ class NonEmptyDatabaseTestCase(unittest.TestCase):
         requestmngr.engine = create_engine('mysql://juan:alfaro@localhost/test_middle')
         requestmngr.db.drop_all()
         requestmngr.db.create_all()
-        requestmngr.db.session.add(requestmngr.users(userName='testname',firstName='testing',lastName='test'))
+        requestmngr.db.session.add(requestmngr.users(userName='testname',firstName='testing',lastName='test',email='test@email.com',password='dGhlUGFzc3dvcmQ='))
         requestmngr.db.session.commit()
-        requestmngr.db.session.add(requestmngr.eventtable(userID=1,latitude=12,longitude=120,eventName="testevent",time="2016-10-10 20:20:20",description="testdesc"))
+        requestmngr.db.session.add(requestmngr.eventtable(userID=1,latitude=12,longitude=120,eventName="testevent",startTime="2018-10-10 20:20:20",endTime="2018-10-10 20:20:20",description="testdesc"))
         requestmngr.db.session.commit()
         self.app = requestmngr.app.test_client()
         #with requestmngr.app.app_context():
@@ -66,15 +58,19 @@ class NonEmptyDatabaseTestCase(unittest.TestCase):
         requestmngr.db.drop_all()
         requestmngr.db.create_all()
 
-    def test_getallevent_db(self):
-        rv = self.app.get('/getallevents')
-        assert '{"features": [{"geometry": {"coordinates": [12.0, 120.0], "type": "Point"}, "properties": {"description": "testdesc", "eventName": "testevent", "time": "2016-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
     def test_getnearevent_db(self):
-        rv = self.app.get('/getnearevents?topLongitude=110&topLatitude=14&bottomLongitude=120&bottomLatitude=10')
-        assert '{"features": [{"geometry": {"coordinates": [120.0, 12.0], "type": "Point"}, "properties": {"description": "testdesc", "eventName": "testevent", "time": "2016-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
+        rv = self.app.get('/getnearevents?longitude=120&latitude=12')
+        assert '{"features": [{"geometry": {"coordinates": [120.0, 12.0], "type": "Point"}, "properties": {"description": "testdesc", "endTime": "2018-10-10 20:20:20", "eventID": 1, "eventName": "testevent", "firstName": "testing", "lastName": "test", "startTime": "2018-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
+
+    def test_login_success_db(self):
+        rv = self.app.post('/login',data=dict(userName="testname",password="dGhlUGFzc3dvcmQ="))
+        assert '{"userID":1,"userName":"testname","firstName":"testing","lastName":"test"}' in rv.data
+
+    def test_login_fail_db(self):
+        rv = self.app.post('/login',data=dict(userName="testname",password="dGhlUGFzc3dvQ="))
+        assert '-1' in rv.data
 
 
-'''
 class EmptyDatabaseWithAddsTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -91,22 +87,42 @@ class EmptyDatabaseWithAddsTestCase(unittest.TestCase):
         requestmngr.db.create_all()
 
     def test_adduser_db(self):
-        rv = self.app.post('/adduser', data=dict(UserName='testUserName',Name='testName',LName='testLName'))
-        assert 'testevent' in rv.data
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        assert '1' in rv.data
 
-    def test_getusers_db(self):
-        rv = self.app.get('/')
-        assert 'testname' in rv.data
+    def test_adduser_same_username_db(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email2@asd.com'))
+        assert '-2' in rv.data
 
-    def test_getallevent_db(self):
-        rv = self.app.get('/getallevents')
-        assert 'testevent' in rv.data
+    def test_adduser_same_email_db(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email2@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='testUserName2',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        assert '-1' in rv.data
 
-    def test_getnearevent_db(self):
-        rv = self.app.get('/getnearevents?topLongitude=12&topLatitude=120&bottomLongitude=12&bottomLatitude=120')
-        assert 'testevent' in rv.data
+    def test_adduser_same_email_and_username_db(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email2@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='testUserName2',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        assert '-3' in rv.data
 
-'''
+    def test_addevent(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
+        assert '1' in rv.data
+
+    def test_login_success_db(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/login',data=dict(userName="testUserName",password="dGhlcGFzc3dvcmQ="))
+        assert '{"userID":1,"userName":"testUserName","firstName":"testName","lastName":"testLName"}' in rv.data
+
+    def test_login_fail_db(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/login',data=dict(userName="testUserName",password="dGhlcGFzc3dcmQ="))
+        assert '-1' in rv.data
+
 
 if __name__ == '__main__':
     unittest.main()
