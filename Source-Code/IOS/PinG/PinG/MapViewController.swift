@@ -21,6 +21,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     @IBOutlet var pingButton: UIBarButtonItem!
     
     // Variables
+    var isTracking: Bool = false
     var user: String?
     var uID: Int = 0
     var locationManager: CLLocationManager!
@@ -30,6 +31,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.mapView.delegate = self
         
         //Set variables
         user = Shared.shared.username
@@ -45,6 +48,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.showsUserLocation = true
         refresh()
         // Do any additional setup after loading the view.
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -53,6 +57,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     func refresh() {
+        if !isTracking{
+            return
+        }
         print("Refresh method called")
         // Grab pings from database and populate dictionary
         var fin = false
@@ -87,12 +94,17 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             let description = feature["properties"]?["description"] as! String
                             let eventName = feature["properties"]?["eventName"] as! String
                             let userID = feature["properties"]?["userID"] as! Int
+                            //let fname = feature["properties"]?["firstName"] as! String
+                            //let lname = feature["properties"]?["lastName"] as! String
                             
                             print("\(eventName) at (\(point?[0]),\(point?[1]))")
                             //Populate local ping map
-                            let ping = Ping(uid: userID, coord: CLLocationCoordinate2DMake(point?[0] as! CLLocationDegrees, point?[1] as! CLLocationDegrees))
-                            ping.title = eventName
-                            ping.subtitle = description
+                            let ping = Ping(coordinate: CLLocationCoordinate2DMake(point?[0] as! CLLocationDegrees, point?[1] as! CLLocationDegrees))
+                            ping.userID = userID
+                            //ping.firstName = fname
+                            //ping.lastName = lname
+                            ping.eventName = eventName
+                            ping.eventDescription = description
                             self.pingMap[userID] = ping
                         }
                         
@@ -127,12 +139,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             for (ids, coordinates) in self.pingMap {
                 if self.pingMap[ids]?.added == false {
                     //pingMap[ids]?.added = true
-                    let annotation = MKPointAnnotation()
-                    annotation.coordinate = (self.pingMap[ids]?.location)!
-                    annotation.title = self.pingMap[ids]?.title
-                    annotation.subtitle = self.pingMap[ids]?.subtitle
+                    let annotation = Ping(coordinate: (self.pingMap[ids]?.coordinate)!)
+                    annotation.coordinate = (self.pingMap[ids]?.coordinate)!
+                    annotation.eventName = self.pingMap[ids]?.eventName
+                    annotation.eventDescription = self.pingMap[ids]?.eventDescription
                     self.mapView.addAnnotation(annotation)
-                    print("Added ping at ")
+                    print("Added ping at (\(annotation.coordinate.latitude), \(annotation.coordinate.longitude))")
                 }
             }
         }
@@ -186,6 +198,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))
                 let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)
                 var succ = false
+                var err = false
+                var msg = ""
                 
                 //Prepare to use http post method to add the jsonText on the server
                 var request = URLRequest(url: URL(string: "http://162.243.15.139/addevent")!)
@@ -197,14 +211,19 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 print("Begin post request")
                 let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
                     print("error=\(error)")
+                    err = true
+                    msg = "Unable to connect to the internet."
+                    succ = true
                     return
                     
                     }
                     
                     if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
                         print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                        msg = "HTTP status code \(httpStatus.statusCode)"
                         print("response = \(response)")
                         succ = true
+                        err = true
                     }
                     
                     let responseString = String(data: data, encoding: .utf8)
@@ -216,6 +235,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 
                 while !succ {
                     Thread.sleep(forTimeInterval: 0.1)
+                }
+                
+                if err {
+                    //Create alert
+                    
+                    let Alert = UIAlertController(title: "Error connecting to server", message: msg, preferredStyle: UIAlertControllerStyle.alert)
+                    
+                    let OkButton = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                    
+                    Alert.addAction(OkButton)
+                    
+                    self.present(Alert, animated: true, completion: nil)
                 }
                 
             } catch {
@@ -269,10 +300,60 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         currentCoordinate = location.coordinate
         if firstCenter == false {
             centerView()
+            refresh()
             firstCenter = true
+            isTracking = true
         }
     }
     
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if annotation is MKUserLocation
+        {
+            return nil
+        }
+        var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: "Pin")
+        if annotationView == nil{
+            annotationView = AnnotationView(annotation: annotation, reuseIdentifier: "Pin")
+            annotationView?.canShowCallout = false  //disable default annotation view
+        }else{
+            annotationView?.annotation = annotation
+        }
+        annotationView?.image = UIImage(named: "pingPin")
+        return annotationView
+    }
+    
+    // Custom callout
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
+    {
+        if view.annotation is MKUserLocation
+        {
+            // Don't proceed with custom callout
+            return
+        }
+        let pingAnnotation = view.annotation as! Ping
+        let views = Bundle.main.loadNibNamed("AnnotationView", owner: nil, options: nil)
+        let calloutView = views?[0] as! AnnotationViewClass
+        calloutView.eventNameLabel.text = pingAnnotation.eventName
+        //calloutView.nameLabel = pingAnnotation.firstName + " " + pingAnnotation.lastName
+        calloutView.descriptionLabel.text = pingAnnotation.eventDescription
+        //calloutView.fromLabel.text = pingAnnotation.fromTime
+        //calloutView.toLabel.text = pingAnnotation.toTime
+        
+        
+        calloutView.center = CGPoint(x: view.bounds.size.width / 2, y: -calloutView.bounds.size.height*0.52)
+        view.addSubview(calloutView)
+        mapView.setCenter((view.annotation?.coordinate)!, animated: true)
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        if view.isKind(of: AnnotationView.self)
+        {
+            for subview in view.subviews
+            {
+                subview.removeFromSuperview()
+            }
+        }
+    }
     /*
     // MARK: - Navigation
 

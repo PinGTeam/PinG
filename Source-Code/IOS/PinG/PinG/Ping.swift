@@ -9,19 +9,19 @@
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
-import UIKit
 import MapKit
 
-class Ping: NSObject {
+class Ping: NSObject, MKAnnotation {
     var username: String?
+    var firstName: String?
+    var lastName: String?
     var userID: Int?
-    var location: CLLocationCoordinate2D?
-    var title: String?
-    var subtitle: String?
+    var coordinate: CLLocationCoordinate2D
+    var eventName: String?
+    var eventDescription: String?
+    var image: UIImage!
     var added = false
     
-    init(uid: Int, coord: CLLocationCoordinate2D) {
-        userID = uid
-        location = coord
-    }
-}
+    init(coordinate: CLLocationCoordinate2D) {
+        self.coordinate = coordinate
+    }}

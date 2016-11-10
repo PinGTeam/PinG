@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E4A26F4C1DD3D66E0036484C /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */; };
+		E4A26F4E1DD3D7D70036484C /* AnnotationViewClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A26F4D1DD3D7D70036484C /* AnnotationViewClass.swift */; };
+		E4A26F501DD3D7F20036484C /* AnnotationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4A26F4F1DD3D7F20036484C /* AnnotationView.xib */; };
 		E4D0A2D51DD2A8280045070B /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D0A2D41DD2A8280045070B /* ProfileViewController.swift */; };
 		EB0642861DAB20D500BDFEDC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0642851DAB20D500BDFEDC /* AppDelegate.swift */; };
 		EB06428B1DAB20D500BDFEDC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB0642891DAB20D500BDFEDC /* Main.storyboard */; };
@@ -43,6 +46,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
+		E4A26F4D1DD3D7D70036484C /* AnnotationViewClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationViewClass.swift; sourceTree = "<group>"; };
+		E4A26F4F1DD3D7F20036484C /* AnnotationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnnotationView.xib; sourceTree = "<group>"; };
 		E4D0A2D41DD2A8280045070B /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		EB0642821DAB20D400BDFEDC /* PinG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PinG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB0642851DAB20D500BDFEDC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -94,6 +100,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E4A26F511DD3D8090036484C /* AnnotationView */ = {
+			isa = PBXGroup;
+			children = (
+				E4A26F4D1DD3D7D70036484C /* AnnotationViewClass.swift */,
+				E4A26F4F1DD3D7F20036484C /* AnnotationView.xib */,
+				E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */,
+			);
+			name = AnnotationView;
+			sourceTree = "<group>";
+		};
 		EB0642791DAB20D400BDFEDC = {
 			isa = PBXGroup;
 			children = (
@@ -119,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				EB066A881DB4711700FC8C93 /* PingAddView */,
+				E4A26F511DD3D8090036484C /* AnnotationView */,
 				EB0642851DAB20D500BDFEDC /* AppDelegate.swift */,
 				EB0642BA1DAB2B4100BDFEDC /* LoginViewController.swift */,
 				EB8B84711DC2B1F700893744 /* NewUserViewController.swift */,
@@ -278,6 +295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB0642901DAB20D500BDFEDC /* LaunchScreen.storyboard in Resources */,
+				E4A26F501DD3D7F20036484C /* AnnotationView.xib in Resources */,
 				EB06428D1DAB20D500BDFEDC /* Assets.xcassets in Resources */,
 				EB066A851DB4709900FC8C93 /* PingAddView.xib in Resources */,
 				EB06428B1DAB20D500BDFEDC /* Main.storyboard in Resources */,
@@ -306,8 +324,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBE463DC1DB04BAE00882D8C /* Shared.swift in Sources */,
+				E4A26F4C1DD3D66E0036484C /* AnnotationView.swift in Sources */,
 				EB0642BB1DAB2B4100BDFEDC /* LoginViewController.swift in Sources */,
 				EB0642BD1DAB317600BDFEDC /* MapViewController.swift in Sources */,
+				E4A26F4E1DD3D7D70036484C /* AnnotationViewClass.swift in Sources */,
 				EB0642861DAB20D500BDFEDC /* AppDelegate.swift in Sources */,
 				EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */,
 				EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */,
