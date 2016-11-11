@@ -44,12 +44,12 @@
         android:layout_below="@+id/userToolBar"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:text="User"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/userProfileButton"
-        android:layout_alignParentTop="true"
+        app:srcCompat="@drawable/userbutton"
+        android:id="@+id/imageButton"
+        android:layout_above="@+id/map"
         android:layout_alignParentStart="true" />
 
 </com.example.jorge.pingv2.MapWrapperLayout>
