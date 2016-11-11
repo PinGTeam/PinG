@@ -101,12 +101,10 @@ public class LogIn extends AppCompatActivity {
             //if successful go to map activity
             else {
                 UserData user = UserData.FromJson(middleTierResponse);
+                Intent mapActivityStart = new Intent(getApplicationContext(), MapActivity.class);
+                startActivity(mapActivityStart);
 
-                Intent intent = new Intent(getApplicationContext(), MapActivity.class);
-
-                // TODO: What is needed here? Just UserID or the can it be the entire user object?
-                intent.putExtra("key", middleTierResponse);
-                startActivity(intent);
+                // TODO: Send user data to map activity class
             }
         }
     }
