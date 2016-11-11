@@ -15,6 +15,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.junit.runner.Request;
@@ -133,6 +135,23 @@ public class UnitTests {
         }
     }
 
+    @Test
+    public void testEventModel()
+    {
+        EventModel model = new EventModel();
+        model.endTime = "2016-10-10 16:00:05";
+        model.startTime = "2016-10-10 15:30:05";
+
+        model.eventName = "Hello";
+        model.description="Mine";
+        model.latitude = -10.005;
+        model.longitude =  140.93838;
+
+        model.userID = 1;
+
+        RequestBody postData = model.getPostFormData();
+
+    }
 
     /*
     @Test
