@@ -103,6 +103,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             });
 
+
             //make pinG button
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
