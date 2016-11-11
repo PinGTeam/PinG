@@ -197,7 +197,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
-
     private void moveToLocation(double latitude, double longitude, int zoom) {
         LatLng location = new LatLng(latitude, longitude);
         CameraUpdate cam = CameraUpdateFactory.newLatLngZoom(location, zoom);
