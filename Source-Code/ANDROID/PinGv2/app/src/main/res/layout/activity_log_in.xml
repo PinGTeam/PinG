@@ -22,16 +22,6 @@
         android:layout_toStartOf="@+id/signUpButton"
         android:layout_marginEnd="13dp" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/pinglogo"
-        android:layout_marginTop="47dp"
-        android:id="@+id/imageView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="11dp" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -54,7 +44,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textPassword"
             android:layout_centerInParent="true"
             android:ellipsize="start"
             android:gravity="center_horizontal"
@@ -80,5 +70,14 @@
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/imageView"
         android:layout_marginEnd="15dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/pinglogo"
+        android:layout_marginTop="52dp"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

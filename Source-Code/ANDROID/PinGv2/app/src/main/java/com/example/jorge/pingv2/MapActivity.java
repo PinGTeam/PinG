@@ -1,6 +1,7 @@
 package com.example.jorge.pingv2;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,6 +17,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -56,7 +61,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        MarkerDialog.OnDialogClickListener {
+        GoogleMap.OnInfoWindowClickListener {
+
+    private boolean first_load;
 
     private GoogleMap mMap;
     private Marker mMarker;
@@ -68,14 +75,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String userID, userFname, userLname;
     private String allEventsString;
 
-    JSONArray geoData;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.userToolBar);
-        setSupportActionBar(myToolbar);
+        first_load = true;
 
         //get userID from logIn activity
         Intent data = getIntent();
@@ -90,17 +94,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
 
-            //final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout)findViewById(R.id.map_relative_layout);
+            Button userProf = (Button) findViewById(R.id.userProfileButton);
+            userProf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent viewUser = new Intent(getApplicationContext(), UserProfile.class);
+                    startActivity(viewUser);
+                }
+            });
+
 
             //make pinG button
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    //create and show custom dialog
-                    MarkerDialog eventWindow = new MarkerDialog();
-                    eventWindow.show(getSupportFragmentManager(), "dialog_marker_dialog");
+                    Intent createEvent = new Intent(getApplicationContext(), CreateEvent.class);
+                    startActivity(createEvent);
                 }
             });
         }
@@ -129,15 +139,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnInfoWindowClickListener(this);
         mMap.setMaxZoomPreference(18);
         mMap.setMinZoomPreference(18);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setScrollGesturesEnabled(true);   //change this to true
         mMap.getUiSettings().setZoomGesturesEnabled(false);    //
-
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.userToolBar);
-        setSupportActionBar(myToolbar);
 
         //check if we can access location
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -152,6 +160,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .build();
         mApiClient.connect();
+
+        //get rid of this??
 
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             //get window frame, we use the default
@@ -179,6 +189,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 return v;
             }
         });
+
     }
 
     @Override
@@ -223,7 +234,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             topLeftCoords = vRegion.farLeft;
             bottomRightCoords = vRegion.nearRight;
 
-            moveToLocation(loc.latitude, loc.longitude, 18);
+            if(first_load == true) {
+                moveToLocation(loc.latitude, loc.longitude, 18);
+                first_load = false;
+            }
 
             new GetMarkerData().execute();
         }
@@ -251,31 +265,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMarker = mMap.addMarker(options);
     }
 
-    //get data from even creation prompt
     @Override
-    public void onDialogPositiveClick(String name, String startTime, String endTime,String desc) {
-        eName = name;
-        eStartTime = startTime;
-        eEndTime = endTime;
-        eDescription = desc;
-
-        //correct coordinates stored
-        System.out.println(theCoords.latitude + ":" + theCoords.longitude);
-
-        //set marker on the map
-        setMarker( eName, eStartTime, endTime, eDescription, theCoords.latitude, theCoords.longitude);
-
-        //send marker data to middle tier
-        //new PostMarkerData().execute();
+    public void onInfoWindowClick(Marker marker) {
+        Intent editWindow = new Intent(getApplicationContext(), CreateEvent.class);
+        startActivity(editWindow);
     }
-
 
     //post marker information to middle tier
     private class PostMarkerData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
 
-            System.out.println("Coords Lat: " + theCoords.latitude + " Coords Lng: " + theCoords.longitude);
+            //System.out.println("Coords Lat: " + theCoords.latitude + " Coords Lng: " + theCoords.longitude);
 
             JSONObject geometry = new JSONObject();
             try {
