@@ -61,7 +61,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        MarkerDialog.OnDialogClickListener,
         GoogleMap.OnInfoWindowClickListener {
 
     private boolean first_load;
@@ -95,15 +94,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
 
+            Button userProf = (Button) findViewById(R.id.userProfileButton);
+            userProf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent viewUser = new Intent(getApplicationContext(), UserProfile.class);
+                    startActivity(viewUser);
+                }
+            });
+
             //make pinG button
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    //create and show custom dialog
-                    MarkerDialog eventWindow = new MarkerDialog();
-                    eventWindow.show(getSupportFragmentManager(), "dialog_marker_dialog");
+                    Intent createEvent = new Intent(getApplicationContext(), CreateEvent.class);
+                    startActivity(createEvent);
                 }
             });
         }
@@ -141,9 +147,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomGesturesEnabled(false);    //
 
         //check if we can access location
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
@@ -157,8 +161,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mApiClient.connect();
 
         //get rid of this??
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             //get window frame, we use the default
             @Override
             public View getInfoWindow(Marker marker) {
@@ -184,6 +188,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 return v;
             }
         });
+
     }
 
     @Override
@@ -192,9 +197,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mLocReq.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocReq.setInterval(100000);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, mLocReq, this);
@@ -261,21 +264,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMarker = mMap.addMarker(options);
     }
 
-    //get data from even creation prompt
-    @Override
-    public void onDialogPositiveClick(String name, String startTime, String endTime,String desc) {
-        eName = name;
-        eStartTime = startTime;
-        eEndTime = endTime;
-        eDescription = desc;
-
-        //set marker on the map
-        setMarker( eName, eStartTime, endTime, eDescription, theCoords.latitude, theCoords.longitude);
-
-        //send marker data to middle tier
-        //new PostMarkerData().execute();
-    }
-
     @Override
     public void onInfoWindowClick(Marker marker) {
         Intent editWindow = new Intent(getApplicationContext(), CreateEvent.class);
@@ -286,6 +274,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private class PostMarkerData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+
+            //System.out.println("Coords Lat: " + theCoords.latitude + " Coords Lng: " + theCoords.longitude);
 
             JSONObject geometry = new JSONObject();
             try {
@@ -328,6 +318,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .url("http://162.243.15.139/addevent")
                     .post(formBody)
                     .build();
+
+            System.out.println(geoJSON.toString());
 
             try {
                 Response response= client.newCall(request).execute();

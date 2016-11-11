@@ -60,7 +60,8 @@
             android:label="@string/title_activity_signup"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" /> <!-- </activity> -->
-        <activity android:name=".CreateEvent"></activity>
+        <activity android:name=".CreateEvent" />
+        <activity android:name=".UserProfile"></activity>
     </application>
 
 </manifest>

@@ -44,7 +44,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textPassword"
             android:layout_centerInParent="true"
             android:ellipsize="start"
             android:gravity="center_horizontal"
