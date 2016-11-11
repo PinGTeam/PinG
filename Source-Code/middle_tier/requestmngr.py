@@ -98,8 +98,6 @@ def insertevent():
 @app.route('/editevent',methods=['POST'])
 def editevent():
     event_geojson = request.form['event']
-    print event_geojson
-    print type(event_geojson)
     locfeat = json.loads(event_geojson)
 
     event = eventtable.query.filter_by(eventID = locfeat['properties']['eventID']).first()
@@ -114,6 +112,27 @@ def editevent():
 
     return "1"
 
+#ATTENDING EVENT
+#Using SQL Alchemy
+#Using POST method
+@app.route('/attend',methods=['POST'])
+def attendevent():
+    userID = request.form['userID']
+    eventID = request.form['eventID']
+    attending = attendancetable.query.filter_by(eventID = eventID,userID = userID).first()
+
+    if not attending:
+        new_attendance =  attendancetable(eventID = eventID,userID = userID)
+        db.session.add(new_attendance)
+        db.session.commit()
+        return "attending"
+    else:
+        db.session.delete(attending)
+        db.session.commit()
+        return "not attending"
+
+#EDITING EVENT
+
 #GET EVENTS
 #Quering list of events from the database
 @app.route('/getallevents')
@@ -124,6 +143,15 @@ def getevents():
         if event.endTime > datetime.utcnow():
             event_list.append(event.json_repr())
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
+
+#GET ONE EVENT
+#Quering for one event by id
+@app.route('/getevent')
+def getonevent():
+    eventID = request.args.get('eventID')
+    event = eventtable.query.filter_by(eventID = eventID).first()
+
+    return event.json_repr_alt()
 
 #GET EVENTS
 #Calling GetEvents Stored procedure
@@ -146,6 +174,27 @@ def getnearevents():
         event_list.append(event_to_geojson(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9]))
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
+#GET EVENTS
+#Calling GetEvents Stored procedure
+@app.route('/getnearevents_alt',methods=['GET'])
+def getnearevents_alt():
+    connection = engine.raw_connection()
+    cursor = connection.cursor()
+
+    cursor.callproc("GetEvents3",\
+    [request.args.get('latitude'),\
+    request.args.get('longitude')])
+
+    results = list(cursor.fetchall())
+    cursor.close()
+    connection.commit()
+    connection.close()
+    event_list = []
+    for event in results:
+        #THIS MIGHT HAVE TO BE FIXED TO TAKE INTO ACCOUNT NEW EVENTTABLE TABLE
+        event_list.append(event_to_geojson_alt(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9]))
+    return str(event_list)
+
 #HELPER FUNCTIONS
 
 #takes an info to make a json feature that represents an event
@@ -159,6 +208,20 @@ def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,e
     "startTime":startTime,\
     "endTime":endTime,\
     "description":description})
+
+#takes an info to make a json feature that represents an event
+def event_to_geojson_alt(latitude,longitude,userID,eventID,firstName,lastName,eventName,startTime,endTime,description):
+    return geojson.dumps({"latitude": latitude,\
+    "longitude": longitude,\
+    "eventID": eventID,\
+    "userID": userID,\
+    "firstName":firstName,\
+    "lastName":lastName,\
+    "eventName": eventName,\
+    "startTime":str( startTime),\
+    "endTime":str( endTime),\
+    "description": description})
+
 
 #TABLES
 #Users table
@@ -196,10 +259,41 @@ class eventtable(db.Model):
         "endTime":str(self.endTime),\
         "description":self.description})
 
+    def json_repr_alt(self):
+        return geojson.dumps({"latitude": latitude,\
+        "longitude": longitude,\
+        "eventID": eventID,\
+        "userID": userID,\
+        "firstName":firstName,\
+        "lastName":lastName,\
+        "eventName": eventName,\
+        "startTime":str( startTime),\
+        "endTime":str( endTime),\
+        "description": description})
+
     def __repr__(self):
         geojson_rep = self.json_repr()
         return geojson.dumps(geojson_rep,sort_keys=True)
 
+#Friendship table
+#class friendshiptable(db.Model):
+#    __tablename__ = 'friendshiptable'
+#    userID_1 = db.Column('userID_1',db.BigInteger,primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
+#    userID_2 = db.Column('userID_2',db.BigInteger,primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
+
+#Request table
+#class requesttable(db.Model):
+#    __tablename__ = 'requesttable'
+#    userID_sender = db.Column('userID_sender',db.BigInteger,primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
+#    userID_receiver = db.Column('userID_receiver',db.BigInteger,primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
+#    status = db.Column('status',db.Enum('accepted','rejected','pending'),primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
+
+#Attendance table
+#class attendancetable(db.Model):
+#    __tablename__ = 'attendancetable'
+#    userID = db.Column('userID',db.BigInteger,primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
+#    eventID = db.Column('eventID',db.BigInteger,primary_key=True,ForeignKey("eventtable.eventID",ondelete="CASCADE"),nullable=False)
+
 #Run App
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port="5001")
+    app.run(host='0.0.0.0')
