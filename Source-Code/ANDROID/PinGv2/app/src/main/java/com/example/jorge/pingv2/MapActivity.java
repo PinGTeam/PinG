@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -55,7 +56,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private boolean firstLoad;
     private GoogleApiClient mApiClient;
     private LocationRequest mLocReq;
-    private Button userProfileButton;
+    private ImageButton userProfileButton;
     private String allEventsString;
     private String eName, eDescription, eStartTime, eEndTime;
     private String userID, userFname, userLname;
@@ -73,7 +74,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             mapFragment.getMapAsync(this);
 
 
-            userProfileButton = (Button) findViewById(R.id.userProfileButton);
+            userProfileButton = (ImageButton) findViewById(R.id.imageButton);
             userProfileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
