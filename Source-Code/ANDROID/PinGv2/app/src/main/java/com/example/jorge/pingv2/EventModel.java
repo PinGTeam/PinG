@@ -1,21 +1,9 @@
 package com.example.jorge.pingv2;
 
-import android.util.JsonToken;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 
@@ -43,7 +31,6 @@ public class EventModel {
                 .build();
 
         return formBody;
-
     }
 
     public static EventModel fromJson(String jsonText) {
@@ -54,8 +41,7 @@ public class EventModel {
     }
 
     public static ArrayList<EventModel> fromArrayJson(String jsonArray) {
-        Type arrayType = new TypeToken<ArrayList<EventModel>>() {
-        }.getType();
+        Type arrayType = new TypeToken<ArrayList<EventModel>>() {}.getType();
 
         Gson gs = new Gson();
         ArrayList<EventModel> eventList = gs.fromJson(jsonArray, arrayType);
