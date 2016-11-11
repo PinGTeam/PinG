@@ -37,9 +37,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -137,10 +139,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .addOnConnectionFailedListener(this)
                 .build();
         mApiClient.connect();
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     @Override
@@ -195,6 +193,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
 
             new GetMarkerData().execute();
+
+
         }
     }
 
@@ -204,81 +204,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap.moveCamera(cam);
     }
 
-    //post marker information to middle tier
-    private class PostMarkerData extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            //System.out.println("Coords Lat: " + theCoords.latitude + " Coords Lng: " + theCoords.longitude);
-
-            JSONObject geometry = new JSONObject();
-            try {
-                JSONArray coord = new JSONArray("[" + theCoords.longitude + ", " + theCoords.latitude + "]");
-                //need to get rid of the "" around coordinates
-
-                geometry.put("coordinates", coord);
-                geometry.put("type", "Point");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            JSONObject properties = new JSONObject();
-            try {
-                properties.put("description", eDescription);
-                properties.put("eventName", eName);
-                properties.put("startTime", eStartTime);
-                properties.put("endTime", eEndTime);
-                properties.put("userID", userID);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            JSONObject geoJSON = new JSONObject();
-            try {
-                geoJSON.put("geometry", geometry);
-                geoJSON.put("properties", properties);
-                geoJSON.put("type", "Feature");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            OkHttpClient client = new OkHttpClient();
-
-            RequestBody formBody = new FormBody.Builder()
-                    .add("location", geoJSON.toString())
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url("http://162.243.15.139/addevent")
-                    .post(formBody)
-                    .build();
-
-            System.out.println(geoJSON.toString());
-
-            try {
-                Response response= client.newCall(request).execute();
-                if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-                //store the response [NOTE: DO NOT USE response.body() BEFORE THIS LINE BECAUSE IT WILL CONSUME THE RETURN]
-                if(Objects.equals(response.body().string(), "hello")) {
-                    System.out.println("POSTED");
-                }
-                response.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    }
-
     private class GetMarkerData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
 
+
             OkHttpClient client = new OkHttpClient();
+
+            HttpUrl url = HttpUrl.parse("http://162.243.15.139/getnearevents_alt");
+            HttpUrl.Builder myBuilder = url.newBuilder();
+            myBuilder.addQueryParameter("longitude", String.valueOf(theCoords.longitude));
+            myBuilder.addQueryParameter("latitude", String.valueOf(theCoords.latitude));
+
             Request request = new  Request.Builder()
-                    .url("http://162.243.15.139/getallevents")
+                    .url(myBuilder.build())
                     .build();
 
             try {
@@ -286,7 +225,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
                 allEventsString = response.body().string();
-                System.out.println("ALL EVENTS: " + allEventsString);
 
                 response.close();
             } catch (IOException e) {
@@ -298,19 +236,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            try {
-                JSONObject obj = new JSONObject(allEventsString);
-                JSONArray points = obj.getJSONArray("features");
-
-                for(int i = 0; i < points.length(); i++) {
-                    JSONObject marker = points.getJSONObject(i);
-
-                    System.out.println("EventName: " + marker.getString("geometry"));
-                }
-                //geoData is JSONArray
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                ArrayList<EventModel> listOfEvents = EventModel.fromArrayJson(allEventsString);
         }
     }
 }
