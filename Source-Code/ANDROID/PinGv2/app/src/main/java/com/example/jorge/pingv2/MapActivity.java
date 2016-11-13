@@ -236,7 +236,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         @Override
         protected void onPostExecute(Void aVoid) {
-                ArrayList<EventModel> listOfEvents = EventModel.fromArrayJson(allEventsString);
+                //ArrayList<EventModel> listOfEvents = EventModel.fromArrayJson(allEventsString);
         }
     }
 }
