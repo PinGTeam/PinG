@@ -14,9 +14,10 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:weightSum="1"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:weightSum="1">
+        android:layout_marginTop="46dp">
 
         <TextView
             android:text="Event Name"
@@ -47,7 +48,7 @@
             android:text=""
             android:ems="10"
             android:id="@+id/editText2"
-            android:layout_weight="0.41" />
+            android:layout_weight="0.29" />
 
         <Space
             android:layout_width="match_parent"
@@ -69,12 +70,18 @@
 
             <TextView
                 android:text="HH:MM"
+                android:clickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView9"
+                android:id="@+id/eventStartField"
                 android:textSize="20sp"
                 android:layout_weight="1" />
         </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -91,12 +98,18 @@
 
             <TextView
                 android:text="  HH:MM"
+                android:clickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView11"
+                android:id="@+id/eventEndField"
                 android:textSize="20sp"
                 android:layout_weight="1" />
         </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.11" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -109,7 +122,7 @@
                 android:layout_weight="1" />
 
             <Button
-                android:text="Button"
+                android:text="Create Event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/button4"

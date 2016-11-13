@@ -226,9 +226,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             try {
                 Response response = client.newCall(request).execute();
-                if(!response.isSuccessful()) {
-                    throw new IOException("Unexpected code " + response);
-                }
+                if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
                 allEventsString = response.body().string();
 
