@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +14,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
+import java.util.regex.Matcher;
+
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,8 +26,9 @@ import okhttp3.Response;
 
 public class SignupActivity extends AppCompatActivity {
 
-    Button signUpButton;
-    String uName, uFname, uLname, uEmail, uPass, uConfPass, middleTierResponse, encodedPass;
+    private boolean check;
+    private Button signUpButton;
+    private String uName, uFname, uLname, uEmail, uPass, uConfPass, middleTierResponse, encodedPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,8 @@ public class SignupActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                check = true;
 
                 //store user data
                 EditText usernameField = (EditText) findViewById(R.id.userameInput);
@@ -54,27 +61,58 @@ public class SignupActivity extends AppCompatActivity {
                 EditText confPassword = (EditText) findViewById(R.id.confPassInput);
                 uConfPass = confPassword.getText().toString();
 
-                //if passwords are equal
-                if(Objects.equals(uPass, uConfPass)) {
-                    try {
-                        byte[] enPass = Base64.encode(uPass.getBytes("UTF-8"), Base64.DEFAULT);
-                        encodedPass = new String(enPass);
-                        //delete trailing newline
-                        encodedPass = encodedPass.replaceAll(System.getProperty("line.separator"), "");
-
-                        new SendSignUpData().execute();
-
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                if(uName.length() < 1) {
+                    check = false;
+                    Toast.makeText(getApplicationContext(), "User Name too short. Try again", Toast.LENGTH_SHORT).show();
                 }
-                //else error message
-                else {
-                    Toast.makeText(SignupActivity.this, "Passwords don't match. Try again", Toast.LENGTH_SHORT).show();
+                else if(uFname.length() < 1) {
+                    check = false;
+                    Toast.makeText(getApplicationContext(), "First name too short. Try again", Toast.LENGTH_SHORT).show();
+                }
+                else if(uLname.length() < 1) {
+                    check = false;
+                    Toast.makeText(getApplicationContext(), "Last name too short. Try again", Toast.LENGTH_SHORT).show();
+                }
+                else if(!isValidEmail(uEmail)) {
+                    check = false;
+                    Toast.makeText(getApplicationContext(), "Invalid email. Try again", Toast.LENGTH_SHORT).show();
+                }
+                else if(uPass.length() < 1) {
+                    check = false;
+                    Toast.makeText(getApplicationContext(), "Password too short. Try again", Toast.LENGTH_SHORT).show();
+                }
+                else if(uConfPass.length() < 1) {
+                    check = false;
+                    Toast.makeText(getApplicationContext(), "Confirm Password too short. Try again", Toast.LENGTH_SHORT).show();
+                }
+
+                if(check == true) {
+                    //if passwords are equal
+                    if (Objects.equals(uPass, uConfPass)) {
+                        try {
+                            byte[] enPass = Base64.encode(uPass.getBytes("UTF-8"), Base64.DEFAULT);
+                            encodedPass = new String(enPass);
+                            //delete trailing newline
+                            encodedPass = encodedPass.replaceAll(System.getProperty("line.separator"), "");
+
+                            new SendSignUpData().execute();
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //else error message
+                    else {
+                        Toast.makeText(SignupActivity.this, "Passwords don't match. Try again", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
 
+    }
+
+    private static boolean isValidEmail(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private class SendSignUpData extends AsyncTask<Void, Void, Void> {

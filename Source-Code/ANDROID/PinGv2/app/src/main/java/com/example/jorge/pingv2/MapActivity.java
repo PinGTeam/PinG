@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -66,16 +65,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //will only jump to current location on true
         firstLoad = true;
 
+        //check if google play services is available
         if(checkGoogleServices()) {
             setContentView(R.layout.activity_map);
+
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
 
-
+            //user image clicked -> user profile activity
             userProfileButton = (ImageButton) findViewById(R.id.imageButton);
             userProfileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -85,6 +88,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 }
             });
 
+            //ping button clicked -> create ping activity
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,6 +104,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
+    //checks google play services
     private boolean checkGoogleServices() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int isAvailable = api.isGooglePlayServicesAvailable(this);
@@ -115,6 +120,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return false;
     }
 
+    //once the map is ready
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -141,6 +147,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mApiClient.connect();
     }
 
+    //when we click the info window, go to edit screen. Uses same screen as create event
     @Override
     public void onInfoWindowClick(Marker marker) {
         Intent startCreateEvent = new Intent(getApplicationContext(), CreateEventActivity.class);
@@ -169,7 +176,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-
+    //when the location is changed. Runs many times
     @Override
     public void onLocationChanged(Location location) {
         //check for location
@@ -181,34 +188,31 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         else {
             final LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
 
-            //save coordinates here
+            //save current coordinates
             theCoords = loc;
 
-            //get screen corners
-            VisibleRegion vRegion = mMap.getProjection().getVisibleRegion();
-
+            //on first load, jump to current location
             if(firstLoad == true) {
                 moveToLocation(loc.latitude, loc.longitude, 18);
                 firstLoad = false;
             }
 
+            //call async task to retrieve pings from database
             new GetMarkerData().execute();
-
-
         }
     }
 
+    ///jumps to location
     private void moveToLocation(double latitude, double longitude, int zoom) {
         LatLng location = new LatLng(latitude, longitude);
         CameraUpdate cam = CameraUpdateFactory.newLatLngZoom(location, zoom);
         mMap.moveCamera(cam);
     }
 
+    //async get marker
     private class GetMarkerData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-
-
             OkHttpClient client = new OkHttpClient();
 
             HttpUrl url = HttpUrl.parse("http://162.243.15.139/getnearevents_alt");
@@ -222,7 +226,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             try {
                 Response response = client.newCall(request).execute();
-                if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                if(!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
 
                 allEventsString = response.body().string();
 
@@ -236,7 +242,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         @Override
         protected void onPostExecute(Void aVoid) {
-                ArrayList<EventModel> listOfEvents = EventModel.fromArrayJson(allEventsString);
+                //ArrayList<EventModel> listOfEvents = EventModel.fromArrayJson(allEventsString);
         }
     }
 }

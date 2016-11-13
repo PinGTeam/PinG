@@ -38,11 +38,19 @@ public class LogIn extends AppCompatActivity {
                 EditText usernameField = (EditText) findViewById(R.id.idInput);
                 userName = usernameField.getText().toString();
 
-                EditText passwordFiled = (EditText) findViewById(R.id.passInput);
-                userPass = passwordFiled.getText().toString();
-                //add checks for empty logIn input
+                EditText passwordField = (EditText) findViewById(R.id.passInput);
+                userPass = passwordField.getText().toString();
 
-                new SendUserData().execute();
+                //add checks for empty logIn input
+                if(userName.length() < 1) {
+                    Toast.makeText(getApplicationContext(), "User Name too short. Try again", Toast.LENGTH_SHORT).show();
+                }
+                if(userPass.length() < 1) {
+                    Toast.makeText(getApplicationContext(), "Password too short. Try again", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    new SendUserData().execute();
+                }
             }
         });
 
@@ -100,11 +108,12 @@ public class LogIn extends AppCompatActivity {
             }
             //if successful go to map activity
             else {
+                System.out.println("LogIn Response: " + middleTierResponse);
                 UserData user = UserData.FromJson(middleTierResponse);
+                System.out.println("Class Data NAME: " + user.firstName);
+
                 Intent mapActivityStart = new Intent(getApplicationContext(), MapActivity.class);
                 startActivity(mapActivityStart);
-
-                // TODO: Send user data to map activity class
             }
         }
     }
