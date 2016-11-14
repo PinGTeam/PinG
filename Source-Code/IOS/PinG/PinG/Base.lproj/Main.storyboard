@@ -47,7 +47,7 @@
                                 <rect key="frame" x="177" y="322" width="20" height="20"/>
                             </activityIndicatorView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't have an account? " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rDt-GF-mEy">
-                                <rect key="frame" x="41" y="350" width="183.5" height="20.5"/>
+                                <rect key="frame" x="24" y="350" width="183.5" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -59,7 +59,7 @@
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Ri-3m-RkG">
-                                <rect key="frame" x="279" y="345" width="55" height="30"/>
+                                <rect key="frame" x="296" y="345" width="55" height="30"/>
                                 <state key="normal" title="Sign Up"/>
                                 <connections>
                                     <segue destination="cw0-0v-fzG" kind="show" id="L6s-sj-1BI"/>
@@ -74,11 +74,11 @@
                             <constraint firstItem="oZR-ew-kP6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8uY-jy-jLy"/>
                             <constraint firstItem="oZR-ew-kP6" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="JVS-cy-iC7"/>
                             <constraint firstItem="Iwf-Ks-gT9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="K1o-45-8E0"/>
-                            <constraint firstItem="rDt-GF-mEy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="25" id="Pua-jo-vZz"/>
+                            <constraint firstItem="rDt-GF-mEy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="8" id="Pua-jo-vZz"/>
                             <constraint firstItem="L64-pQ-EIx" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VYt-eL-c2R"/>
                             <constraint firstItem="L64-pQ-EIx" firstAttribute="top" secondItem="E1w-ZI-BOr" secondAttribute="bottom" constant="8" id="XCM-Sl-2bO"/>
                             <constraint firstItem="wl8-ZA-9ET" firstAttribute="top" secondItem="Iwf-Ks-gT9" secondAttribute="bottom" constant="8" id="dBC-ab-ePZ"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="5Ri-3m-RkG" secondAttribute="trailing" constant="25" id="f7i-Ns-ceX"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="5Ri-3m-RkG" secondAttribute="trailing" constant="8" id="f7i-Ns-ceX"/>
                             <constraint firstItem="E1w-ZI-BOr" firstAttribute="top" secondItem="oZR-ew-kP6" secondAttribute="bottom" constant="8" id="gJL-oN-T0p"/>
                             <constraint firstItem="5Ri-3m-RkG" firstAttribute="top" secondItem="wl8-ZA-9ET" secondAttribute="bottom" constant="3" id="gc9-r9-MrD"/>
                             <constraint firstItem="Iwf-Ks-gT9" firstAttribute="top" secondItem="L64-pQ-EIx" secondAttribute="bottom" constant="8" id="kCb-er-2Nu"/>
@@ -299,7 +299,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YlB-if-lih">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="DefaultProfilePic" translatesAutoresizingMaskIntoConstraints="NO" id="YlB-if-lih">
                                 <rect key="frame" x="115" y="72" width="144" height="144"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="YlB-if-lih" secondAttribute="height" multiplier="1:1" id="Sxi-9O-nXU"/>
@@ -340,6 +340,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="DefaultProfilePic" width="192" height="211"/>
         <image name="PingLogo" width="154" height="45"/>
     </resources>
 </document>

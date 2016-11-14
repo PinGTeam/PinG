@@ -64,7 +64,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Grab pings from database and populate dictionary
         var fin = false
         print("Testing request")
-        var request = URLRequest(url: URL(string: "http://162.243.15.139/getallevents")!)
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/getnearevents?longitude=\(currentCoordinate.longitude)&latitude=\(currentCoordinate.latitude)")!)
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
             print("error=\(error)")
@@ -97,9 +97,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             //let fname = feature["properties"]?["firstName"] as! String
                             //let lname = feature["properties"]?["lastName"] as! String
                             
-                            print("\(eventName) at (\(point?[0]),\(point?[1]))")
+                            print("\(eventName) at (\((point?[1])!),\((point?[0])!) for uID \(userID)")
                             //Populate local ping map
-                            let ping = Ping(coordinate: CLLocationCoordinate2DMake(point?[0] as! CLLocationDegrees, point?[1] as! CLLocationDegrees))
+                            let ping = Ping(coordinate: CLLocationCoordinate2DMake(point?[1] as! CLLocationDegrees, point?[0] as! CLLocationDegrees))
                             ping.userID = userID
                             //ping.firstName = fname
                             //ping.lastName = lname
@@ -139,14 +139,20 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             for (ids, coordinates) in self.pingMap {
                 if self.pingMap[ids]?.added == false {
                     //pingMap[ids]?.added = true
+                    /*
                     let annotation = Ping(coordinate: (self.pingMap[ids]?.coordinate)!)
                     annotation.coordinate = (self.pingMap[ids]?.coordinate)!
                     annotation.eventName = self.pingMap[ids]?.eventName
                     annotation.eventDescription = self.pingMap[ids]?.eventDescription
+                    */
+                    let annotation = self.pingMap[ids]!
                     self.mapView.addAnnotation(annotation)
                     print("Added ping at (\(annotation.coordinate.latitude), \(annotation.coordinate.longitude))")
                 }
             }
+        }
+        for annotation in mapView.annotations {
+            print("Ping: \(annotation.coordinate.longitude), \(annotation.coordinate.latitude)")
         }
         
     }
@@ -342,7 +348,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         calloutView.center = CGPoint(x: view.bounds.size.width / 2, y: -calloutView.bounds.size.height*0.52)
         view.addSubview(calloutView)
-        mapView.setCenter((view.annotation?.coordinate)!, animated: true)
+        let centerRegion = MKCoordinateRegionMake((view.annotation?.coordinate)!, mapView.region.span)
+        var newView = mapView.convertRegion(centerRegion, toRectTo: nil)
+        newView = newView.offsetBy(dx: 0, dy: -150)
+        let newRegion = mapView.convert(newView, toRegionFrom: nil)
+        mapView.setRegion(newRegion, animated: true)
     }
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
