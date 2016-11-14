@@ -92,6 +92,32 @@ def insertevent():
     connection.close()
     return "1"
 
+#ADDING EVENT ALT
+#Calling InsertEvent Stored procedure
+#Using POST method
+#CALL InsertEvent(userID <int[25]>, EventName <string[255]>, Latitude <double>, Longitude <double>, Date/Time <year-month-day hour:min:second>, Description <string[1024]>);
+@app.route('/addevent_alt',methods=['POST'])
+def insertevent_alt():
+    connection = engine.raw_connection()
+    cursor = connection.cursor()
+    event = request.form['event']
+    locfeat = json.loads(event)
+
+    cursor.callproc("InsertEvent",\
+    [locfeat['userID'],\
+    locfeat['eventName'],\
+    locfeat['latitude'],\
+    locfeat['longitude'],\
+    locfeat['startTime'],\
+    locfeat['endTime'],\
+    locfeat['description']])
+
+    results = list(cursor.fetchall())
+    cursor.close()
+    connection.commit()
+    connection.close()
+    return "1"
+
 #EDITING EVENT
 #In a future implementation we can reduce overhead by updating
 #individual elements of the event rather than all the elements
@@ -111,6 +137,27 @@ def editevent():
     db.session.commit()
 
     return "1"
+
+#EDITING EVENT ALT
+#In a future implementation we can reduce overhead by updating
+#individual elements of the event rather than all the elements
+@app.route('/editevent_alt',methods=['POST'])
+def editevent_alt():
+    event_geojson = request.form['event']
+    locfeat = json.loads(event_geojson)
+
+    event = eventtable.query.filter_by(eventID = locfeat['eventID']).first()
+
+    event.latitude = locfeat['latitude']
+    event.longitude = locfeat['longitude']
+    event.eventName = locfeat['eventName']
+    event.startTime = locfeat['startTime']
+    event.endTime = locfeat['endTime']
+    event.description = locfeat['description']
+    db.session.commit()
+
+    return "1"
+
 
 #ATTENDING EVENT
 #Using SQL Alchemy
@@ -170,8 +217,8 @@ def getnearevents():
     connection.close()
     event_list = []
     for event in results:
-        #THIS MIGHT HAVE TO BE FIXED TO TAKE INTO ACCOUNT NEW EVENTTABLE TABLE
-        event_list.append(event_to_geojson(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9]))
+        userCount = attendancetable.query.filter_by(eventID = event[3]).count()
+        event_list.append(event_to_geojson(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9],userCount))
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #GET EVENTS
@@ -191,14 +238,27 @@ def getnearevents_alt():
     connection.close()
     event_list = []
     for event in results:
-        #THIS MIGHT HAVE TO BE FIXED TO TAKE INTO ACCOUNT NEW EVENTTABLE TABLE
-        event_list.append(event_to_geojson_alt(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9]))
+        userCount = attendancetable.query.filter_by(eventID = event[3]).count()
+        event_list.append(event_to_geojson_alt(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9],userCount))
     return str(event_list)
+
+#GET ATTENDANCE
+@app.route('/getattendance',methods=['GET'])
+def getattendance():
+    eventID = request.args.get('eventID')
+    attendees = list(attendancetable.query.filter_by(eventID = eventID))
+    attendee_list = []
+
+    for ent in attendees:
+        attendee = users.query.filter_by(userID = ent.userID).first()
+        attendee_list.append(attendee)
+
+    return str(attendee_list)
 
 #HELPER FUNCTIONS
 
 #takes an info to make a json feature that represents an event
-def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,endTime,description):
+def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,endTime,description,attendance):
     return Feature(geometry=Point((x,y)),\
     properties={"userID":userID,\
     "eventID":eventID,\
@@ -207,10 +267,11 @@ def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,e
     "eventName":eventName,\
     "startTime":startTime,\
     "endTime":endTime,\
-    "description":description})
+    "description":description,\
+    "attendance":attendance})
 
 #takes an info to make a json feature that represents an event
-def event_to_geojson_alt(latitude,longitude,userID,eventID,firstName,lastName,eventName,startTime,endTime,description):
+def event_to_geojson_alt(latitude,longitude,userID,eventID,firstName,lastName,eventName,startTime,endTime,description,attendance):
     return geojson.dumps({"latitude": latitude,\
     "longitude": longitude,\
     "eventID": eventID,\
@@ -220,7 +281,8 @@ def event_to_geojson_alt(latitude,longitude,userID,eventID,firstName,lastName,ev
     "eventName": eventName,\
     "startTime":str( startTime),\
     "endTime":str( endTime),\
-    "description": description})
+    "description": description,\
+    "attendance":attendance})
 
 
 #TABLES
@@ -289,10 +351,10 @@ class eventtable(db.Model):
 #    status = db.Column('status',db.Enum('accepted','rejected','pending'),primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
 
 #Attendance table
-#class attendancetable(db.Model):
-#    __tablename__ = 'attendancetable'
-#    userID = db.Column('userID',db.BigInteger,primary_key=True,ForeignKey("users.userID",ondelete="CASCADE"),nullable=False)
-#    eventID = db.Column('eventID',db.BigInteger,primary_key=True,ForeignKey("eventtable.eventID",ondelete="CASCADE"),nullable=False)
+class attendancetable(db.Model):
+    __tablename__ = 'attendancetable'
+    userID = db.Column('userID',db.BigInteger,ForeignKey("users.userID",ondelete="CASCADE"),primary_key=True)
+    eventID = db.Column('eventID',db.BigInteger,ForeignKey("eventtable.eventID",ondelete="CASCADE"),primary_key=True)
 
 #Run App
 if __name__ == "__main__":
