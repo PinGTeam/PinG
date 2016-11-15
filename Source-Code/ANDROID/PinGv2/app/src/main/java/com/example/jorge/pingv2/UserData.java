@@ -4,6 +4,7 @@ import android.util.Base64;
 
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
 import okhttp3.FormBody;
@@ -13,7 +14,7 @@ import okhttp3.RequestBody;
  * Created by Richard Hamm on 11/3/2016.
  */
 
-public class UserData {
+public class UserData implements Serializable{
 
     public int userId;
     public String userName;

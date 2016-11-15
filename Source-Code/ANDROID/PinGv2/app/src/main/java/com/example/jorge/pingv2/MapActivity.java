@@ -1,22 +1,27 @@
 package com.example.jorge.pingv2;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.ImageButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -28,99 +33,127 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
-
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleMap.OnInfoWindowClickListener,
+public class MapActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
+        GoogleMap.OnInfoWindowClickListener,
         GoogleApiClient.OnConnectionFailedListener {
 
+    SupportMapFragment sMapFragment;
     private GoogleMap mMap;
-    private LatLng theCoords;
-    private boolean firstLoad;
     private GoogleApiClient mApiClient;
+    private boolean firstLoad;
     private LocationRequest mLocReq;
-    private ImageButton userProfileButton;
-    private String allEventsString;
-    private String eName, eDescription, eStartTime, eEndTime;
-    private String userID, userFname, userLname;
+    private LatLng theCoords;
+    private int theUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sMapFragment = SupportMapFragment.newInstance();
+        setContentView(R.layout.activity_map);
 
-        //will only jump to current location on true
+        UserData currentUserInfo = (UserData) getIntent().getSerializableExtra("UserData");
+        theUserID = currentUserInfo.userId;
+
+        //theUser = "12";
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent startCreateEvent = new Intent(getApplicationContext(), CreateEventActivity.class);
+
+                Bundle createPingInfo = new Bundle();
+                createPingInfo.putParcelable("theCoords", theCoords);
+                createPingInfo.putInt("theUser", theUserID);
+                startCreateEvent.putExtras(createPingInfo);
+                startActivity(startCreateEvent);
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        sMapFragment.getMapAsync(this);
+
+        android.app.FragmentManager mapFragmentManager = getFragmentManager();
+        android.support.v4.app.FragmentManager sFM = getSupportFragmentManager();
+
+        sFM.beginTransaction().add(R.id.map, sMapFragment).commit();
+
         firstLoad = true;
 
-        //check if google play services is available
-        if(checkGoogleServices()) {
-            setContentView(R.layout.activity_map);
-
-            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
-
-            //user image clicked -> user profile activity
-            userProfileButton = (ImageButton) findViewById(R.id.imageButton);
-            userProfileButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent startUserProfile = new Intent(getApplicationContext(), UserProfileActivity.class);
-                    startActivity(startUserProfile);
-                }
-            });
-
-            //ping button clicked -> create ping activity
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent startCreateEvent = new Intent(getApplicationContext(), CreateEventActivity.class);
-                    startActivity(startCreateEvent);
-                }
-            });
-
-        }
-        else {
-            finish();
-        }
     }
 
-    //checks google play services
-    private boolean checkGoogleServices() {
-        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
-        int isAvailable = api.isGooglePlayServicesAvailable(this);
-
-        if (isAvailable == ConnectionResult.SUCCESS)
-            return true;
-        else if (api.isUserResolvableError(isAvailable)) {
-            Dialog box = api.getErrorDialog(this, isAvailable, 0);
-            box.show();
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
-            Toast.makeText(this, "Cannot connect to Google Play Services", Toast.LENGTH_LONG).show();
+            super.onBackPressed();
         }
-        return false;
     }
 
-    //once the map is ready
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.map, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -147,11 +180,41 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mApiClient.connect();
     }
 
-    //when we click the info window, go to edit screen. Uses same screen as create event
+    @Override
+    public void onLocationChanged(Location location) {
+        //check for location
+        if(location == null) {
+            Toast.makeText(this, "Cannot get current location", Toast.LENGTH_LONG).show();
+        }
+
+        //if we find it, allow the placement of marker
+        else {
+            final LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+
+            //save current coordinates
+            theCoords = loc;
+
+            //on first load, jump to current location
+            if(firstLoad == true) {
+                moveToLocation(loc.latitude, loc.longitude, 18);
+                firstLoad = false;
+            }
+
+            //call async task to retrieve pings from database
+            //new GetMarkerData().execute();
+        }
+    }
+
+    ///jumps to location
+    private void moveToLocation(double latitude, double longitude, int zoom) {
+        LatLng location = new LatLng(latitude, longitude);
+        CameraUpdate cam = CameraUpdateFactory.newLatLngZoom(location, zoom);
+        mMap.moveCamera(cam);
+    }
+
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Intent startCreateEvent = new Intent(getApplicationContext(), CreateEventActivity.class);
-        startActivity(startCreateEvent);
+        //TODO: when clicked go to edit event screen
     }
 
     @Override
@@ -174,73 +237,5 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-    }
-
-    //when the location is changed. Runs many times
-    @Override
-    public void onLocationChanged(Location location) {
-        //check for location
-        if(location == null) {
-            Toast.makeText(this, "Cannot get current location", Toast.LENGTH_LONG).show();
-        }
-
-        //if we find it, allow the placement of marker
-        else {
-            final LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-
-            //save current coordinates
-            theCoords = loc;
-
-            //on first load, jump to current location
-            if(firstLoad == true) {
-                moveToLocation(loc.latitude, loc.longitude, 18);
-                firstLoad = false;
-            }
-
-            //call async task to retrieve pings from database
-            new GetMarkerData().execute();
-        }
-    }
-
-    ///jumps to location
-    private void moveToLocation(double latitude, double longitude, int zoom) {
-        LatLng location = new LatLng(latitude, longitude);
-        CameraUpdate cam = CameraUpdateFactory.newLatLngZoom(location, zoom);
-        mMap.moveCamera(cam);
-    }
-
-    //async get marker
-    private class GetMarkerData extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            OkHttpClient client = new OkHttpClient();
-
-            HttpUrl url = HttpUrl.parse("http://162.243.15.139/getnearevents_alt");
-            HttpUrl.Builder myBuilder = url.newBuilder();
-            myBuilder.addQueryParameter("longitude", String.valueOf(theCoords.longitude));
-            myBuilder.addQueryParameter("latitude", String.valueOf(theCoords.latitude));
-
-            Request request = new  Request.Builder()
-                    .url(myBuilder.build())
-                    .build();
-
-            try {
-                Response response = client.newCall(request).execute();
-                if(!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-                allEventsString = response.body().string();
-
-                response.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-                //ArrayList<EventModel> listOfEvents = EventModel.fromArrayJson(allEventsString);
-        }
     }
 }

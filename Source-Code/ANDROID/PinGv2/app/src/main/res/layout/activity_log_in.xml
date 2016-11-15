@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.jorge.pingv2.LogIn">
+    tools:context="com.example.jorge.pingv3.LogInActivity">
 
     <TextView
         android:text="Don't have an account?"

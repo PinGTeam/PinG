@@ -1,60 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.jorge.pingv2.MapWrapperLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:id="@+id/map_relative_layout"
-    tools:context="com.example.jorge.pingv2.MapActivity">
+    tools:openDrawer="start">
 
-    <android.support.v7.widget.Toolbar
+    <include
+        layout="@layout/app_bar_map"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:minHeight="?attr/actionBarSize"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        android:id="@+id/userToolBar"
-        android:layout_gravity="top"
-        tools:visibility="visible"
-        android:gravity="top"
-        android:foregroundGravity="top" />
+        android:layout_height="match_parent" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/pingbutton"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="23dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_map"
+        app:menu="@menu/activity_map_drawer" />
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context="com.example.jorge.pingv2.MapActivity"
-        android:layout_below="@+id/userToolBar"
-        android:layout_alignParentStart="true" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/userbutton"
-        android:id="@+id/imageButton"
-        android:layout_above="@+id/map"
-        android:layout_alignParentStart="true"
-        android:cropToPadding="false"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true" />
-
-</com.example.jorge.pingv2.MapWrapperLayout>
-
-    <!--app:srcCompat="@drawable/userbutton"-->
+</android.support.v4.widget.DrawerLayout>
