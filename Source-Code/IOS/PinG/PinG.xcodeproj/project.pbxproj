@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E44BD47C1DDA869600A65869 /* AddEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */; };
+		E44BD47E1DDA97CE00A65869 /* SegueFromLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */; };
 		E4A26F4C1DD3D66E0036484C /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */; };
 		E4A26F4E1DD3D7D70036484C /* AnnotationViewClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A26F4D1DD3D7D70036484C /* AnnotationViewClass.swift */; };
 		E4A26F501DD3D7F20036484C /* AnnotationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4A26F4F1DD3D7F20036484C /* AnnotationView.xib */; };
@@ -46,6 +48,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventTableViewController.swift; sourceTree = "<group>"; };
+		E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueFromLeft.swift; sourceTree = "<group>"; };
 		E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
 		E4A26F4D1DD3D7D70036484C /* AnnotationViewClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationViewClass.swift; sourceTree = "<group>"; };
 		E4A26F4F1DD3D7F20036484C /* AnnotationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnnotationView.xib; sourceTree = "<group>"; };
@@ -141,8 +145,10 @@
 				EB8B84711DC2B1F700893744 /* NewUserViewController.swift */,
 				EB0642BC1DAB317600BDFEDC /* MapViewController.swift */,
 				E4D0A2D41DD2A8280045070B /* ProfileViewController.swift */,
+				E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */,
 				EB8B2DD21DAD943900920A81 /* Ping.swift */,
 				EB0642891DAB20D500BDFEDC /* Main.storyboard */,
+				E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */,
 				EB06428C1DAB20D500BDFEDC /* Assets.xcassets */,
 				EB06428E1DAB20D500BDFEDC /* LaunchScreen.storyboard */,
 				EB0642911DAB20D500BDFEDC /* Info.plist */,
@@ -329,6 +335,8 @@
 				EB0642BD1DAB317600BDFEDC /* MapViewController.swift in Sources */,
 				E4A26F4E1DD3D7D70036484C /* AnnotationViewClass.swift in Sources */,
 				EB0642861DAB20D500BDFEDC /* AppDelegate.swift in Sources */,
+				E44BD47E1DDA97CE00A65869 /* SegueFromLeft.swift in Sources */,
+				E44BD47C1DDA869600A65869 /* AddEventTableViewController.swift in Sources */,
 				EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */,
 				EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */,
 				E4D0A2D51DD2A8280045070B /* ProfileViewController.swift in Sources */,

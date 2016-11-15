@@ -19,6 +19,8 @@ class Ping: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var eventName: String?
     var eventDescription: String?
+    var fromTime: Date?
+    var toTime: Date?
     var image: UIImage!
     var added = false
     

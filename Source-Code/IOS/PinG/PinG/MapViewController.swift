@@ -94,17 +94,25 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             let description = feature["properties"]?["description"] as! String
                             let eventName = feature["properties"]?["eventName"] as! String
                             let userID = feature["properties"]?["userID"] as! Int
-                            //let fname = feature["properties"]?["firstName"] as! String
-                            //let lname = feature["properties"]?["lastName"] as! String
+                            let fname = feature["properties"]?["firstName"] as! String
+                            let lname = feature["properties"]?["lastName"] as! String
+                            let fromTime = feature["properties"]?["startTime"] as! String
+                            let toTime = feature["properties"]?["endTime"] as! String
+                            
+                            let df = DateFormatter()
+                            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                            df.timeZone = TimeZone(abbreviation: "UTC")
                             
                             print("\(eventName) at (\((point?[1])!),\((point?[0])!) for uID \(userID)")
                             //Populate local ping map
                             let ping = Ping(coordinate: CLLocationCoordinate2DMake(point?[1] as! CLLocationDegrees, point?[0] as! CLLocationDegrees))
                             ping.userID = userID
-                            //ping.firstName = fname
-                            //ping.lastName = lname
+                            ping.firstName = fname
+                            ping.lastName = lname
                             ping.eventName = eventName
                             ping.eventDescription = description
+                            ping.fromTime = df.date(from: fromTime)
+                            ping.toTime = df.date(from: toTime)
                             self.pingMap[userID] = ping
                         }
                         
@@ -336,14 +344,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             // Don't proceed with custom callout
             return
         }
+        let df = DateFormatter()
+        df.dateFormat = "h:mm a"
         let pingAnnotation = view.annotation as! Ping
         let views = Bundle.main.loadNibNamed("AnnotationView", owner: nil, options: nil)
         let calloutView = views?[0] as! AnnotationViewClass
         calloutView.eventNameLabel.text = pingAnnotation.eventName
-        //calloutView.nameLabel = pingAnnotation.firstName + " " + pingAnnotation.lastName
+        calloutView.nameLabel.text = "\(pingAnnotation.firstName!) \(pingAnnotation.lastName!)"
         calloutView.descriptionLabel.text = pingAnnotation.eventDescription
-        //calloutView.fromLabel.text = pingAnnotation.fromTime
-        //calloutView.toLabel.text = pingAnnotation.toTime
+        calloutView.fromLabel.text = "From \(df.string(from: pingAnnotation.fromTime!))"
+        calloutView.toLabel.text = "To \(df.string(from: pingAnnotation.toTime!))"
         
         
         calloutView.center = CGPoint(x: view.bounds.size.width / 2, y: -calloutView.bounds.size.height*0.52)
