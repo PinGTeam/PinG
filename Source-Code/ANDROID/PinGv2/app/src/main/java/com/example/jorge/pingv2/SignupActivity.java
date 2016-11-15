@@ -2,19 +2,20 @@ package com.example.jorge.pingv2;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.os.Bundle;
 import android.util.Base64;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.jorge.pingv2.LogInActivity;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
-import java.util.regex.Matcher;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -22,9 +23,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
-
-public class SignupActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     private boolean check;
     private Button signUpButton;
@@ -33,9 +32,9 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_sign_up);
 
-        signUpButton = (Button) findViewById(R.id.button2);
+        signUpButton = (Button) findViewById(R.id.createUser);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,7 +102,7 @@ public class SignupActivity extends AppCompatActivity {
                     }
                     //else error message
                     else {
-                        Toast.makeText(SignupActivity.this, "Passwords don't match. Try again", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "Passwords don't match. Try again", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -154,19 +153,19 @@ public class SignupActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             String positive = "1";
             if (Objects.equals(middleTierResponse, positive)) {
-                Toast.makeText(SignupActivity.this, "User created. You may now sign in", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), LogIn.class);
+                Toast.makeText(SignUpActivity.this, "User created. You may now sign in", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
                 startActivity(intent);
             } else {
                 switch (middleTierResponse) {
                     case "-1":
-                        Toast.makeText(SignupActivity.this, "Email already exists", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "Email already exists", Toast.LENGTH_SHORT).show();
                         break;
                     case "-2":
-                        Toast.makeText(SignupActivity.this, "User name already exists", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "User name already exists", Toast.LENGTH_SHORT).show();
                         break;
                     case "-3":
-                        Toast.makeText(SignupActivity.this, "User name and email exist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "User name and email exist", Toast.LENGTH_SHORT).show();
                 }
             }
         }
