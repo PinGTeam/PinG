@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.jorge.pingv2.LogInActivity;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;

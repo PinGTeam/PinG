@@ -16,7 +16,7 @@ import okhttp3.RequestBody;
 
 public class UserData implements Serializable{
 
-    public int userId;
+    public int userID;
     public String userName;
     public String firstName;
     public String lastName;

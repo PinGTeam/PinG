@@ -30,7 +30,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private String eventName, eventDescription, eventStartTime, eventEndTime;
     private Button createEvent;
     private LatLng currentCoords;
-    private String currentUser; //DOES THIS HAVE TO BE AN INT
+    private int currentUser; //DOES THIS HAVE TO BE AN INT
     private TextView selectStartTime, selectEndTime;
 
     @Override
@@ -38,20 +38,22 @@ public class CreateEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        //TODO: get Latlng and userID from mapactivity
         Bundle extras = getIntent().getExtras();
         currentCoords = extras.getParcelable("theCoords");
-        currentUser = extras.getString("theUser");
+        currentUser = extras.getInt("theUser");
 
         System.out.println("USERID: " + currentUser);
         System.out.println("LAT: " + currentCoords.latitude + "   |   LONG: " + currentCoords.longitude);
 
+        //TODO: this shit aint working
         selectStartTime = (TextView) findViewById(R.id.eventStartInput);
         selectStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 SelectTimeDialog timeWindow = new SelectTimeDialog();
                 timeWindow.show(getSupportFragmentManager(), "dialog_select_time_dialog");
+
             }
         });
 
