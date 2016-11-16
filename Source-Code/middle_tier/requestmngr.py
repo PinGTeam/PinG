@@ -193,8 +193,8 @@ def getevents():
 
 #GET ONE EVENT
 #Quering for one event by id
-@app.route('/getevent')
-def getonevent():
+@app.route('/getevent_alt')
+def getoneevent():
     eventID = request.args.get('eventID')
     event = eventtable.query.filter_by(eventID = eventID).first()
 
@@ -207,6 +207,8 @@ def getnearevents():
     connection = engine.raw_connection()
     cursor = connection.cursor()
 
+    userID_caller = 0 if not request.args.get('userID') else request.args.get('userID')
+
     cursor.callproc("GetEvents3",\
     [request.args.get('latitude'),\
     request.args.get('longitude')])
@@ -218,7 +220,7 @@ def getnearevents():
     event_list = []
     for event in results:
         userCount = attendancetable.query.filter_by(eventID = event[3]).count()
-        userAttending = attendancetable.query.filter_by(eventID = event[3],userID = request.args.get('userID')).first()
+        userAttending = attendancetable.query.filter_by(eventID = event[3],userID = userID_caller).first()
         if not userAttending:
             userAttending = 0
         else:
@@ -233,6 +235,8 @@ def getnearevents_alt():
     connection = engine.raw_connection()
     cursor = connection.cursor()
 
+    userID_caller = 0 if not request.args.get('userID') else request.args.get('userID')
+
     cursor.callproc("GetEvents3",\
     [request.args.get('latitude'),\
     request.args.get('longitude')])
@@ -244,7 +248,7 @@ def getnearevents_alt():
     event_list = []
     for event in results:
         userCount = attendancetable.query.filter_by(eventID = event[3]).count()
-        userAttending = attendancetable.query.filter_by(eventID = event[3],userID = request.args.get('userID')).first()
+        userAttending = attendancetable.query.filter_by(eventID = event[3],userID = userID_caller).first()
         if not userAttending:
             userAttending = 0
         else:
