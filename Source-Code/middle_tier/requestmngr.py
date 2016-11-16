@@ -187,8 +187,7 @@ def getevents():
     events = eventtable.query.all()
     event_list = []
     for event in events:
-        if event.endTime > datetime.utcnow():
-            event_list.append(event.json_repr())
+        event_list.append(event.json_repr())
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #GET ONE EVENT
