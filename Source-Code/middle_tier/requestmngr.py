@@ -198,7 +198,7 @@ def getonevent():
     eventID = request.args.get('eventID')
     event = eventtable.query.filter_by(eventID = eventID).first()
 
-    return event.json_repr_alt()
+    return str(event.json_repr_alt())
 
 #GET EVENTS
 #Calling GetEvents Stored procedure
@@ -218,7 +218,12 @@ def getnearevents():
     event_list = []
     for event in results:
         userCount = attendancetable.query.filter_by(eventID = event[3]).count()
-        event_list.append(event_to_geojson(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9],userCount))
+        userAttending = attendancetable.query.filter_by(eventID = event[3],userID = request.args.get('userID')).first()
+        if not userAttending:
+            userAttending = 0
+        else:
+            userAttending = 1
+        event_list.append(event_to_geojson(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9],userCount,userAttending))
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #GET EVENTS
@@ -239,7 +244,12 @@ def getnearevents_alt():
     event_list = []
     for event in results:
         userCount = attendancetable.query.filter_by(eventID = event[3]).count()
-        event_list.append(event_to_geojson_alt(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9],userCount))
+        userAttending = attendancetable.query.filter_by(eventID = event[3],userID = request.args.get('userID')).first()
+        if not userAttending:
+            userAttending = 0
+        else:
+            userAttending = 1
+        event_list.append(event_to_geojson_alt(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9],userCount,userAttending))
     return str(event_list)
 
 #GET ATTENDANCE
@@ -258,7 +268,7 @@ def getattendance():
 #HELPER FUNCTIONS
 
 #takes an info to make a json feature that represents an event
-def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,endTime,description,attendance):
+def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,endTime,description,attendance,attending):
     return Feature(geometry=Point((x,y)),\
     properties={"userID":userID,\
     "eventID":eventID,\
@@ -268,21 +278,23 @@ def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,e
     "startTime":startTime,\
     "endTime":endTime,\
     "description":description,\
-    "attendance":attendance})
+    "attendance":attendance,\
+    "attending":attending})
 
 #takes an info to make a json feature that represents an event
-def event_to_geojson_alt(latitude,longitude,userID,eventID,firstName,lastName,eventName,startTime,endTime,description,attendance):
-    return geojson.dumps({"latitude": latitude,\
+def event_to_geojson_alt(latitude,longitude,userID,eventID,firstName,lastName,eventName,startTime,endTime,description,attendance,attending):
+    return {"latitude": latitude,\
     "longitude": longitude,\
-    "eventID": eventID,\
-    "userID": userID,\
+    "eventID": int(eventID),\
+    "userID": int(userID),\
     "firstName":firstName,\
     "lastName":lastName,\
     "eventName": eventName,\
     "startTime":str( startTime),\
     "endTime":str( endTime),\
     "description": description,\
-    "attendance":attendance})
+    "attendance":int(attendance),\
+    "attending":int(attending)}
 
 
 #TABLES
@@ -322,16 +334,14 @@ class eventtable(db.Model):
         "description":self.description})
 
     def json_repr_alt(self):
-        return geojson.dumps({"latitude": latitude,\
-        "longitude": longitude,\
-        "eventID": eventID,\
-        "userID": userID,\
-        "firstName":firstName,\
-        "lastName":lastName,\
-        "eventName": eventName,\
-        "startTime":str( startTime),\
-        "endTime":str( endTime),\
-        "description": description})
+        return {"latitude": self.latitude,\
+        "longitude": self.longitude,\
+        "userID": int(self.userID),\
+        "eventID": int(self.eventID),\
+        "eventName": str(self.eventName),\
+        "startTime": str(self.startTime),\
+        "endTime": str(self.endTime),\
+        "description": str(self.description)}
 
     def __repr__(self):
         geojson_rep = self.json_repr()
