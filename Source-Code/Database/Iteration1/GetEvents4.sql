@@ -1,12 +1,12 @@
 USE `ping`;
 
-DROP procedure IF EXISTS `GetEvents3`;
+DROP procedure IF EXISTS `GetEvents4`;
 
 
 
 DELIMITER $$
 USE `ping`$$
-CREATE PROCEDURE `GetEvents3`(paramLatitude double,  paramLongitude double)
+CREATE PROCEDURE `GetEvents4`(paramLatitude double,  paramLongitude double)
 BEGIN
 
 DECLARE distMiles INT;
