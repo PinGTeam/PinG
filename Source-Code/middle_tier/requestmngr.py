@@ -1,6 +1,7 @@
 # Implemented by: Juan and Monica
 import geojson
 import json
+import base64
 from geojson import Feature, Point, FeatureCollection
 from flask import Flask, url_for, request
 from flask_sqlalchemy import SQLAlchemy
@@ -34,6 +35,17 @@ def getusers():
     else:
         return str
 
+#LOGIN
+#Checking login
+@app.route('/login',methods=['POST'])
+def login():
+    username = request.form['userName']
+    password = request.form['password']
+    results = users.query.filter_by(userName = username,password = password).first()
+    if not results:
+        return "-1"
+    else:
+        return str(results)
 
 #ADDING USER
 #Calling InsertUser Stored procedure
@@ -42,10 +54,12 @@ def getusers():
 def insertuser():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    username = request.form['UserName']
-    name = request.form['Name']
-    lname = request.form['LName']
-    cursor.callproc("InsertUser", [username, name,lname])
+    username = request.form['userName']
+    name = request.form['firstName']
+    lname = request.form['lastName']
+    password = request.form['password']
+    email = request.form['email']
+    cursor.callproc("InsertUser", [username,password,name,lname,email])
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
@@ -60,14 +74,45 @@ def insertuser():
 def insertevent():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    location = request.form['location']
-    locfeat = json.loads(location)
-    cursor.callproc("InsertEvent", [locfeat['properties']['userID'],locfeat['properties']['eventName'],locfeat['geometry']['coordinates'][0],locfeat['geometry']['coordinates'][1],locfeat['properties']['time'],locfeat['properties']['description']])
+    event = request.form['event']
+    locfeat = json.loads(event)
+
+    cursor.callproc("InsertEvent",\
+    [locfeat['properties']['userID'],\
+    locfeat['properties']['eventName'],\
+    locfeat['geometry']['coordinates'][0],\
+    locfeat['geometry']['coordinates'][1],\
+    locfeat['properties']['startTime'],\
+    locfeat['properties']['endTime'],\
+    locfeat['properties']['description']])
+
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
     connection.close()
-    return "hello"
+    return "1"
+
+#EDITING EVENT
+#In a future implementation we can reduce overhead by updating
+#individual elements of the event rather than all the elements
+@app.route('/editevent',methods=['POST'])
+def editevent():
+    event_geojson = request.form['event']
+    print event_geojson
+    print type(event_geojson)
+    locfeat = json.loads(event_geojson)
+
+    event = eventtable.query.filter_by(eventID = locfeat['properties']['eventID']).first()
+
+    event.latitude = locfeat['geometry']['coordinates'][0]
+    event.longitude = locfeat['geometry']['coordinates'][1]
+    event.eventName = locfeat['properties']['eventName']
+    event.startTime = locfeat['properties']['startTime']
+    event.endTime = locfeat['properties']['endTime']
+    event.description = locfeat['properties']['description']
+    db.session.commit()
+
+    return "1"
 
 #GET EVENTS
 #Quering list of events from the database
@@ -76,7 +121,8 @@ def getevents():
     events = eventtable.query.all()
     event_list = []
     for event in events:
-        event_list.append(event_to_geojson(event.latitude,event.longitude,event.userID,event.eventName,str(event.time),event.description))
+        if event.endTime > datetime.utcnow():
+            event_list.append(event.json_repr())
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #GET EVENTS
@@ -85,21 +131,34 @@ def getevents():
 def getnearevents():
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    cursor.callproc("GetEvents", [request.args.get('topLatitude'),request.args.get('topLongitude'),request.args.get('bottomLatitude'),request.args.get('bottomLongitude')])
+
+    cursor.callproc("GetEvents3",\
+    [request.args.get('latitude'),\
+    request.args.get('longitude')])
+
     results = list(cursor.fetchall())
     cursor.close()
     connection.commit()
     connection.close()
     event_list = []
     for event in results:
-        event_list.append(event_to_geojson(event[4],event[3],event[0],event[5],str(event[6]),event[7]))
+        #THIS MIGHT HAVE TO BE FIXED TO TAKE INTO ACCOUNT NEW EVENTTABLE TABLE
+        event_list.append(event_to_geojson(event[0],event[1],event[2],event[3],event[4],event[5],event[6],str(event[7]),str(event[8]),event[9]))
     return geojson.dumps(FeatureCollection(event_list),sort_keys=True)
 
 #HELPER FUNCTIONS
 
 #takes an info to make a json feature that represents an event
-def event_to_geojson(x,y,userID,eventName,time,description):
-    return Feature(geometry=Point((x,y)),properties={"userID":userID,"eventName":eventName,"time":time,"description":description})
+def event_to_geojson(x,y,userID,eventID,firstName,lastName,eventName,startTime,endTime,description):
+    return Feature(geometry=Point((x,y)),\
+    properties={"userID":userID,\
+    "eventID":eventID,\
+    "firstName":firstName,\
+    "lastName":lastName,\
+    "eventName":eventName,\
+    "startTime":startTime,\
+    "endTime":endTime,\
+    "description":description})
 
 #TABLES
 #Users table
@@ -107,11 +166,13 @@ class users(db.Model):
     __tablename__ = 'users'
     userID = db.Column('userID',db.BigInteger, primary_key=True, autoincrement=True)
     userName = db.Column('userName',db.String(20), nullable=False)
+    password = db.Column('password',db.String(60), nullable=False)
     firstName = db.Column('firstName',db.String(25), nullable=False)
     lastName = db.Column('lastName',db.String(25), nullable=False)
+    email = db.Column('email',db.String(320), nullable=False)
 
     def __repr__(self):
-        return '<User {}>'.format(self.userID)
+        return '{{"userID":{},"userName":"{}","firstName":"{}","lastName":"{}"}}'.format(self.userID,self.userName,self.firstName,self.lastName)
 
 #Events table
 class eventtable(db.Model):
@@ -121,12 +182,24 @@ class eventtable(db.Model):
     latitude = db.Column('latitude',db.Float,nullable=False)
     longitude = db.Column('longitude',db.Float,nullable=False)
     eventName = db.Column('eventName',db.String(255),nullable=False)
-    time = db.Column('time',db.DateTime,nullable=False)
+    startTime = db.Column('startTime',db.DateTime,nullable=False)
+    endTime = db.Column('endTime',db.DateTime,nullable=False)
     description = db.Column('description',db.String(1024),nullable=True)
 
+    def json_repr(self):
+        return Feature(geometry=Point((self.latitude,self.longitude)),\
+        properties={\
+        "eventID":self.eventID,\
+        "userID":self.userID,\
+        "eventName":self.eventName,\
+        "startTime":str(self.startTime),\
+        "endTime":str(self.endTime),\
+        "description":self.description})
+
     def __repr__(self):
-        return '<User {}>'.format(self.userID)
+        geojson_rep = self.json_repr()
+        return geojson.dumps(geojson_rep,sort_keys=True)
 
 #Run App
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port="5001")

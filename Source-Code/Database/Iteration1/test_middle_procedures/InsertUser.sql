@@ -1,8 +1,8 @@
-USE `ping`;
+USE `test_middle`;
 DROP procedure IF EXISTS `InsertUser`;
 
 DELIMITER $$
-USE `ping`$$
+USE `test_middle`$$
 CREATE PROCEDURE `InsertUser`(parmUserName varchar(20), parmPassword varchar(60), parmFirstName varchar(25), parmLastName varchar(25), parmEmail varchar(320))
 BEGIN
     IF exists(SELECT * FROM users where email = parmEmail) AND exists(SELECT * FROM users where userName = parmUserName) THEN

@@ -35,6 +35,7 @@ class PinGTests: XCTestCase {
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
                 print("error=\(error)")
+                XCTAssert(false)
                 return
             
             }
@@ -44,6 +45,7 @@ class PinGTests: XCTestCase {
             if httpStatus.statusCode != 200 {
                 print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
                 print("response = \(response)")
+                XCTAssert(false)
             }
             else {
                 //Parse jason
@@ -52,10 +54,11 @@ class PinGTests: XCTestCase {
                     let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
                     
                     if let features = json["features"] as? [[String: AnyObject]] {
-                        
+                        XCTAssert(!features.isEmpty)
                         for feature in features {
                             
                             print(feature)
+                            
                         }
                         
                     }
@@ -75,6 +78,88 @@ class PinGTests: XCTestCase {
             Thread.sleep(forTimeInterval: 0.1)
         }
         
+    }
+    
+    func testLogin() {
+        var done = false
+        var succ = true
+        let username = "username1"
+        let password = "thepassword"
+        
+        print("Login button pressed")
+        let utf8str = password.data(using: String.Encoding.utf8)
+        let base64Encoded = utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+        print("password: \(base64Encoded!)")
+        
+        //HTTP Post method
+        var resString:String?
+        var resData:Data?
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/login")!)
+        request.httpMethod = "POST"
+        //Create post string via string concatenation
+        var postString = "userName=" + username
+        postString += "&password=" + base64Encoded!
+        request.httpBody = postString.data(using: .utf8)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
+            print("error=\(error)")
+            done = true
+            succ = false
+            XCTAssert(false)
+            return
+            
+            }
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                print("response = \(response)")
+                done = true
+                succ = false
+                XCTAssert(false)
+            }
+            
+            let responseString = String(data: data, encoding: .utf8)
+            print("responseString = \(responseString)")
+            resString = responseString!
+            resData = data
+            done = true
+            
+        }
+        task.resume()
+        
+        //stay in function until async completion
+        while !done {
+            Thread.sleep(forTimeInterval: 0.25)
+        }
+        print("password: \(base64Encoded)")
+        
+        if succ {
+            print("Begin retrieving json")
+            if resString == "-1" {
+                print("login failed xD")
+            }
+            else {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: resData!, options: .allowFragments) as! [String:AnyObject]
+                    
+                    print(json)
+                    print("UserID = \(json["userID"]!)")
+                    print("Username = \(json["userName"]!)")
+                    print("First name = \(json["firstName"]!)")
+                    print("Last name = \(json["lastName"]!)")
+                    
+                    //done
+                    XCTAssert(true)
+                    
+                    
+                } catch {
+                    print("Error with JSON: \(error)")
+                    XCTAssert(false)
+                }
+                
+                
+            }
+            
+        }
     }
     
     func testPOSTRequest() {
@@ -100,6 +185,40 @@ class PinGTests: XCTestCase {
             let responseString = String(data: data, encoding: .utf8)
             print("responseString = \(responseString)")
             
+            XCTAssert(responseString == "5")
+            succ = true
+        }
+        task.resume()
+        
+        while !succ {
+            Thread.sleep(forTimeInterval: 0.1)
+        }
+    }
+    
+    func testPOSTRequestFail() {
+        var succ = false
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/adduser")!)
+        request.httpMethod = "POST"
+        //Create post string via string concatenation
+        var postString = "UserName=" + "BigNice"
+        postString += "&Name=" + "Koji"
+        postString += "&LName=" + "Harlow"
+        request.httpBody = postString.data(using: .utf8)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
+            print("error=\(error)")
+            return
+            
+            }
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                print("response = \(response)")
+            }
+            
+            let responseString = String(data: data, encoding: .utf8)
+            print("responseString = \(responseString)")
+            
+            XCTAssert(responseString == "6")
             succ = true
         }
         task.resume()
@@ -126,11 +245,13 @@ class PinGTests: XCTestCase {
         let geojson = ["geometry": ["coordinates": [-3.5123, 175.5], "type": "Point"], "properties": ["description": "This is a test event", "eventName": "Party_at_Juans_House", "time": dateString, "userID": 1], "type": "Feature"] as [String : Any]
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))
-            let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)
-            print(jsonText)
+            let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)!
+            print("\(jsonText)")
         } catch {
             print(error.localizedDescription)
         }
+        
+        
     }
     
     func testPerformanceExample() {
