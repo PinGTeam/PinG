@@ -1,5 +1,5 @@
 //
-//  AddEventTableViewController.swift
+//  ViewEventTableViewController.swift
 //  PinG
 //
 //  Created by Arthur Xenophon Karapateas on 11/14/16.
@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class AddEventTableViewController: UITableViewController, UITextViewDelegate, CLLocationManagerDelegate {
+class ViewEventTableViewController: UITableViewController, UITextViewDelegate, CLLocationManagerDelegate {
     
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextView!
@@ -18,7 +18,6 @@ class AddEventTableViewController: UITableViewController, UITextViewDelegate, CL
     @IBOutlet weak var fromDatePicker: UIDatePicker!
     @IBOutlet weak var toDatePicker: UIDatePicker!
     
-    var timeStamp: Date!
     var placeholderLabel: UILabel!
     var fromDate: Date!
     var toDate: Date!
@@ -28,7 +27,6 @@ class AddEventTableViewController: UITableViewController, UITextViewDelegate, CL
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        timeStamp = Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -95,6 +93,8 @@ class AddEventTableViewController: UITableViewController, UITextViewDelegate, CL
             toDatePickerHidden = !toDatePickerHidden
         }
         
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
 
     // MARK: - Table view data source
@@ -176,17 +176,11 @@ class AddEventTableViewController: UITableViewController, UITextViewDelegate, CL
         if indexPath.section == 1 && indexPath.row == 0 {
             //print("From time edit")
             toggleDatePicker(fromDatePicker)
-            toDatePickerHidden = true
-            tableView.beginUpdates()
-            tableView.endUpdates()
             tableView.deselectRow(at: indexPath, animated: true)
         }
         else if indexPath.section == 1 && indexPath.row == 2 {
             //print("To time edit xD")
             toggleDatePicker(toDatePicker)
-            fromDatePickerHidden = true
-            tableView.beginUpdates()
-            tableView.endUpdates()
             tableView.deselectRow(at: indexPath, animated: true)
         }
         else if indexPath.section == 2 && indexPath.row == 0 {
@@ -196,7 +190,7 @@ class AddEventTableViewController: UITableViewController, UITextViewDelegate, CL
             var fdate = fromDatePicker.date
             var tdate = toDatePicker.date
             
-            if fdate < timeStamp {
+            if fdate < Date() {
                 fdate = Calendar.current.date(byAdding: .day, value: 1, to: fdate)!
             }
             while tdate < fdate {
@@ -214,7 +208,7 @@ class AddEventTableViewController: UITableViewController, UITextViewDelegate, CL
             print(eventDescription)
             
             //Create json string from dictionary
-            let geojson = ["geometry": ["coordinates": [currentCoordinate!.latitude, currentCoordinate!.longitude], "type": "Point"], "properties": ["description": eventDescription, "eventName": eventName, "startTime": fdateString, "endTime": tdateString, "userID": Shared.shared.userID!], "type": "Feature"] as [String : Any]
+            let geojson = ["geometry": ["coordinates": [currentCoordinate!.latitude, currentCoordinate!.longitude], "type": "Point"], "properties": ["description": eventName, "eventName": eventDescription, "startTime": fdateString, "endTime": tdateString, "userID": Shared.shared.userID!], "type": "Feature"] as [String : Any]
             
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))

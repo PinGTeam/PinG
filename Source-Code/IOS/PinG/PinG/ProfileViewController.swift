@@ -12,6 +12,7 @@ class ProfileViewController: UIViewController {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var logoutButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +28,17 @@ class ProfileViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func logoutPressed(sender: UIButton) {
+        print("xd")
+        //Clear shared data
+        Shared.shared.username = nil
+        Shared.shared.firstname = nil
+        Shared.shared.lastname = nil
+        Shared.shared.userID = nil
+        //Present login view controller
+        let view = self.storyboard?.instantiateViewController(withIdentifier: "loginNav")
+        self.present(view as! UINavigationController, animated: true, completion: nil)
+    }
 
     /*
     // MARK: - Navigation

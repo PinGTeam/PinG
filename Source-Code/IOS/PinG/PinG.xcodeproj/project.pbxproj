@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E42E1DB31DDBC95C00F07E12 /* dirac.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DAE1DDBC95C00F07E12 /* dirac.gpx */; };
+		E42E1DB41DDBC95C00F07E12 /* landisFountain.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DAF1DDBC95C00F07E12 /* landisFountain.gpx */; };
+		E42E1DB51DDBC95C00F07E12 /* majorsLab.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DB01DDBC95C00F07E12 /* majorsLab.gpx */; };
+		E42E1DB61DDBC95C00F07E12 /* slc.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DB11DDBC95C00F07E12 /* slc.gpx */; };
+		E42E1DB71DDBC95C00F07E12 /* stroz.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DB21DDBC95C00F07E12 /* stroz.gpx */; };
+		E42E1DB91DDBD16A00F07E12 /* ViewEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42E1DB81DDBD16A00F07E12 /* ViewEventTableViewController.swift */; };
 		E44BD47C1DDA869600A65869 /* AddEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */; };
 		E44BD47E1DDA97CE00A65869 /* SegueFromLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */; };
 		E4A26F4C1DD3D66E0036484C /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */; };
@@ -48,6 +54,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E42E1DAE1DDBC95C00F07E12 /* dirac.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = dirac.gpx; sourceTree = "<group>"; };
+		E42E1DAF1DDBC95C00F07E12 /* landisFountain.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = landisFountain.gpx; sourceTree = "<group>"; };
+		E42E1DB01DDBC95C00F07E12 /* majorsLab.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = majorsLab.gpx; sourceTree = "<group>"; };
+		E42E1DB11DDBC95C00F07E12 /* slc.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = slc.gpx; sourceTree = "<group>"; };
+		E42E1DB21DDBC95C00F07E12 /* stroz.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = stroz.gpx; sourceTree = "<group>"; };
+		E42E1DB81DDBD16A00F07E12 /* ViewEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewEventTableViewController.swift; sourceTree = "<group>"; };
 		E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventTableViewController.swift; sourceTree = "<group>"; };
 		E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueFromLeft.swift; sourceTree = "<group>"; };
 		E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
@@ -117,6 +129,11 @@
 		EB0642791DAB20D400BDFEDC = {
 			isa = PBXGroup;
 			children = (
+				E42E1DAE1DDBC95C00F07E12 /* dirac.gpx */,
+				E42E1DAF1DDBC95C00F07E12 /* landisFountain.gpx */,
+				E42E1DB01DDBC95C00F07E12 /* majorsLab.gpx */,
+				E42E1DB11DDBC95C00F07E12 /* slc.gpx */,
+				E42E1DB21DDBC95C00F07E12 /* stroz.gpx */,
 				EB0642841DAB20D400BDFEDC /* PinG */,
 				EB0642991DAB20D500BDFEDC /* PinGTests */,
 				EB0642A41DAB20D500BDFEDC /* PinGUITests */,
@@ -146,6 +163,7 @@
 				EB0642BC1DAB317600BDFEDC /* MapViewController.swift */,
 				E4D0A2D41DD2A8280045070B /* ProfileViewController.swift */,
 				E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */,
+				E42E1DB81DDBD16A00F07E12 /* ViewEventTableViewController.swift */,
 				EB8B2DD21DAD943900920A81 /* Ping.swift */,
 				EB0642891DAB20D500BDFEDC /* Main.storyboard */,
 				E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */,
@@ -300,9 +318,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E42E1DB71DDBC95C00F07E12 /* stroz.gpx in Resources */,
+				E42E1DB61DDBC95C00F07E12 /* slc.gpx in Resources */,
 				EB0642901DAB20D500BDFEDC /* LaunchScreen.storyboard in Resources */,
+				E42E1DB31DDBC95C00F07E12 /* dirac.gpx in Resources */,
 				E4A26F501DD3D7F20036484C /* AnnotationView.xib in Resources */,
+				E42E1DB41DDBC95C00F07E12 /* landisFountain.gpx in Resources */,
 				EB06428D1DAB20D500BDFEDC /* Assets.xcassets in Resources */,
+				E42E1DB51DDBC95C00F07E12 /* majorsLab.gpx in Resources */,
 				EB066A851DB4709900FC8C93 /* PingAddView.xib in Resources */,
 				EB06428B1DAB20D500BDFEDC /* Main.storyboard in Resources */,
 			);
@@ -339,6 +362,7 @@
 				E44BD47C1DDA869600A65869 /* AddEventTableViewController.swift in Sources */,
 				EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */,
 				EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */,
+				E42E1DB91DDBD16A00F07E12 /* ViewEventTableViewController.swift in Sources */,
 				E4D0A2D51DD2A8280045070B /* ProfileViewController.swift in Sources */,
 				EB8B84721DC2B1F700893744 /* NewUserViewController.swift in Sources */,
 			);

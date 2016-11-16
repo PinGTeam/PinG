@@ -32,6 +32,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("Map view did load..... xD")
         self.mapView.delegate = self
         
         //Set variables
@@ -49,6 +50,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         refresh()
         // Do any additional setup after loading the view.
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        print("View did appear haha")
+        if isTracking {
+            refresh()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -87,6 +95,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                     let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
                     
                     if let features = json["features"] as? [[String: AnyObject]] {
+                        self.pingMap.removeAll()
                         
                         for feature in features {
                             
@@ -113,7 +122,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             ping.eventDescription = description
                             ping.fromTime = df.date(from: fromTime)
                             ping.toTime = df.date(from: toTime)
-                            self.pingMap[userID] = ping
+                            if ping.toTime! > Date() {
+                                self.pingMap[userID] = ping
+                            }
                         }
                         
                     }
@@ -166,11 +177,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     func centerView() {
-        if currentCoordinate != nil {
-            mapView.setCenter(currentCoordinate, animated: true)
+        if isTracking {
+            if currentCoordinate != nil {
+                mapView.setCenter(currentCoordinate, animated: true)
+            }
+            let viewRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(currentCoordinate, 30*METERS_MILE, 30*METERS_MILE)
+            mapView.setRegion(viewRegion, animated: true)
         }
-        let viewRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(currentCoordinate, 4*METERS_MILE, 4*METERS_MILE)
-        //mapView.setRegion(viewRegion, animated: true)
         
     }
     
@@ -278,6 +291,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
     }
     
+    func getCurrentLocation() -> CLLocationCoordinate2D {
+        return currentCoordinate
+    }
+    
     //Interface actions
     @IBAction func refreshPressed(sender: UIBarButtonItem) {
         centerView()
@@ -312,11 +329,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         //Grab current location
         let location: CLLocation = locations.last!
         currentCoordinate = location.coordinate
+        Shared.shared.sharedLocation = currentCoordinate
         if firstCenter == false {
+            isTracking = true
             centerView()
             refresh()
             firstCenter = true
-            isTracking = true
         }
     }
     

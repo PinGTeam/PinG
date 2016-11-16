@@ -8,12 +8,20 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class Shared: NSObject {
     static let shared = Shared()
     
+    //User data
     var username: String!
     var firstname: String!
     var lastname: String!
     var userID: Int!
+    
+    //Location data
+    var sharedLocation: CLLocationCoordinate2D!
+    
+    //shared ping info
+    
 }
