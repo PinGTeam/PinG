@@ -22,6 +22,8 @@
             android:text="Event Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="16sp"
             android:id="@+id/textView2" />
 
         <EditText
@@ -36,6 +38,8 @@
             android:text="Event Description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="16sp"
             android:id="@+id/textView3" />
 
         <EditText
@@ -58,24 +62,29 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.02">
+            android:layout_weight="0.04">
 
             <TextView
                 android:text="Start Time:"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:textSize="16sp"
+                android:textColor="#000000"
                 android:id="@+id/textView7"
                 android:layout_weight="1" />
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="6.06" />
 
             <TextView
                 android:text="HH:MM"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="#000000"
+                android:textSize="16sp"
                 android:id="@+id/eventStartInput"
                 android:layout_weight="1" />
         </LinearLayout>
@@ -88,24 +97,30 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="0.04">
 
             <TextView
                 android:text="End Time:"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="45sp"
+                android:textSize="16sp"
+                android:textColor="#000000"
                 android:id="@+id/textView9"
                 android:layout_weight="1" />
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.17" />
+                android:layout_weight="6.12" />
 
             <TextView
                 android:text="HH:MM"
+                android:textColor="#000000"
+                android:textSize="16sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/eventEndInput"
                 android:layout_weight="1" />
         </LinearLayout>
@@ -131,7 +146,7 @@
 
             <Button
                 android:text="Create Event"
-                android:layout_width="146dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/createEventButton"
                 android:layout_weight="0.44" />
