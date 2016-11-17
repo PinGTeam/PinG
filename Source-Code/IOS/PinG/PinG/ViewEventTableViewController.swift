@@ -7,23 +7,18 @@
 //
 
 import UIKit
-import CoreLocation
 
-class ViewEventTableViewController: UITableViewController, UITextViewDelegate, CLLocationManagerDelegate {
+class ViewEventTableViewController: UITableViewController, UITextViewDelegate {
     
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextView!
     @IBOutlet weak var fromDetailLabel: UILabel!
     @IBOutlet weak var toDetailLabel: UILabel!
-    @IBOutlet weak var fromDatePicker: UIDatePicker!
-    @IBOutlet weak var toDatePicker: UIDatePicker!
+    @IBOutlet weak var attendingDetailLabel: UILabel!
     
     var placeholderLabel: UILabel!
     var fromDate: Date!
     var toDate: Date!
-    var fromDatePickerHidden = true
-    var toDatePickerHidden = true
-    var currentCoordinate = Shared.shared.sharedLocation
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,10 +50,6 @@ class ViewEventTableViewController: UITableViewController, UITextViewDelegate, C
         df.dateFormat = "h:mm a"
         fromDetailLabel.text = df.string(from: fromDate)
         toDetailLabel.text = df.string(from: toDate)
-        let tdate = Calendar.current.date(byAdding: .hour, value: 1, to: toDatePicker.date)!
-        toDatePicker.setDate(tdate, animated: false)
-        datePickerChanged(fromDatePicker)
-        datePickerChanged(toDatePicker)
         
     }
     
@@ -69,33 +60,7 @@ class ViewEventTableViewController: UITableViewController, UITextViewDelegate, C
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func datePickerUsed(sender: UIDatePicker) {
-        datePickerChanged(sender)
-    }
     
-    func datePickerChanged(_ picker: UIDatePicker) {
-        let df = DateFormatter()
-        df.dateFormat = "h:mm a"
-        
-        if picker == fromDatePicker {
-            fromDetailLabel.text = df.string(from: fromDatePicker.date)
-        }
-        else if picker == toDatePicker {
-            toDetailLabel.text = df.string(from: toDatePicker.date)
-        }
-    }
-    
-    func toggleDatePicker(_ picker: UIDatePicker) {
-        if picker == fromDatePicker {
-            fromDatePickerHidden = !fromDatePickerHidden
-        }
-        else if picker == toDatePicker {
-            toDatePickerHidden = !toDatePickerHidden
-        }
-        
-        tableView.beginUpdates()
-        tableView.endUpdates()
-    }
 
     // MARK: - Table view data source
 /*
@@ -174,123 +139,9 @@ class ViewEventTableViewController: UITableViewController, UITextViewDelegate, C
         //print(indexPath.row)
         
         if indexPath.section == 1 && indexPath.row == 0 {
-            //print("From time edit")
-            toggleDatePicker(fromDatePicker)
+            //code for selecting table cells
             tableView.deselectRow(at: indexPath, animated: true)
-        }
-        else if indexPath.section == 1 && indexPath.row == 2 {
-            //print("To time edit xD")
-            toggleDatePicker(toDatePicker)
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-        else if indexPath.section == 2 && indexPath.row == 0 {
-            
-            //add ping
-            
-            var fdate = fromDatePicker.date
-            var tdate = toDatePicker.date
-            
-            if fdate < Date() {
-                fdate = Calendar.current.date(byAdding: .day, value: 1, to: fdate)!
-            }
-            while tdate < fdate {
-                tdate = Calendar.current.date(byAdding: .day, value: 1, to: tdate)!
-            }
-            
-            let df = DateFormatter()
-            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            df.timeZone = TimeZone(abbreviation: "UTC")
-            let fdateString = df.string(from: fdate)
-            let tdateString = df.string(from: tdate)
-            let eventName = nameTextField.text!
-            let eventDescription = descriptionTextField.text!
-            print(eventName)
-            print(eventDescription)
-            
-            //Create json string from dictionary
-            let geojson = ["geometry": ["coordinates": [currentCoordinate!.latitude, currentCoordinate!.longitude], "type": "Point"], "properties": ["description": eventName, "eventName": eventDescription, "startTime": fdateString, "endTime": tdateString, "userID": Shared.shared.userID!], "type": "Feature"] as [String : Any]
-            
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))
-                let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)
-                var succ = false
-                var err = false
-                var msg = ""
-                
-                //Prepare to use http post method to add the jsonText on the server
-                var request = URLRequest(url: URL(string: "http://162.243.15.139/addevent")!)
-                request.httpMethod = "POST"
-                //Create post string
-                let postString = "event=" + jsonText!
-                print("\(postString)")
-                request.httpBody = postString.data(using: .utf8)
-                print("Begin post request")
-                let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
-                    print("error=\(error)")
-                    err = true
-                    msg = "Unable to connect to the internet."
-                    succ = true
-                    return
-                    
-                    }
-                    
-                    if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                        print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
-                        msg = "HTTP status code \(httpStatus.statusCode)"
-                        print("response = \(response)")
-                        succ = true
-                        err = true
-                    }
-                    
-                    let responseString = String(data: data, encoding: .utf8)
-                    print("responseString = \(responseString)")
-                    
-                    succ = true
-                }
-                task.resume()
-                
-                while !succ {
-                    Thread.sleep(forTimeInterval: 0.1)
-                }
-                
-                if err {
-                    //Create alert
-                    
-                    let Alert = UIAlertController(title: "Error connecting to server", message: msg, preferredStyle: UIAlertControllerStyle.alert)
-                    
-                    let OkButton = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-                    
-                    Alert.addAction(OkButton)
-                    
-                    self.present(Alert, animated: true, completion: nil)
-                }
-                
-                else {
-                    self.navigationController?.popViewController(animated: true)
-                }
-                
-            } catch {
-                print(error.localizedDescription)
-            }
         }
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if fromDatePickerHidden && indexPath.section == 1 && indexPath.row == 1 {
-            return 0
-        }
-        else if toDatePickerHidden && indexPath.section == 1 && indexPath.row == 3 {
-            return 0
-        }
-        else {
-            return super.tableView(tableView, heightForRowAt: indexPath)
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        //Grab current location
-        let location: CLLocation = locations.last!
-        currentCoordinate = location.coordinate
-        
-    }
 }

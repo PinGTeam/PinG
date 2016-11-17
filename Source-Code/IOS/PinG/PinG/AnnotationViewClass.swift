@@ -15,8 +15,6 @@ class AnnotationViewClass: UIView {
     @IBOutlet weak var descriptionLabel: UITextView!
     @IBOutlet weak var fromLabel: UILabel!
     @IBOutlet weak var toLabel: UILabel!
-    @IBOutlet weak var editButton: UIButton!
-    @IBOutlet weak var attendingSwitch: UISwitch!
 
     
 

@@ -373,14 +373,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         calloutView.fromLabel.text = "From \(df.string(from: pingAnnotation.fromTime!))"
         calloutView.toLabel.text = "To \(df.string(from: pingAnnotation.toTime!))"
         
-        
         calloutView.center = CGPoint(x: view.bounds.size.width / 2, y: -calloutView.bounds.size.height*0.52)
         view.addSubview(calloutView)
         let centerRegion = MKCoordinateRegionMake((view.annotation?.coordinate)!, mapView.region.span)
         var newView = mapView.convertRegion(centerRegion, toRectTo: nil)
-        newView = newView.offsetBy(dx: 0, dy: -150)
+        newView = newView.offsetBy(dx: 0, dy: -140)
         let newRegion = mapView.convert(newView, toRegionFrom: nil)
         mapView.setRegion(newRegion, animated: true)
+        
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState) {
+        print("haha xd")
     }
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
@@ -392,6 +396,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             }
         }
     }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        let pingAnnotation = view.annotation as! Ping
+        let views = Bundle.main.loadNibNamed("AnnotationView", owner: nil, options: nil)
+        let calloutView = views?[0] as! AnnotationViewClass
+        
+        print(control)
+    }
+    
     /*
     // MARK: - Navigation
 
