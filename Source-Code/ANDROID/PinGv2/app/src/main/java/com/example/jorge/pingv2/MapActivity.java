@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,16 +50,19 @@ public class MapActivity extends AppCompatActivity
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleMap.OnInfoWindowClickListener,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.InfoWindowAdapter {
 
     SupportMapFragment sMapFragment;
     private GoogleMap mMap;
     private GoogleApiClient mApiClient;
-    private boolean firstLoad;
+    private boolean firstLoad, firstread;
     private LocationRequest mLocReq;
     private LatLng theCoords;
     private int theUserID;
     private String allEventsString;
+    private ArrayList<EventModel> listOfMarkers;
+    private UserData currentUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,18 +70,24 @@ public class MapActivity extends AppCompatActivity
         sMapFragment = SupportMapFragment.newInstance();
         setContentView(R.layout.activity_map);
 
-        UserData currentUserInfo = (UserData) getIntent().getSerializableExtra("UserData");
+        //get user class from login
+        currentUserInfo = (UserData) getIntent().getSerializableExtra("UserData");
         theUserID = currentUserInfo.userID;
 
+        System.out.println("USERID: " + theUserID);
+
+        //set toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //set ping button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent startCreateEvent = new Intent(getApplicationContext(), CreateEventActivity.class);
 
+                //send info to ping creation screen
                 Bundle createPingInfo = new Bundle();
                 createPingInfo.putParcelable("theCoords", theCoords);
                 createPingInfo.putInt("theUser", theUserID);
@@ -85,6 +96,7 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
+        //flying nav bar and map placement
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -102,9 +114,9 @@ public class MapActivity extends AppCompatActivity
         sFM.beginTransaction().add(R.id.map, sMapFragment).commit();
 
         firstLoad = true;
-
     }
 
+    //closes nav bar when back is pressed
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,13 +127,22 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
+    //set elements on navbar and set text on nav bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.map, menu);
+
+        TextView sideUserName = (TextView)findViewById(R.id.sideBarUserFirstLast);
+        sideUserName.setText(currentUserInfo.firstName + " " + currentUserInfo.lastName);
+
+        TextView sideUserID = (TextView)findViewById(R.id.sideBarUserName);
+        sideUserID.setText(currentUserInfo.userName);
+
         return true;
     }
 
+    //for later iterations
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -137,12 +158,14 @@ public class MapActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    //for later iterations
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        /*
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
@@ -156,22 +179,25 @@ public class MapActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
+        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    //map is loaded, set preferences
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setInfoWindowAdapter(this);
         mMap.setOnInfoWindowClickListener(this);
-        mMap.setMaxZoomPreference(18);
-        mMap.setMinZoomPreference(18);
+        //mMap.setMaxZoomPreference(18);
+        //mMap.setMinZoomPreference(18);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setScrollGesturesEnabled(true);
-        mMap.getUiSettings().setZoomGesturesEnabled(false);
+        //mMap.getUiSettings().setZoomGesturesEnabled(false);
 
         //check if we can access location
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -188,6 +214,7 @@ public class MapActivity extends AppCompatActivity
         mApiClient.connect();
     }
 
+    //every time the location is changed
     @Override
     public void onLocationChanged(Location location) {
         //check for location
@@ -201,6 +228,7 @@ public class MapActivity extends AppCompatActivity
 
             //save current coordinates
             theCoords = loc;
+            System.out.println(theCoords);
 
             //on first load, jump to current location
             if(firstLoad == true) {
@@ -213,16 +241,22 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    ///jumps to location
+    //jumps to location
     private void moveToLocation(double latitude, double longitude, int zoom) {
         LatLng location = new LatLng(latitude, longitude);
         CameraUpdate cam = CameraUpdateFactory.newLatLngZoom(location, zoom);
         mMap.moveCamera(cam);
     }
 
+    //will implement event edit screen
     @Override
     public void onInfoWindowClick(Marker marker) {
         //TODO: when clicked go to edit event screen
+        //Toast.makeText(this, "CLICKED THE INFO WINDOW", Toast.LENGTH_SHORT).show();
+        EventModel currMarker = (EventModel) marker.getTag();
+        Toast.makeText(this, (int) currMarker.userID, Toast.LENGTH_SHORT).show();
+
+
     }
 
     @Override
@@ -238,15 +272,25 @@ public class MapActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onConnectionSuspended(int i) {}
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+
+    @Override
+    public View getInfoWindow(Marker marker) {
+        //View view = getLayoutInflater().inflate(R.layout.custom_event_info_window, null);
+        // return view;
+        return null;
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+    public View getInfoContents(Marker marker) {
+        View view = getLayoutInflater().inflate(R.layout.custom_event_info_window, null);
+        return view;
     }
 
+    //called at end of location changed, will update map with new pings
     private class GetMarkers extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -275,9 +319,18 @@ public class MapActivity extends AppCompatActivity
             return null;
         }
 
+        //after I get back all the events from middle tier, save them in array and then place them on the map
         @Override
         protected void onPostExecute(Void aVoid) {
-            ArrayList<EventModel> listOfEvents = EventModel.fromArrayJson(allEventsString);
+            //listOfMarkers = null;
+            listOfMarkers = EventModel.fromArrayJson(allEventsString);
+            for(int i = 0; i < listOfMarkers.size(); i++) {
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(listOfMarkers.get(i).longitude, listOfMarkers.get(i).latitude))
+                        .title(listOfMarkers.get(i).eventName)
+                        .snippet(listOfMarkers.get(i).description));
+                marker.setTag(listOfMarkers.get(i));
+            }
         }
     }
 }

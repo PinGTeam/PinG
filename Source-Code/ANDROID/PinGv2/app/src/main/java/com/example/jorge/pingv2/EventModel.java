@@ -13,14 +13,15 @@ import okhttp3.RequestBody;
 
 public class EventModel {
     public long eventID;
-    public long userID;
-    public String description;
     public String eventName;
-    public double latitude;
-    public double longitude;
-
     public String startTime;
+    public String firstName;
+    public double latitude;
+    public String lastName;
     public String endTime;
+    public long userID;
+    public double longitude;
+    public String description;
 
     public RequestBody getPostFormData() {
         Gson gs = new Gson();
