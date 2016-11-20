@@ -60,7 +60,8 @@ class NonEmptyDatabaseTestCase(unittest.TestCase):
 
     def test_getnearevent_db(self):
         rv = self.app.get('/getnearevents?longitude=120&latitude=12')
-        assert '{"features": [{"geometry": {"coordinates": [120.0, 12.0], "type": "Point"}, "properties": {"description": "testdesc", "endTime": "2018-10-10 20:20:20", "eventID": 1, "eventName": "testevent", "firstName": "testing", "lastName": "test", "startTime": "2018-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
+	assert '{"features": [{"geometry": {"coordinates": [120.0, 12.0], "type": "Point"}, "properties": {"attendance": 0, "attending": 0, "description": "testdesc", "endTime": "2018-10-10 20:20:20", "eventID": 1, "eventName": "testevent", "firstName": "testing", "lastName": "test", "startTime": "2018-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
+
 
     def test_login_success_db(self):
         rv = self.app.post('/login',data=dict(userName="testname",password="dGhlUGFzc3dvcmQ="))
@@ -122,6 +123,32 @@ class EmptyDatabaseWithAddsTestCase(unittest.TestCase):
         rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
         rv = self.app.post('/login',data=dict(userName="testUserName",password="dGhlcGFzc3dcmQ="))
         assert '-1' in rv.data
+
+class EmptyAttendanceTable(unittest.TestCase):
+
+    def setUp(self):
+	requestmngr.app.config['TESTING'] = True
+        requestmngr.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/test_middle'
+        requestmngr.engine = create_engine('mysql://juan:alfaro@localhost/test_middle')
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+        self.app = requestmngr.app.test_client()
+
+    def tearDown(self):
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+
+    def test_adduser_db(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        assert '1' in rv.data
+
+    def test_empty_at(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
+	rv = self.app.get('/getattendance', data=dict(eventID = 1))
+	assert '[]' in rv.data
+
+
 
 
 if __name__ == '__main__':
