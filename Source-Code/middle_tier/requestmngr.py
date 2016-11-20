@@ -90,6 +90,11 @@ def insertevent():
     cursor.close()
     connection.commit()
     connection.close()
+
+    new_attendance =  attendancetable(eventID = results[0][0],userID = locfeat['properties']['userID'])
+    db.session.add(new_attendance)
+    db.session.commit()
+
     return "1"
 
 #ADDING EVENT ALT
@@ -116,6 +121,11 @@ def insertevent_alt():
     cursor.close()
     connection.commit()
     connection.close()
+
+    new_attendance = attendancetable(eventID = results[0][0],userID = locfeat['userID'])
+    db.session.add(new_attendance)
+    db.session.commit()
+
     return "1"
 
 #EDITING EVENT
