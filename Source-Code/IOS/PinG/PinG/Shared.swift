@@ -34,4 +34,5 @@ final class Shared: NSObject {
     var eventLocation: CLLocationCoordinate2D!
     var attending: Int!
     var eventAttendance: Int!
+    var eventAttendees: Any?
 }

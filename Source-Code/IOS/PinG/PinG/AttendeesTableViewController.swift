@@ -9,10 +9,13 @@
 import UIKit
 
 class AttendeesTableViewController: UITableViewController {
+    
+    var tableData = Shared.shared.eventAttendees as! [AnyObject]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableData = Shared.shared.eventAttendees as! [AnyObject]
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -35,18 +38,19 @@ class AttendeesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         // Number of attendees
-        return 0
+        return tableData.count
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
 
         // Configure the cell...
+        cell.textLabel?.text = "\((tableData[indexPath.row]["firstName"]!)!) \((tableData[indexPath.row]["lastName"]!)!)"
 
         return cell
     }
-    */
+    
 
     /*
     // Override to support conditional editing of the table view.

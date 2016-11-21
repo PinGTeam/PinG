@@ -26,6 +26,7 @@ class PinGTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         print("Testing testing")
+        XCTAssert(true)
     }
     
     func testGETRequest() {
@@ -54,7 +55,7 @@ class PinGTests: XCTestCase {
                     let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
                     
                     if let features = json["features"] as? [[String: AnyObject]] {
-                        XCTAssert(!features.isEmpty)
+                        XCTAssert(!features.isEmpty)  //if data exists
                         for feature in features {
                             
                             print(feature)
@@ -136,6 +137,7 @@ class PinGTests: XCTestCase {
             print("Begin retrieving json")
             if resString == "-1" {
                 print("login failed xD")
+                XCTAssert(false)
             }
             else {
                 do {
@@ -162,6 +164,7 @@ class PinGTests: XCTestCase {
         }
     }
     
+    /* Legacy method
     func testPOSTRequest() {
         var succ = false
         var request = URLRequest(url: URL(string: "http://162.243.15.139/adduser")!)
@@ -227,13 +230,16 @@ class PinGTests: XCTestCase {
             Thread.sleep(forTimeInterval: 0.1)
         }
     }
+ 
+ */
     
     func testDateFormat() {
-        let date = Date()
+        let date = Date(timeIntervalSince1970: 0)
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let timestamp = df.string(from: date)
         print(timestamp)
+        XCTAssert(timestamp == "1969-12-31 19:00:00")
     }
     
     func testJSONCreate() {
@@ -247,11 +253,61 @@ class PinGTests: XCTestCase {
             let jsonData = try JSONSerialization.data(withJSONObject: geojson, options: .init(rawValue: 0))
             let jsonText = String(data: jsonData, encoding: String.Encoding.ascii)!
             print("\(jsonText)")
+            XCTAssert(jsonText != "")
         } catch {
             print(error.localizedDescription)
+            XCTAssert(false)
         }
+    }
+    
+    func testAttendeesGet() {
+        var succ = false
+        print("Testing request")
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/getattendance?eventID=1")!)
+        request.httpMethod = "GET"
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
+            print("error=\(error)")
+            XCTAssert(false)
+            succ = true
+            return
+            
+            }
+            let httpStatus = response as! HTTPURLResponse
+            print("In url session method")
+            
+            if httpStatus.statusCode != 200 {
+                print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                print("response = \(response)")
+                XCTAssert(false)
+            }
+            else {
+                //Parse jason
+                print("Begin retrieving json")
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [AnyObject]
+                    
+                    print(json)
+                    print(json.count)
+                    XCTAssert(json.count > 0)
+                    for attendee in json {
+                        print("\(attendee["firstName"]!) \(attendee["lastName"]!)")
+                    }
+                    
+                } catch {
+                    print("Error with JSON: \(error)")
+                    XCTAssert(false)
+                }
+                
+            }
+            
+            succ = true
+            
+        }
+        task.resume()
         
-        
+        while !succ {
+            Thread.sleep(forTimeInterval: 0.1)
+        }
     }
     
     func testPerformanceExample() {

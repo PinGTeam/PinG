@@ -16,12 +16,14 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var firstnameTextField: UITextField!
     @IBOutlet weak var lastnameTextField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var errorTextField: UITextView!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        errorTextField.text = ""
     }
 
     override func didReceiveMemoryWarning() {
@@ -86,12 +88,12 @@ class LoginViewController: UIViewController {
         while !done {
             Thread.sleep(forTimeInterval: 0.25)
         }
-        print("password: \(base64Encoded)")
         
         if succ {
             print("Begin retrieving json")
             if resString == "-1" {
                 print("login failed xD")
+                errorTextField.text = "Login failed. The username or password is incorrect."
             }
             else {
                 do {

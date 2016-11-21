@@ -172,6 +172,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                     annotation.eventDescription = self.pingMap[ids]?.eventDescription
                     */
                     let annotation = self.pingMap[ids]!
+                    
                     self.mapView.addAnnotation(annotation)
                     print("Added ping at (\(annotation.coordinate.latitude), \(annotation.coordinate.longitude))")
                 }
@@ -188,7 +189,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             if currentCoordinate != nil {
                 mapView.setCenter(currentCoordinate, animated: true)
             }
-            let viewRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(currentCoordinate, 30*METERS_MILE, 30*METERS_MILE)
+            let viewRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(currentCoordinate, 1*METERS_MILE,1*METERS_MILE)
             mapView.setRegion(viewRegion, animated: true)
         }
         
@@ -356,8 +357,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
         var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: "Pin")
         if annotationView == nil{
-            annotationView = AnnotationView(annotation: annotation, reuseIdentifier: "Pin")
+            annotationView = AnnotationView(annotation: annotation, reuseIdentifier: "Pin") as MKAnnotationView
             annotationView?.canShowCallout = false  ////disable default annotation view
+            
         }else{
             annotationView?.annotation = annotation
         }
@@ -390,6 +392,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         newView = newView.offsetBy(dx: 0, dy: -140)
         let newRegion = mapView.convert(newView, toRegionFrom: nil)
         mapView.setRegion(newRegion, animated: true)
+        
+        if pingAnnotation.attending != 1 {
+            calloutView.checkImage.isHidden = true
+        }
         
         //Prepare for possible view switch
         viewEventButton.isEnabled = true

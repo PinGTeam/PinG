@@ -242,8 +242,56 @@ class ViewEventTableViewController: UITableViewController, UITextViewDelegate {
         //print(indexPath.row)
         
         if indexPath.section == 2 && indexPath.row == 1 {
-            //view attendees 
             tableView.deselectRow(at: indexPath, animated: true)
+            //view attendees
+            var succ = false
+            print("Testing request")
+            var request = URLRequest(url: URL(string: "http://162.243.15.139/getattendance?eventID=\(Shared.shared.eventID!)")!)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
+                print("error=\(error)")
+                succ = true
+                return
+                
+                }
+                let httpStatus = response as! HTTPURLResponse
+                print("In url session method")
+                
+                if httpStatus.statusCode != 200 {
+                    print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
+                    print("response = \(response)")
+                }
+                else {
+                    //Parse jason
+                    print("Begin retrieving json")
+                    do {
+                        let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [AnyObject]
+                        
+                        print(json)
+                        print(json.count)
+                        for attendee in json {
+                            print("\(attendee["firstName"]!) \(attendee["lastName"]!)")
+                        }
+                        Shared.shared.eventAttendees = json
+                        
+                    } catch {
+                        print("Error with JSON: \(error)")
+                    }
+                    
+                }
+                
+                succ = true
+                
+            }
+            task.resume()
+            
+            while !succ {
+                Thread.sleep(forTimeInterval: 0.1)
+            }
+            
+            //prepare for segue
+            self.performSegue(withIdentifier: "viewAttendees", sender: self)
+            
         }
     }
     

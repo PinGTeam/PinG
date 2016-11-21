@@ -25,6 +25,7 @@ class Ping: NSObject, MKAnnotation {
     var eventID: Int?
     var attending: Int?
     var attendance: Int?
+    var title: String?
     var added = false
     
     init(coordinate: CLLocationCoordinate2D) {
