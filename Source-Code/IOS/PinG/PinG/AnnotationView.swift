@@ -8,7 +8,7 @@
 
 import MapKit
 
-class AnnotationView: MKAnnotationView {
+class AnnotationView: MKPinAnnotationView {
 
     /*
     // Only override draw() if you perform custom drawing.

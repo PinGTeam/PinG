@@ -23,5 +23,15 @@ final class Shared: NSObject {
     var sharedLocation: CLLocationCoordinate2D!
     
     //shared ping info
-    
+    var eventName: String!
+    var eventDescription: String!
+    var fromTime: Date!
+    var toTime: Date!
+    var eventUsername: String!
+    var eventFullName: String!
+    var eventUserID: Int!
+    var eventID: Int!
+    var eventLocation: CLLocationCoordinate2D!
+    var attending: Int!
+    var eventAttendance: Int!
 }

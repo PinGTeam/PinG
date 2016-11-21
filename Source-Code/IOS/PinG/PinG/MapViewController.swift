@@ -19,6 +19,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Interface variables
     @IBOutlet var mapView: MKMapView!
     @IBOutlet var pingButton: UIBarButtonItem!
+    @IBOutlet weak var viewEventButton: UIBarButtonItem!
     
     // Variables
     var isTracking: Bool = false
@@ -72,7 +73,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Grab pings from database and populate dictionary
         var fin = false
         print("Testing request")
-        var request = URLRequest(url: URL(string: "http://162.243.15.139/getnearevents?longitude=\(currentCoordinate.longitude)&latitude=\(currentCoordinate.latitude)")!)
+        var request = URLRequest(url: URL(string: "http://162.243.15.139/getnearevents?longitude=\(currentCoordinate.longitude)&latitude=\(currentCoordinate.latitude)&userID=\(Shared.shared.userID!)")!)
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request) { data, response, error in guard let data = data, error == nil else {
             print("error=\(error)")
@@ -107,6 +108,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             let lname = feature["properties"]?["lastName"] as! String
                             let fromTime = feature["properties"]?["startTime"] as! String
                             let toTime = feature["properties"]?["endTime"] as! String
+                            let eventID = feature["properties"]?["eventID"] as! Int
+                            let attending = feature["properties"]?["attending"] as! Int
+                            let attendance = feature["properties"]?["attendance"] as! Int
                             
                             let df = DateFormatter()
                             df.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -116,12 +120,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             //Populate local ping map
                             let ping = Ping(coordinate: CLLocationCoordinate2DMake(point?[1] as! CLLocationDegrees, point?[0] as! CLLocationDegrees))
                             ping.userID = userID
+                            ping.eventID = eventID
                             ping.firstName = fname
                             ping.lastName = lname
                             ping.eventName = eventName
                             ping.eventDescription = description
                             ping.fromTime = df.date(from: fromTime)
                             ping.toTime = df.date(from: toTime)
+                            ping.attending = attending
+                            ping.attendance = attendance
                             if ping.toTime! > Date() {
                                 self.pingMap[userID] = ping
                             }
@@ -323,6 +330,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
         
     }
+    
+    @IBAction func viewButtonPressed(sender: UIBarButtonItem) {
+        self.performSegue(withIdentifier: "viewPing", sender: sender)
+    }
 
     //Delegate methods
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -346,11 +357,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: "Pin")
         if annotationView == nil{
             annotationView = AnnotationView(annotation: annotation, reuseIdentifier: "Pin")
-            annotationView?.canShowCallout = false  //disable default annotation view
+            annotationView?.canShowCallout = false  ////disable default annotation view
         }else{
             annotationView?.annotation = annotation
         }
-        annotationView?.image = UIImage(named: "pingPin")
         return annotationView
     }
     
@@ -373,7 +383,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         calloutView.fromLabel.text = "From \(df.string(from: pingAnnotation.fromTime!))"
         calloutView.toLabel.text = "To \(df.string(from: pingAnnotation.toTime!))"
         
-        calloutView.center = CGPoint(x: view.bounds.size.width / 2, y: -calloutView.bounds.size.height*0.52)
+        calloutView.center = CGPoint(x: view.bounds.size.width / 2 - 8, y: -calloutView.bounds.size.height*0.52)
         view.addSubview(calloutView)
         let centerRegion = MKCoordinateRegionMake((view.annotation?.coordinate)!, mapView.region.span)
         var newView = mapView.convertRegion(centerRegion, toRectTo: nil)
@@ -381,10 +391,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let newRegion = mapView.convert(newView, toRegionFrom: nil)
         mapView.setRegion(newRegion, animated: true)
         
-    }
-    
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState) {
-        print("haha xd")
+        //Prepare for possible view switch
+        viewEventButton.isEnabled = true
+        Shared.shared.eventName = pingAnnotation.eventName
+        Shared.shared.eventDescription = pingAnnotation.eventDescription
+        Shared.shared.eventFullName = "\(pingAnnotation.firstName!) \(pingAnnotation.lastName!)"
+        Shared.shared.fromTime = pingAnnotation.fromTime
+        Shared.shared.toTime = pingAnnotation.toTime
+        Shared.shared.eventUserID = pingAnnotation.userID
+        Shared.shared.eventID = pingAnnotation.eventID
+        Shared.shared.eventLocation = pingAnnotation.coordinate
+        Shared.shared.attending = pingAnnotation.attending
+        Shared.shared.eventAttendance = pingAnnotation.attendance
     }
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
@@ -394,6 +412,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             {
                 subview.removeFromSuperview()
             }
+            viewEventButton.isEnabled = false
         }
     }
     
