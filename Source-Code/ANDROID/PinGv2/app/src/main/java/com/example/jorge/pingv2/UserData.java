@@ -3,9 +3,12 @@ package com.example.jorge.pingv2;
 import android.util.Base64;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
@@ -74,5 +77,15 @@ public class UserData implements Serializable{
                 .build();
 
         return formBody;
+    }
+
+    public static ArrayList<UserData> FromJsonArray(String jsonText)
+    {
+        Type arrayType = new TypeToken<ArrayList<UserData>>() {}.getType();
+
+        Gson gs = new Gson();
+        ArrayList<UserData> userList = gs.fromJson(jsonText, arrayType);
+
+        return userList;
     }
 }

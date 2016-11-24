@@ -326,10 +326,9 @@ public class MapActivity extends AppCompatActivity
             listOfMarkers = EventModel.fromArrayJson(allEventsString);
             for(int i = 0; i < listOfMarkers.size(); i++) {
                 Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(listOfMarkers.get(i).longitude, listOfMarkers.get(i).latitude))
                         .title(listOfMarkers.get(i).eventName)
+                        .position(new LatLng(listOfMarkers.get(i).longitude, listOfMarkers.get(i).latitude))
                         .snippet(listOfMarkers.get(i).description));
-                marker.setTag(listOfMarkers.get(i));
             }
         }
     }

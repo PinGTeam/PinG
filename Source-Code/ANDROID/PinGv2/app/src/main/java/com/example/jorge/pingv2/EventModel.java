@@ -22,6 +22,7 @@ public class EventModel {
     public long userID;
     public double longitude;
     public String description;
+    public long attendance;
 
     public RequestBody getPostFormData() {
         Gson gs = new Gson();
