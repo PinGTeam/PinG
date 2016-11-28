@@ -30,7 +30,7 @@ SET bottomLatitude = paramLatitude-distMiles/lat2miles;
 
 
 SELECT
-longitude, latitude, eventtable.userID, max(eventID), firstName, lastName, eventName, startTime, endTime, description
+longitude, latitude, eventtable.userID, eventID, firstName, lastName, eventName, startTime, endTime, description
 FROM
 eventtable
 inner join
@@ -38,7 +38,8 @@ users
 on
 eventtable.userid = users.userid
 where
-(endTime > NOW()) AND
+(endTime > NOW())
+AND
 
 (latitude <= topLatitude AND
         latitude >= bottomLatitude) AND
@@ -55,8 +56,7 @@ WHEN
   (longitude >= topLongitude AND longitude <= bottomLongitude)) then 1
 ELSE
 0
-END) = 1
-GROUP BY longitude,latitude,userID,firstName,lastName,eventName,startTime,endTime,description;
+END) = 1;
 END$$
 
 
