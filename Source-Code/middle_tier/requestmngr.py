@@ -90,6 +90,11 @@ def insertevent():
     cursor.close()
     connection.commit()
     connection.close()
+
+    new_attendance =  attendancetable(eventID = results[0][0],userID = locfeat['properties']['userID'])
+    db.session.add(new_attendance)
+    db.session.commit()
+
     return "1"
 
 #ADDING EVENT ALT
@@ -116,6 +121,11 @@ def insertevent_alt():
     cursor.close()
     connection.commit()
     connection.close()
+
+    new_attendance = attendancetable(eventID = results[0][0],userID = locfeat['userID'])
+    db.session.add(new_attendance)
+    db.session.commit()
+
     return "1"
 
 #EDITING EVENT
@@ -195,9 +205,28 @@ def getevents():
 @app.route('/getevent_alt')
 def getoneevent():
     eventID = request.args.get('eventID')
-    event = eventtable.query.filter_by(eventID = eventID).first()
+    userID_caller = request.args.get('userID')
 
-    return str(event.json_repr_alt())
+    event = eventtable.query.filter_by(eventID = eventID).first()
+    user = users.query.filter_by(userID = event.userID).first()
+    userCount = attendancetable.query.filter_by(eventID = eventID).count()
+    userAttending = attendancetable.query.filter_by(eventID = eventID,userID = userID_caller).first()
+    if not userAttending:
+        userAttending = 0
+    else:
+        userAttending = 1
+    return str(event_to_geojson_alt(event.latitude,\
+    event.longitude,\
+    event.userID,\
+    event.eventID,\
+    str(user.firstName),\
+    str(user.lastName),\
+    str(event.eventName),\
+    str(event.startTime),\
+    str(event.endTime),\
+    str(event.description),\
+    userCount,\
+    userAttending))
 
 #GET EVENTS
 #Calling GetEvents Stored procedure
