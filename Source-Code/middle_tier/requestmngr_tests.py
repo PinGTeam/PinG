@@ -145,8 +145,8 @@ class EmptyAttendanceTable(unittest.TestCase):
     def test_empty_at(self):
         rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
         rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
-	rv = self.app.get('/getattendance', data=dict(eventID = 1))
-	assert '[]' in rv.data
+        rv = self.app.get('/getattendance', data=dict(eventID = 1))
+        assert '[]' in rv.data
 
 class EmptyAttendanceTableWithAddTestCase(unittest.TestCase):
 
@@ -176,7 +176,7 @@ class EmptyAttendanceTableWithAddTestCase(unittest.TestCase):
         rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
         rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
         rv = self.app.post('/attend', data=dict(userID = 1, eventID = 1))
-	assert 'attending' is rv.data
+        assert 'attending' is rv.data
 
     def test_add_attendee(self):
         rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
@@ -188,8 +188,8 @@ class EmptyAttendanceTableWithAddTestCase(unittest.TestCase):
         rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
         rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
         rv = self.app.post('/attend', data=dict(userID = 1, eventID = 1))
-	rv = self.app.post('/attend', data=dict(userID = 1, eventID = 1))
-	assert 'not attending' == rv.data
+        rv = self.app.post('/attend', data=dict(userID = 1, eventID = 1))
+        assert 'not attending' == rv.data
 
 class EmptyAttendanceTableWithMultipleAdds(unittest.TestCase):
 
@@ -210,21 +210,30 @@ class EmptyAttendanceTableWithMultipleAdds(unittest.TestCase):
         requestmngr.db.create_all()
 
     def test_multiple_adds(self):
-	rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email1@asd.com'))
-	rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
-	rv = self.app.post('/adduser', data=dict(userName='boogers1',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email2@asd.com'))
-	rv = self.app.post('/adduser', data=dict(userName='boogers2',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email3@asd.com'))
-	rv = self.app.post('/adduser', data=dict(userName='lingering fart smell',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email4@asd.com'))
-	rv = self.app.post('/attend', data=dict(userID = 4, eventID = 1))
-	rv = self.app.post('/attend', data=dict(userID = 3, eventID = 1))
-	rv = self.app.post('/attend', data=dict(userID = 2, eventID = 1))
-	rv = self.app.get('/getattendance', data=dict(eventID = 1))
-	results = requestmngr.attendancetable.query.all()
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email1@asd.com'))
+        rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
+        rv = self.app.post('/adduser', data=dict(userName='boogers1',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email2@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='boogers2',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email3@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='lingering fart smell',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email4@asd.com'))
+        rv = self.app.post('/attend', data=dict(userID = 4, eventID = 1))
+        #print rv.data
+        rv = self.app.post('/attend', data=dict(userID = 3, eventID = 1))
+        #print rv.data
+        rv = self.app.post('/attend', data=dict(userID = 2, eventID = 1))
+        #print rv.data
+        rv = self.app.get('/getattendance?&eventID=1')
+        #print rv.data
 
-	for row in attendancetable.query.all()
-	    print(row.userID, row.eventID)
+        #results = requestmngr.attendancetable.query.all()
+        #for row in results:
+        #    print row.userID, row.eventID
 
-	assert '1' in rv.data
+#        results = requestmngr.eventtable.query.all()
+#        for row in results:
+#            print "---"
+#            print row.eventID, row.eventName
+        assert '[{"userID":2,"userName":"testUserName","firstName":"testName","lastName":"testLName"}, {"userID":3,"userName":"boogers1","firstName":"testName","lastName":"testLName"}, {"userID":4,"userName":"boogers2","firstName":"testName","lastName":"testLName"}]' in rv.data
+
 
 if __name__ == '__main__':
     unittest.main()
