@@ -234,6 +234,41 @@ class EmptyAttendanceTableWithMultipleAdds(unittest.TestCase):
 #            print row.eventID, row.eventName
         assert '[{"userID":2,"userName":"testUserName","firstName":"testName","lastName":"testLName"}, {"userID":3,"userName":"boogers1","firstName":"testName","lastName":"testLName"}, {"userID":4,"userName":"boogers2","firstName":"testName","lastName":"testLName"}]' in rv.data
 
+class RemovingFromAttendanceTable(unittest.TestCase):
+
+    def setUp(self):
+        requestmngr.app.config['TESTING'] = True
+        requestmngr.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/test_middle'
+        requestmngr.engine = create_engine('mysql://juan:alfaro@localhost/test_middle')
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+        requestmngr.db.session.add(requestmngr.users(userName='testname',firstName='testing',lastName='test',email='test@email.com',password='dGhlUGFzc3dvcmQ='))
+        requestmngr.db.session.commit()
+        requestmngr.db.session.add(requestmngr.eventtable(userID=1,latitude=12,longitude=120,eventName="testevent",startTime="2018-10-10 20:20:20",endTime="2018-10-10 20:20:20",description="testdesc"))
+        requestmngr.db.session.commit()
+        self.app = requestmngr.app.test_client()
+
+    def tearDown(self):
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+
+    def test_add_and_remove(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email1@asd.com'))
+        rv = self.app.post('/addevent', data=dict(event='{"geometry": {"coordinates": [-3.5123, 175.5], "type": "Point"}, "properties": {"description": "This is a test event","eventName": "Party_at_Juans_House","startTime": "2018-10-08 16:37:00","endTime": "2018-10-08 16:37:00", "userID": 1}, "type": "Feature"}'))
+        rv = self.app.post('/adduser', data=dict(userName='boogers1',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email2@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='boogers2',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email3@asd.com'))
+        rv = self.app.post('/adduser', data=dict(userName='lingering fart smell',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email4@asd.com'))
+        rv = self.app.post('/attend', data=dict(userID = 4, eventID = 1))
+        rv = self.app.post('/attend', data=dict(userID = 3, eventID = 1))
+        rv = self.app.post('/attend', data=dict(userID = 2, eventID = 1))
+        #rv = self.app.get('/getattendance?&eventID=1')
+	#print rv.data
+	rv = self.app.post('/attend', data=dict(userID = 4, eventID = 1))
+        rv = self.app.post('/attend', data=dict(userID = 3, eventID = 1))
+        rv = self.app.post('/attend', data=dict(userID = 2, eventID = 1))
+	rv = self.app.get('/getattendance?&eventID=1')
+        #print rv.data
+	assert '[]' in rv.data
 
 if __name__ == '__main__':
     unittest.main()
