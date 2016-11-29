@@ -1,20 +1,26 @@
 package com.example.jorge.pingv2;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.view.LayoutInflater;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
 /**
- * Created by Jorge on 11/14/2016.
+ * Created by Jorge on 11/15/2016.
  */
 
 public class SetTimeDialog extends DialogFragment
-    implements TimePickerDialog.OnTimeSetListener {
+        implements TimePickerDialog.OnTimeSetListener {
+
 
     public interface SetTimeDialogListener {
         void onDialogPositiveClick(int hour, int minute);
@@ -40,6 +46,7 @@ public class SetTimeDialog extends DialogFragment
 
         return new TimePickerDialog(getActivity(), this, hour, minute, false);
     }
+
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {

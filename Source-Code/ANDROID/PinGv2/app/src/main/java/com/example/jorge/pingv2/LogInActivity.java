@@ -20,8 +20,7 @@ import okhttp3.Response;
 
 public class LogInActivity extends AppCompatActivity {
 
-    Button logIn, signUp;
-    private String userName, userPass, encodedPass, middleTierResponse;
+    private String userName, userPass, middleTierResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,7 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
 
         //login button press
-        logIn = (Button) findViewById(R.id.logInButton);
+        Button logIn = (Button) findViewById(R.id.logInButton);
         logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,7 +54,7 @@ public class LogInActivity extends AppCompatActivity {
         });
 
         //signup button press
-        signUp = (Button) findViewById(R.id.signUpButton);
+        Button signUp = (Button) findViewById(R.id.signUpButton);
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,12 +65,14 @@ public class LogInActivity extends AppCompatActivity {
         });
     }
 
+    //contacts middle-tier
     private class SendUserData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             //create connection client
             OkHttpClient client = new OkHttpClient();
 
+            //create user object to store middle tier information in
             UserData user = new UserData();
             user.userName = userName;
 
@@ -99,7 +100,7 @@ public class LogInActivity extends AppCompatActivity {
             return null;
         }
 
-        //once the middle-tier sends us back the response, go to map and send user code with it
+        //once the middle-tier sends us back the response, go to map and send user class with it
         @Override
         protected void onPostExecute(Void aVoid) {
             String failedRes = "-1";
@@ -110,8 +111,6 @@ public class LogInActivity extends AppCompatActivity {
             else {
                 UserData user = UserData.FromJson(middleTierResponse);
                 Intent mapActivityStart = new Intent(getApplicationContext(), MapActivity.class);
-
-                System.out.println("USERID: " + user.userID);
 
                 //SEND SERIALIZABLE CLASS TO MAP
                 mapActivityStart.putExtra("UserData", user);

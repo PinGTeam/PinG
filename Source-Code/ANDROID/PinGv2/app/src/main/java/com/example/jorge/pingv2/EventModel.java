@@ -2,6 +2,8 @@ package com.example.jorge.pingv2;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import okhttp3.FormBody;
@@ -11,7 +13,7 @@ import okhttp3.RequestBody;
  * Created by Richard Hamm on 11/10/2016.
  */
 
-public class EventModel {
+public class EventModel implements Serializable{
     public long eventID;
     public String eventName;
     public String startTime;

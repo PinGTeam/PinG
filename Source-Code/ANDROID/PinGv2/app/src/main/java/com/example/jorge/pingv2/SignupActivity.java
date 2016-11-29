@@ -32,6 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        //signup button
         signUpButton = (Button) findViewById(R.id.createUser);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
                 EditText confPassword = (EditText) findViewById(R.id.confPassInput);
                 uConfPass = confPassword.getText().toString();
 
+                //error check fields
                 if(uName.length() < 1) {
                     check = false;
                     Toast.makeText(getApplicationContext(), "User Name too short. Try again", Toast.LENGTH_SHORT).show();
@@ -83,6 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Confirm Password too short. Try again", Toast.LENGTH_SHORT).show();
                 }
 
+                //if no errors in fields, encode password and start middle-tier POST
                 if(check == true) {
                     //if passwords are equal
                     if (Objects.equals(uPass, uConfPass)) {
@@ -108,10 +111,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    //check if email field is valid
     private static boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    //contact middle-tier
     private class SendSignUpData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
