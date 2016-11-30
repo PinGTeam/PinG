@@ -1,4 +1,4 @@
-#Implemented by: Juan and Monica and most importantly Harlow
+#Implemented by: Juan and Monica and  Harlow
 import os
 import requestmngr
 import unittest
@@ -7,7 +7,7 @@ from sqlalchemy import *
 
 
 
-#--Testing for Middle-Tier | Iteration One --
+#--Testing for Middle-Tier | Iteration TWO --
 #    Tests:
 #        1. Database is empty [EmptyDatabaseTestCase]
 #            - Tests getallevents and getnearevents
@@ -60,6 +60,7 @@ class NonEmptyDatabaseTestCase(unittest.TestCase):
 
     def test_getnearevent_db(self):
         rv = self.app.get('/getnearevents?longitude=120&latitude=12')
+	#print rv.data
 	assert '{"features": [{"geometry": {"coordinates": [120.0, 12.0], "type": "Point"}, "properties": {"attendance": 0, "attending": 0, "description": "testdesc", "endTime": "2018-10-10 20:20:20", "eventID": 1, "eventName": "testevent", "firstName": "testing", "lastName": "test", "startTime": "2018-10-10 20:20:20", "userID": 1}, "type": "Feature"}], "type": "FeatureCollection"}' in rv.data
 
 
@@ -216,22 +217,9 @@ class EmptyAttendanceTableWithMultipleAdds(unittest.TestCase):
         rv = self.app.post('/adduser', data=dict(userName='boogers2',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email3@asd.com'))
         rv = self.app.post('/adduser', data=dict(userName='lingering fart smell',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email4@asd.com'))
         rv = self.app.post('/attend', data=dict(userID = 4, eventID = 1))
-        #print rv.data
         rv = self.app.post('/attend', data=dict(userID = 3, eventID = 1))
-        #print rv.data
         rv = self.app.post('/attend', data=dict(userID = 2, eventID = 1))
-        #print rv.data
         rv = self.app.get('/getattendance?&eventID=1')
-        #print rv.data
-
-        #results = requestmngr.attendancetable.query.all()
-        #for row in results:
-        #    print row.userID, row.eventID
-
-#        results = requestmngr.eventtable.query.all()
-#        for row in results:
-#            print "---"
-#            print row.eventID, row.eventName
         assert '[{"userID":2,"userName":"testUserName","firstName":"testName","lastName":"testLName"}, {"userID":3,"userName":"boogers1","firstName":"testName","lastName":"testLName"}, {"userID":4,"userName":"boogers2","firstName":"testName","lastName":"testLName"}]' in rv.data
 
 class RemovingFromAttendanceTable(unittest.TestCase):
@@ -261,14 +249,59 @@ class RemovingFromAttendanceTable(unittest.TestCase):
         rv = self.app.post('/attend', data=dict(userID = 4, eventID = 1))
         rv = self.app.post('/attend', data=dict(userID = 3, eventID = 1))
         rv = self.app.post('/attend', data=dict(userID = 2, eventID = 1))
-        #rv = self.app.get('/getattendance?&eventID=1')
-	#print rv.data
 	rv = self.app.post('/attend', data=dict(userID = 4, eventID = 1))
         rv = self.app.post('/attend', data=dict(userID = 3, eventID = 1))
         rv = self.app.post('/attend', data=dict(userID = 2, eventID = 1))
 	rv = self.app.get('/getattendance?&eventID=1')
-        #print rv.data
 	assert '[]' in rv.data
+
+#Begining _alt path testing
+#Juan why do you do this to me
+
+class EmptyDatabaseGetNear_Alt(unittest.TestCase):
+
+    def setUp(self):
+        requestmngr.app.config['TESTING'] = True
+        requestmngr.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/test_middle'
+        requestmngr.engine = create_engine('mysql://juan:alfaro@localhost/test_middle')
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+        self.app = requestmngr.app.test_client()
+        #with requestmngr.app.app_context():
+
+    def tearDown(self):
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+
+    def test_getnearevent_alt(self):
+        rv = self.app.get('/getnearevents_alt?topLongitude=12&topLatitude=120&bottomLongitude=12&bottomLatitude=120')
+	#print rv.data
+        assert '[]' in rv.data
+
+class NonEmptyGetNear_Alt(unittest.TestCase):
+
+    def setUp(self):
+        requestmngr.app.config['TESTING'] = True
+        requestmngr.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/test_middle'
+        requestmngr.engine = create_engine('mysql://juan:alfaro@localhost/test_middle')
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+        requestmngr.db.session.add(requestmngr.users(userName='testname',firstName='testing',lastName='test',email='test@email.com',password='dGhlUGFzc3dvcmQ='))
+        requestmngr.db.session.commit()
+        requestmngr.db.session.add(requestmngr.eventtable(userID=1,latitude=12,longitude=120,eventName="testevent",startTime="2018-10-10 20:20:20",endTime="2018-10-10 20:20:20",description="testdesc"))
+        requestmngr.db.session.commit()
+        self.app = requestmngr.app.test_client()
+
+    def tearDown(self):
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+
+    def test_getnearevent_alt(self):
+	rv = self.app.get('/getnearevents_alt?longitude=120&latitude=12')
+	print rv.data
+        #assert '{"eventID": 1, "description": "testdesc", "attending": 0, "startTime": "2018-10-10 20:20:20", "attendance": 0, "firstName": "testing", "lastName": "test", "userID": 1, "longitude": 12.0, "eventName": "testevent", "latitude": 120.0, "endTime": "2018-10-10 20:20:20"}' in rv.data
+	assert '{"eventID": 1, "description": "testdesc", "attending": 0, "startTime": "2018-10-10 20:20:20", "attendance": 0, "firstName": "testing", "lastName": "test", "userID": 1, "longitude": 12.0, "eventName": "testevent", "latitude": 120.0, "endTime": "2018-10-10 20:20:20"}' in rv.data
+
 
 if __name__ == '__main__':
     unittest.main()
