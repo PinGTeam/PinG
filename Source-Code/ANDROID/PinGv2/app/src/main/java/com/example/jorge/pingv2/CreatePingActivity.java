@@ -1,16 +1,19 @@
+/* Written by Zach and Jorge on 11/20/16 */
+
 package com.example.jorge.pingv2;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,37 +24,49 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.jorge.pingv2.R.drawable.edit_btn;
+import static java.lang.Math.abs;
+
+
+//TODO: CHANGE THIS TO MATCH THE EVENT DETAIL
 public class CreatePingActivity extends AppCompatActivity {
 
-    private String pingName, pingDescription;
-    private FloatingActionButton createEvent;
-
-    private LatLng currentCoords;
-    private int currentUser;
-
-    private TextView selectedStartTime, selectedEndTime;
-    private int whichField;
-
-    private Calendar currentDateTime, startDateTime, endDateTime;
-    private String currentYear, currentMonth, currentDay, currentHour, currentMinute;
-
-    private int convYear, convMonth, convDay, convHour, convMinute;
-    private int convSYear, convSMonth, convSDay, convSHour, convSMinute;
-    private int convEYear, convEMonth, convEDay, convEHour, convEMinute;
-
-    private String FINALStartDateTime, FINALEndDateTime;
+    //variables holding information about the event and the user
+    private LatLng theCoords;
     private UserData currentUserInformation;
 
+
+    //GIU stuff
+    private FloatingActionButton fab;
+    private TextView startTimeFieldOnScreen, endTimeFieldOnScreen;
+    private EditText eventNameFieldOnScreen, eventDescFieldOnScreen;
+    private int whichField;
+
+    //time stuff
+    private boolean newStartTimeSetFlag, newEndTimeFlag;
+    private int newStartHour, newStartMinute, newEndHour, newEndMinute;
+    private Calendar originalStartDateTime, originalEndDateTime, newStartDateTime, newEndDateTime;
+
+    //final extracted fields for server
+    private String finalEventName, finalEventDescription, finalEventStart, finalEventEnd;
+
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,234 +74,412 @@ public class CreatePingActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarCreatePing);
         setSupportActionBar(toolbar);
 
-        InitializeTime();
+        fab = (FloatingActionButton) findViewById(R.id.createPingFab);
 
-        //get data from map activity
+        //get info from map activity
         Bundle extras = getIntent().getExtras();
-        currentCoords = extras.getParcelable("theCoords");
-        currentUser = extras.getInt("theUser");
+        theCoords = extras.getParcelable("theCoords");
         currentUserInformation = (UserData) getIntent().getSerializableExtra("userInformation");
 
+        System.out.println("The coords: " + theCoords);
+
+        //initialize time changed flags
+        newStartTimeSetFlag = false;         //will only be true if the user inputs a new start time
+        newEndTimeFlag = false;              //will only be true if the user inputs a new end time
+
+        //TODO: SET TTWO GREGORIAN CALENDARS TO CURRENT DATE TIME AND USE THEM TO SET NEW END AND START DATE TIME
+        //TODO: THESE WILL BE USED IN CASE A NEW TIME IS NOT CHOSEN
+        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+        originalStartDateTime = GregorianCalendar.getInstance(timeZone);
+        originalEndDateTime = GregorianCalendar.getInstance(timeZone);
+
+        //originalStartDateTime.roll(Calendar.MONTH, 1);
+        //originalEndDateTime.roll(Calendar.MONTH, 1);
+
+        //set new start and new end to original
+        newStartDateTime = new GregorianCalendar();
+        //newStartDateTime = originalStartDateTime;
+
+        newEndDateTime = new GregorianCalendar();
+        //newEndDateTime = originalEndDateTime;
+
+        //set to correct month because java's month start at 0 for some reason...
+        //originalStartDateTime.add(Calendar.MONTH, 1);
+        //originalEndDateTime.add(Calendar.MONTH, 1);
+
+        System.out.println("GREGY S: " + originalStartDateTime);
+        System.out.println("GREGY E: " + originalEndDateTime);
+
+        //Set click states based on user
+        InitializeInitialTimes();
+
+        //declare fab button reference
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(CreatePingActivity.this)
+                        .setTitle("Create Event")
+                        .setMessage("Do you want to create this event?")
+
+                        //AS SOON AS YOU PRESS THIS, THE DATA IN THE FIELDS ARE EXTRACTED AND SAVED FOR MIDDLE TIER
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                CompleteCreate();
+                            }
+                        })
+                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(edit_btn)
+                        .show();
+            }
+        });
+
         //pop up set time dialog
-        selectedStartTime = (TextView) findViewById(R.id.createPingStartTimeClickable);
-        selectedStartTime.setOnClickListener(new View.OnClickListener() {
+        startTimeFieldOnScreen = (TextView) findViewById(R.id.createPingStartTimeClickable);
+        startTimeFieldOnScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 whichField = 1;
                 showSetTimeDialog(whichField);
             }
         });
-        selectedEndTime = (TextView) findViewById(R.id.createPingEndTimeClickable);
-        selectedEndTime.setOnClickListener(new View.OnClickListener() {
+        endTimeFieldOnScreen = (TextView) findViewById(R.id.createPingEndTimeClickable);
+        endTimeFieldOnScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 whichField = 2;
                 showSetTimeDialog(whichField);
             }
         });
+    }
 
-        //create event button press
-        createEvent = (FloatingActionButton)findViewById(R.id.createPingFab);
-        createEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("ON CREATE BUTTON Start time : " + convSHour);
-                //get the data from the fields and store
-                EditText eName = (EditText) findViewById(R.id.createPingEventNameInput);
-                pingName = eName.getText().toString();
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
+    public void InitializeInitialTimes() {
 
-                EditText eDesc = (EditText) findViewById(R.id.createPingEventDescInput);
-                pingDescription = eDesc.getText().toString();
+        //get references to fields
+        startTimeFieldOnScreen = (TextView)findViewById(R.id.createPingStartTimeClickable);
+        endTimeFieldOnScreen = (TextView)findViewById(R.id.createPingEndTimeClickable);
 
-                //if start hour < currentHour, increment day or if they are equal but mins are notincrement day
-                if(convHour+5 > convSHour && convSHour != 0 || convMinute > convSMinute) {
-                    System.out.println("HERE<<<");
-                    startDateTime.roll(startDateTime.DAY_OF_MONTH, 1);
-                    convSDay = startDateTime.get(startDateTime.DAY_OF_MONTH);
-                    endDateTime.roll(endDateTime.DAY_OF_MONTH, 1);
-                    convEDay = endDateTime.get(endDateTime.DAY_OF_MONTH);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //START TIME CONVERT------------------------------------------------------------------------
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //extract start time (UTC)
+        int initStartTimeHour = originalStartDateTime.get(Calendar.HOUR_OF_DAY);
+        int initStartTimeMinutes = originalStartDateTime.get(Calendar.MINUTE);
+        System.out.println("Extracted startTime: " + initStartTimeHour + ":" + initStartTimeMinutes);
 
-                    FINALStartDateTime = String.valueOf(convSYear) + "-" + String.valueOf(convSMonth) + "-" + String.valueOf(convSDay) + " " + String.valueOf(convSHour) + ":" + String.valueOf(convSMinute);
-                    FINALEndDateTime = String.valueOf(convEYear) + "-" + String.valueOf(convEMonth) + "-" + String.valueOf(convSDay) + " " + String.valueOf(convEHour) + ":" + String.valueOf(convEMinute);
+        //convert UTC to EST
+        int estStartTimeHour = initStartTimeHour - 5;
+        //if the conversion is negative it means we wrap around to 24
+        if(estStartTimeHour < 0) {
+            estStartTimeHour = abs(estStartTimeHour);
+            estStartTimeHour = 24 - estStartTimeHour;
+            System.out.println("EST START HOUR: " + estStartTimeHour);
+        }
 
-                    System.out.println("FINAL STARTv1: " + FINALStartDateTime);
-                    System.out.println("FINAL ENDv1: " + FINALEndDateTime);
-                }
+        //set am or pm based on hour
+        String startTag;
+        if(estStartTimeHour < 12)
+            startTag = " AM";
+        else
+            startTag = " PM";
 
-                if(convEHour < convSHour && convEYear != 0 || convEMinute < convSMinute) {
-                    System.out.println("HEREv2<<<");
-                    endDateTime.roll(endDateTime.DAY_OF_MONTH, 1);
-                    //convEDay = endDateTime.get(endDateTime.DAY_OF_MONTH);
-
-                    FINALStartDateTime = String.valueOf(convSYear) + "-" + String.valueOf(convSMonth) + "-" + String.valueOf(convSDay) + " " + String.valueOf(convSHour) + ":" + String.valueOf(convSMinute);
-                    FINALEndDateTime = String.valueOf(convEYear) + "-" + String.valueOf(convEMonth) + "-" + String.valueOf(convEDay) + " " + String.valueOf(convEHour) + ":" + String.valueOf(convEMinute);
-                }
-
-                //append final values to strings
-                FINALStartDateTime = String.valueOf(convSYear) + "-";
-                //month check
-                if(convSMonth < 10)
-                    FINALStartDateTime = FINALStartDateTime.concat("0" + String.valueOf(convSMonth) + "-");
-                else
-                    FINALStartDateTime = FINALStartDateTime.concat(String.valueOf(convSMonth) + "-");
-
-                //day check
-                if(convSDay < 10)
-                    FINALStartDateTime = FINALStartDateTime.concat("0" + String.valueOf(convSDay) + " ");
-                else
-                    FINALStartDateTime = FINALStartDateTime.concat(String.valueOf(convSDay) + " ");
-
-                //hour check
-                if(convSHour < 10)
-                    FINALStartDateTime = FINALStartDateTime.concat("0" + String.valueOf(convSHour) + ":");
-                else
-                    FINALStartDateTime = FINALStartDateTime.concat(String.valueOf(convSHour) + ":");
-
-                //minute check
-                if(convSMinute < 10) {
-                    FINALStartDateTime = FINALStartDateTime.concat("0" + String.valueOf(convSMinute));
-                }
-                else
-                    FINALStartDateTime = FINALStartDateTime.concat(String.valueOf(convSMinute));
-
-                //append final values to strings
-                FINALEndDateTime = String.valueOf(convSYear) + "-";
-                //month check
-                if(convSMonth < 10)
-                    FINALEndDateTime = FINALEndDateTime.concat("0" + String.valueOf(convEMonth) + "-");
-                else
-                    FINALEndDateTime = FINALEndDateTime.concat(String.valueOf(convEMonth) + "-");
-
-                //day check
-                if(convSDay < 10)
-                    FINALEndDateTime = FINALEndDateTime.concat("0" + String.valueOf(convEDay) + " ");
-                else
-                    FINALEndDateTime = FINALEndDateTime.concat(String.valueOf(convEDay) + " ");
-
-                //hour check
-                if(convSHour < 10)
-                    FINALEndDateTime = FINALEndDateTime.concat("0" + String.valueOf(convEHour) + ":");
-                else
-                    FINALEndDateTime = FINALEndDateTime.concat(String.valueOf(convEHour) + ":");
-
-                //minute check
-                if(convSMinute < 10) {
-                    FINALEndDateTime = FINALEndDateTime.concat("0" + String.valueOf(convEMinute));
-                }
-                else
-                    FINALEndDateTime = FINALEndDateTime.concat(String.valueOf(convEMinute));
-
-                System.out.println("FINAL STARTv3: " + FINALStartDateTime);
-                System.out.println("FINAL ENDv3: " + FINALEndDateTime);
-
-                //post the marker to middle-tier
-                new PostMarkerData().execute();
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //START TIME DISPLAY------------------------------------------------------------------------
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //if start 12 am||pm
+        if(estStartTimeHour == 12 || estStartTimeHour == 0) {
+            if(initStartTimeMinutes < 10) {
+                String startDisplay = "12:0" + initStartTimeMinutes + startTag;
+                startTimeFieldOnScreen.setText(startDisplay);
             }
-        });
+            else {
+                String startDisplay = "12:" + initStartTimeMinutes + startTag;
+                startTimeFieldOnScreen.setText(startDisplay);
+            }
+        }
+        //all other hours
+        else {
+            if(initStartTimeMinutes < 10) {
+                String startDisplay = String.valueOf((estStartTimeHour % 12)) + ":0" + initStartTimeMinutes + startTag;
+                startTimeFieldOnScreen.setText(startDisplay);
+            }
+            else {
+                String startDisplay = String.valueOf((estStartTimeHour % 12)) + ":" + initStartTimeMinutes + startTag;
+                startTimeFieldOnScreen.setText(startDisplay);
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //END TIME CONVERT--------------------------------------------------------------------------
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //extract end time (UTC)
+        int initEndTimeHour = originalEndDateTime.get(Calendar.HOUR_OF_DAY);
+        int initEndTimeMinutes = originalEndDateTime.get(Calendar.MINUTE);
+        System.out.println("Extracted endTime: " + initEndTimeHour + ":" + initEndTimeMinutes);
+
+        //convert UTC to EST
+        int estEndTimeHour = initEndTimeHour - 5;
+        //if the conversion is negative it means we wrap around to 24
+        if(estEndTimeHour < 0) {
+            estEndTimeHour = abs(estEndTimeHour);
+            estEndTimeHour = 24 - estEndTimeHour;
+            System.out.println("EST END HOUR: " + estEndTimeHour);
+        }
+
+        String endTag;
+        //set am or pm based on hour
+        if(estEndTimeHour < 12)
+            endTag = " AM";
+        else
+            endTag = " PM";
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //END TIME DISPLAY--------------------------------------------------------------------------
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //if start 12 am||pm
+        if(estEndTimeHour == 12 || estEndTimeHour == 0) {
+            if(initStartTimeMinutes < 10) {
+                String endDisplay = "12:0" + initEndTimeHour + endTag;
+                endTimeFieldOnScreen.setText(endDisplay);
+            }
+            else {
+                String endDisplay = "12:" + initEndTimeHour + endTag;
+                endTimeFieldOnScreen.setText(endDisplay);
+            }
+        }
+        //all other hours
+        else {
+            if(initEndTimeMinutes < 10) {
+                String endDisplay = String.valueOf((estEndTimeHour % 12)) + ":0" + initEndTimeMinutes + endTag;
+                endTimeFieldOnScreen.setText(endDisplay);
+            }
+            else {
+                String endDisplay = String.valueOf((estEndTimeHour % 12)) + ":" + initEndTimeMinutes + endTag;
+                endTimeFieldOnScreen.setText(endDisplay);
+            }
+        }
     }
 
-    private void InitializeTime() {
-        //get current date time
-        currentDateTime = Calendar.getInstance();
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
+    public void CompleteCreate() {
 
-        //get current year
-        DateFormat currYear = new SimpleDateFormat("yyyy");
-        currentYear = currYear.format(currentDateTime.getTime());
-        convYear = Integer.parseInt(currentYear);
+        eventNameFieldOnScreen = (EditText)findViewById(R.id.createPingEventNameInput);
+        eventDescFieldOnScreen = (EditText)findViewById(R.id.createPingEventDescInput);
 
-        //get current month
-        DateFormat currMonth = new SimpleDateFormat("MM");
-        currentMonth = currMonth.format(currentDateTime.getTime());
-        convMonth = Integer.parseInt(currentMonth);
+        //extract input from name and description fields
+        finalEventName = eventNameFieldOnScreen.getText().toString();
+        finalEventDescription = eventDescFieldOnScreen.getText().toString();
 
-        //get current day
-        DateFormat currDay = new SimpleDateFormat("dd");
-        currentDay = currDay.format(currentDateTime.getTime());
-        convDay = Integer.parseInt(currentDay);
+        //only do the UTC conversions if newStartTimeSetFlags were set to true
+        if(newStartTimeSetFlag) {
 
-        //get current hour
-        DateFormat currHour = new SimpleDateFormat("HH");
-        currentHour = currHour.format(currentDateTime.getTime());
-        convHour = Integer.parseInt(currentHour);
+            //est -> utc
+            int utcStartHour = newStartHour + 5;
+            //if converted hour is > 24, we need to roll it over
+            if(utcStartHour >= 24)
+                utcStartHour %= 24;
 
-        //get current minute
-        DateFormat currMin = new SimpleDateFormat("mm");
-        currentMinute = currMin.format(currentDateTime.getTime());
-        convMinute = Integer.parseInt(currentMinute);
+            //now we check for cases where we should roll days
+            int originalStartHour = originalStartDateTime.get(Calendar.HOUR_OF_DAY);
 
-        int test = 0;
-        test = currentDateTime.get(currentDateTime.HOUR);
-        System.out.println(test);
-        currentDateTime.set(convYear, convMonth, convDay, (convHour+5), convMinute);
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            //START CHECK-------------------------------------------------------------------------------
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            //TODO:IF THE MONTH == 0, WE MUST EXPLICITLY SET IT TO 12
+            //if newStart < originalStart : newStart day++
+            if(utcStartHour < originalStartHour) {
+                newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            //if newStart == original BUT newStartMinute < originalStartMinute : newStart day++
+            else if(utcStartHour == originalStartHour && newStartMinute < originalStartDateTime.get(Calendar.MINUTE))
+                newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
-        DateFormat currentDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String currDTF = currentDateFormat.format(currentDateTime.getTime());
-        System.out.println("HERE>>" + currDTF);
+            //convert start calendar to string
+            finalEventStart = String.valueOf(newStartDateTime.get(Calendar.YEAR));
 
-        startDateTime = currentDateTime;
-        endDateTime = currentDateTime;
-        startDateTime.set(0,0,0,0,0);
-        endDateTime.set(0,0,0,0,0);
+            newStartDateTime.roll(Calendar.MONTH, 1);
+
+            //if month is less than 10, but not 0
+            if(newStartDateTime.get(Calendar.MONTH) < 10 && !(Objects.equals(newStartDateTime.get(Calendar.MONTH), 0))) {
+                finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
+            }
+            //if month is less than 10, but is 0, set month to december
+            else if(newStartDateTime.get(Calendar.MONTH) < 10 && (Objects.equals(newStartDateTime.get(Calendar.MONTH), 0))) {
+                finalEventStart = finalEventStart.concat("-12");
+            }
+            else
+                finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
+
+            if(newStartDateTime.get(Calendar.DAY_OF_MONTH) < 10)
+                finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDateTime.get(Calendar.DAY_OF_MONTH)));
+            else
+                finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDateTime.get(Calendar.DAY_OF_MONTH)));
+
+            if(utcStartHour < 10)
+                finalEventStart = finalEventStart.concat(" 0" + String.valueOf(utcStartHour));
+            else
+                finalEventStart = finalEventStart.concat(" " + String.valueOf(utcStartHour));
+
+            if(newStartDateTime.get(Calendar.MINUTE) < 10)
+                finalEventStart = finalEventStart.concat(":0" + String.valueOf(newStartDateTime.get(Calendar.MINUTE)));
+            else
+                finalEventStart = finalEventStart.concat(":" + String.valueOf(newStartDateTime.get(Calendar.MINUTE)));
+        }
+        //if no end time changes were made, then we simply send the original to the server
+        else {
+            //CHANGE THIS TO EXTRACTED START TIME ORIGINAL
+            SimpleDateFormat startForm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            finalEventStart = startForm.format(originalStartDateTime.getTime());
+        }
+
+        //only do the UTC conversions if newEndTimeSetFlags were set to true
+        if(newEndTimeFlag) {
+
+            //est->utc
+            int utcEndHour = newEndHour + 5;
+            if(utcEndHour >= 24)
+                utcEndHour %= 24;
+
+            //original end hour
+            int originalEndHour = originalEndDateTime.get(Calendar.HOUR_OF_DAY);
+
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            //END CHECK---------------------------------------------------------------------------------
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            //if newEnd < originalEnd : newEnd day++
+            if(utcEndHour < originalEndHour) {
+                newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            //if newEnd == original BUT newEndMinute < originalEndMinute : newEnd day++
+            else if(utcEndHour == originalEndHour && newEndMinute < originalEndDateTime.get(Calendar.MINUTE))
+                newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
+
+            //start hour for comparison with end hour
+            int utcStartHour = newStartHour + 5;
+
+            //if converted hour is > 24, we need to roll it over
+            if(utcStartHour >= 24)
+                utcStartHour %= 24;
+
+            if(utcEndHour < utcStartHour)
+                newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
+
+            //convert end calendar to string
+            finalEventEnd = String.valueOf(newEndDateTime.get(Calendar.YEAR));
+
+            newEndDateTime.roll(Calendar.MONTH, 1);
+
+            //if end month < 10 and not 0
+            if(newEndDateTime.get(Calendar.MONTH) < 10 && !(Objects.equals(newEndDateTime.get(Calendar.MONTH),0)))
+                finalEventEnd = finalEventEnd.concat("-0" + String.valueOf(newEndDateTime.get(Calendar.MONTH)));
+                //if end month < 10 and is 0, set month to december
+            else if(newEndDateTime.get(Calendar.MONTH) < 10 && (Objects.equals(newEndDateTime.get(Calendar.MONTH),0)))
+                finalEventEnd = finalEventEnd.concat("-12");
+            else
+                finalEventEnd = finalEventEnd.concat("-" + String.valueOf(newEndDateTime.get(Calendar.MONTH)));
+
+            if(newEndDateTime.get(Calendar.DAY_OF_MONTH) < 10)
+                finalEventEnd = finalEventEnd.concat("-0" + String.valueOf(newEndDateTime.get(Calendar.DAY_OF_MONTH)));
+            else
+                finalEventEnd = finalEventEnd.concat("-" + String.valueOf(newEndDateTime.get(Calendar.DAY_OF_MONTH)));
+
+            if(utcEndHour < 10)
+                finalEventEnd = finalEventEnd.concat(" 0" + String.valueOf(utcEndHour));
+            else
+                finalEventEnd = finalEventEnd.concat(" " + String.valueOf(utcEndHour));
+
+            if(newEndDateTime.get(Calendar.MINUTE) < 10)
+                finalEventEnd = finalEventEnd.concat(":0" + String.valueOf(newEndDateTime.get(Calendar.MINUTE)));
+            else
+                finalEventEnd = finalEventEnd.concat(":" + String.valueOf(newEndDateTime.get(Calendar.MINUTE)));
+        }
+        //if no end time changes were made, then we simply send the original to the server
+        else {
+            //CHANGE THIS TO EXTRACTED END TIME ORIGINAL
+            SimpleDateFormat endForm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            finalEventEnd = endForm.format(originalEndDateTime.getTime());
+        }
+
+        System.out.println("eventName: " + finalEventName);
+        System.out.println("startTime: " + finalEventStart);
+        System.out.println("latitude: " + theCoords.latitude);
+        System.out.println("endTime: " + finalEventEnd);
+        System.out.println("userID: " + currentUserInformation.userID);
+        System.out.println("longitude: " + theCoords.longitude);
+        System.out.println("description: " + finalEventDescription);
+
+        //call the server to post
+        new CreatePing().execute();
     }
 
-    //show the dialog
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void showSetTimeDialog(final int whichField) {
         SetTimeDialog timeDialog = SetTimeDialog.newInstance(new SetTimeDialog.SetTimeDialogListener() {
             @Override
             public void onDialogPositiveClick(int hour, int minute) {
-                //now we have the hour and minute from the dialog, then just save the values to their variables
 
                 TextView timeView = null;
 
                 if(whichField == 1) {
-                    timeView = (TextView) findViewById(R.id.createPingStartTimeClickable);
 
-                    startDateTime.set(convYear, convMonth, convDay, hour+5, minute);
+                    newStartTimeSetFlag = true;     //new end time was input
+                    timeView = (TextView) findViewById(R.id.createPingStartTimeClickable); //select field to print time to
 
-                    convSYear = startDateTime.get(startDateTime.YEAR);
-                    convSMonth = startDateTime.get(startDateTime.MONTH);
-                    convSDay = startDateTime.get(startDateTime.DAY_OF_MONTH);
-                    convSHour = startDateTime.get(startDateTime.HOUR_OF_DAY);
-                    convSMinute = startDateTime.get(startDateTime.MINUTE);
+                    //TODO: JAVA MONTH RANGE : 0 - 11, I INITIALLY ROLL THE MONTH OVER BY ONE TO ACCOUNT FOR THIS, SO JAN IS MONTH 1 AND NOT MONTH 0
+                    //TODO: WHEN THE MONTH == 12, WE NEED TO EXPLICITLY SET IT TO 12 IN THE CHECK
+                    //TODO: THIS PROBLEM WILL ALSO BE IN THE EDIT EVENT
+                    //set the new startDateTime to the newly selected start time with original start year, month, and day
+                    newStartDateTime.set(originalStartDateTime.get(Calendar.YEAR), originalStartDateTime.get(Calendar.MONTH), originalStartDateTime.get(Calendar.DAY_OF_MONTH), hour, minute, 00);
+                    System.out.println("AFTER SELECTING NEW START TIME: " + newStartDateTime);
+
+                    //save the values for later use
+                    newStartHour = newStartDateTime.get(Calendar.HOUR_OF_DAY);
+                    newStartMinute = newStartDateTime.get(Calendar.MINUTE);
                 }
                 else if(whichField == 2) {
-                    timeView = (TextView) findViewById(R.id.createPingEndTimeClickable);
 
-                    endDateTime.set(convYear, convMonth, convDay, hour+5, minute);
+                    newEndTimeFlag = true;      //new time was input
+                    timeView = (TextView) findViewById(R.id.createPingEndTimeClickable);  //select field to print time to
 
-                    convEYear = endDateTime.get(endDateTime.YEAR);
-                    convEMonth = endDateTime.get(endDateTime.MONTH);
-                    convEDay = endDateTime.get(endDateTime.DAY_OF_MONTH);
-                    convEHour = endDateTime.get(endDateTime.HOUR_OF_DAY);
-                    convEMinute = endDateTime.get(endDateTime.MINUTE);
+                    //set the new endDateTime to the newly selected end time with original end year, month, and day
+                    newEndDateTime.set(originalEndDateTime.get(Calendar.YEAR), originalEndDateTime.get(Calendar.MONTH), originalEndDateTime.get(Calendar.DAY_OF_MONTH), hour, minute , 00);
+                    System.out.println("AFTER SELECTING NEW END TIME: " + newEndDateTime);
+
+                    //save the values for later use
+                    newEndHour = newEndDateTime.get(Calendar.HOUR_OF_DAY);
+                    newEndMinute = newEndDateTime.get(Calendar.MINUTE);
                 }
 
-                //FOR SCREEN DISPLAY PURPOSE ONLY-------------------------------------------------------
-                if(hour == 0) {
-                    if(minute < 10)
-                        timeView.setText("12:0" + minute + " AM");
-                    else
-                        timeView.setText("12:" + minute + " AM");
-                }
+                //Display selected time to selected field
+                String tag;
+                if(hour < 12)
+                    tag = " AM";
+                else
+                    tag = " PM";
 
-                else if(hour < 12) {
-                    if(minute < 10)
-                        timeView.setText(hour + ":0" + minute + " AM");
-                    else
-                        timeView.setText(hour + ":" + minute + " AM");
-                }
-                else if(hour >= 12) {
-                    if(hour == 12) {
-                        if(minute < 10)
-                            timeView.setText( hour + ":0" + minute + " PM");
-                        else
-                            timeView.setText( hour + ":" + minute + " PM");
+                if(hour == 0 || hour == 12) {
+                    if(minute < 10) {
+                        String display = "12:0" + minute + tag;
+                        timeView.setText(display);
                     }
                     else {
-                        if (minute < 10)
-                            timeView.setText(hour - 12 + ":0" + minute + " PM");
-                        else
-                            timeView.setText(hour - 12 + ":" + minute + " PM");
+                        String display = "12:" + minute + tag;
+                        timeView.setText(display);
+                    }
+                }
+                else {
+                    if(minute < 10) {
+                        String display = (hour % 12) + ":0" + minute + tag;
+                        timeView.setText(display);
+                    }
+                    else {
+                        String display = (hour % 12) + ":" + minute + tag;
+                        timeView.setText(display);
                     }
                 }
             }
@@ -297,27 +490,20 @@ public class CreatePingActivity extends AppCompatActivity {
         timeDialog.show(getSupportFragmentManager(), "Set Time");
     }
 
-    private class PostMarkerData extends AsyncTask<Void, Void, Void> {
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
+    private class CreatePing extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
 
-            System.out.println("eventName: " + pingName);
-            System.out.println("startTime: " + FINALStartDateTime);
-            System.out.println("latitude: " + currentCoords.latitude);
-            System.out.println("endTime: " + FINALEndDateTime);
-            System.out.println("userID: " + currentUser);
-            System.out.println("longitude: " + currentCoords.longitude);
-            System.out.println("description: " + pingDescription);
-
             JSONObject markerInformation = new JSONObject();
             try {
-                markerInformation.put("eventName", pingName);
-                markerInformation.put("startTime", FINALStartDateTime);
-                markerInformation.put("latitude", currentCoords.latitude);
-                markerInformation.put("endTime", FINALEndDateTime);
-                markerInformation.put("userID", currentUser);
-                markerInformation.put("longitude", currentCoords.longitude);
-                markerInformation.put("description", pingDescription);
+                markerInformation.put("eventName", finalEventName);
+                markerInformation.put("startTime", finalEventStart);
+                markerInformation.put("latitude", theCoords.latitude);
+                markerInformation.put("endTime", finalEventEnd);
+                markerInformation.put("userID", currentUserInformation.userID);
+                markerInformation.put("longitude", theCoords.longitude);
+                markerInformation.put("description", finalEventDescription);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -358,4 +544,5 @@ public class CreatePingActivity extends AppCompatActivity {
             finish();
         }
     }
+
 }

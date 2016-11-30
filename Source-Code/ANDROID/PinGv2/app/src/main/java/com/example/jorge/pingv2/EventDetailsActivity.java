@@ -12,9 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -27,6 +25,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 
 import okhttp3.FormBody;
@@ -39,22 +39,25 @@ import okhttp3.Response;
 import static com.example.jorge.pingv2.R.drawable.edit_btn;
 import static java.lang.Math.abs;
 
+
+//TODO: CHANGE THIS TO MATCH THE EVENT DETAIL
 public class EventDetailsActivity extends AppCompatActivity {
 
-    //info stuff
+    //variables holding information about the event and the user
     private int userID;
     private long eventID;
     private EventModel markerInformation;
     private UserData currentUserInformation;
 
+    //flag to signal first load of the screen
     private boolean firstLoad;
 
     //users attending stuff
-    private Switch attendSwitch;            //the actual switch itself
-    private boolean attendingFlag;          //set true if the user is attending
-    private int attendanceCount;            //how many attendees
-    private String attendanceResponse;      //server response
-    private String allAttendingUsers;       //JSON of attendees
+    private Switch attendSwitch;                    //the actual switch itself
+    private boolean attendingFlag;                  //set true if the user is attending
+    private int attendanceCount;                    //how many attendees
+    private String attendanceResponse;              //server response
+    private String allAttendingUsers;               //JSON of attendees
     private ArrayList<UserData> attendingUsersList; //Array of attendees
 
     //GIU stuff
@@ -65,19 +68,19 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     //time stuff
     private boolean newStartTimeSetFlag, newEndTimeFlag;
-    private Calendar startDateTime, endDateTime, origStartDateTime, origEndDateTime, newStartDate, newEndDate;
-    private int newStartYear, newStartMonth, newStartDay, newStartHour, newStartMinute, newEndYear, newEndMonth, newEndDay, newEndHour, newEndMinute;
+    private int newStartHour, newStartMinute, newEndHour, newEndMinute;
+    private Calendar originalStartDateTime, originalEndDateTime, newStartDateTime, newEndDateTime;
 
-    //final extracted fields for middle tier
+    //final extracted fields for server
     private String finalEventName, finalEventDescription, finalEventStart, finalEventEnd;
 
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         firstLoad = true;
         fab = (FloatingActionButton) findViewById(R.id.EventDetailsfab);
@@ -89,43 +92,45 @@ public class EventDetailsActivity extends AppCompatActivity {
         markerInformation = (EventModel) getIntent().getSerializableExtra("markerInfo");
         currentUserInformation = (UserData) getIntent().getSerializableExtra("userInfo");
 
-        //initialize attending to false, next line will check to see if attending
+        //initialize time changed flags
         newStartTimeSetFlag = false;         //will only be true if the user inputs a new start time
         newEndTimeFlag = false;              //will only be true if the user inputs a new end time
 
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
-        //TODO::*************************************************************************************
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
-        //attendingFlag = false;               //will only be true if the user is attending the event
-        //get list of attendees
+        //get list of attendees, set attend switch position and display number of attendees showing
         new GetListOfAttendees().execute();  //get attendees from middle tier
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
-        //TODO::*************************************************************************************
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
 
-        //initialize calendar objects
-        newStartDate = Calendar.getInstance();
-        newEndDate = Calendar.getInstance();
-        origStartDateTime = Calendar.getInstance();
-        origEndDateTime = Calendar.getInstance();
-
-        //convert startTime string to Calendar
-        DateFormat startDT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        startDateTime = Calendar.getInstance();
+        //set gregorian start and end calendars converted from strings
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {
-            startDateTime.setTime(startDT.parse(markerInformation.startTime));
+            Date parsedS = sdf.parse(markerInformation.startTime);
+            originalStartDateTime = new GregorianCalendar();
+            originalStartDateTime.setTime(parsedS);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        //convert endTime string to Calendar
-        DateFormat endDT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        endDateTime  = Calendar.getInstance();
+        DateFormat edf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {
-            endDateTime.setTime(endDT.parse(markerInformation.endTime));
+            Date parsedE = edf.parse(markerInformation.endTime);
+            originalEndDateTime = new GregorianCalendar();
+            originalEndDateTime.setTime(parsedE);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        //set new start and new end to original
+        newStartDateTime = new GregorianCalendar();
+        newStartDateTime = originalStartDateTime;
+
+        newEndDateTime = new GregorianCalendar();
+        newEndDateTime = originalEndDateTime;
+
+        //set to correct month because java's month start at 0 for some reason...
+        originalStartDateTime.add(Calendar.MONTH, 1);
+        originalEndDateTime.add(Calendar.MONTH, 1);
+
+        System.out.println("GREGY S: " + originalStartDateTime);
+        System.out.println("GREGY E: " + originalEndDateTime);
 
         //Set click states based on user
         InitializeGUI();
@@ -155,9 +160,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
 
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
-        //TODO::*************************************************************************************
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
         //attending switch listener
         attendSwitch = (Switch) findViewById(R.id.attendingEventSwitch);
         attendSwitch.setOnClickListener(new View.OnClickListener() {
@@ -167,9 +169,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                 new GetListOfAttendees().execute(); //update our array with the new attendees
             }
         });
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
-        //TODO::*************************************************************************************
-        //TODO://////////////////////////////////////////////////////////////////////////////////////
 
         //pop up set time dialog
         startTimeFieldOnScreen = (TextView) findViewById(R.id.eStartTime);
@@ -205,7 +204,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
-    //CORRECT, NEED SMALL CHANGES
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     private void InitializeGUI() {
 
         InitializeInitialTimes();
@@ -260,7 +259,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
-    //CORRECT
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void InitializeInitialTimes() {
 
         //get references to fields
@@ -271,8 +270,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         //START TIME CONVERT------------------------------------------------------------------------
         ////////////////////////////////////////////////////////////////////////////////////////////
         //extract start time (UTC)
-        int initStartTimeHour = startDateTime.get(Calendar.HOUR_OF_DAY);
-        int initStartTimeMinutes = startDateTime.get(Calendar.MINUTE);
+        int initStartTimeHour = originalStartDateTime.get(Calendar.HOUR_OF_DAY);
+        int initStartTimeMinutes = originalStartDateTime.get(Calendar.MINUTE);
         System.out.println("Extracted startTime: " + initStartTimeHour + ":" + initStartTimeMinutes);
 
         //convert UTC to EST
@@ -321,8 +320,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         //END TIME CONVERT--------------------------------------------------------------------------
         ////////////////////////////////////////////////////////////////////////////////////////////
         //extract end time (UTC)
-        int initEndTimeHour = endDateTime.get(Calendar.HOUR_OF_DAY);
-        int initEndTimeMinutes = endDateTime.get(Calendar.MINUTE);
+        int initEndTimeHour = originalEndDateTime.get(Calendar.HOUR_OF_DAY);
+        int initEndTimeMinutes = originalEndDateTime.get(Calendar.MINUTE);
         System.out.println("Extracted endTime: " + initEndTimeHour + ":" + initEndTimeMinutes);
 
         //convert UTC to EST
@@ -368,33 +367,14 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void CompleteEdit() {
         //extract input from name and description fields
         finalEventName = eventNameFieldOnScreen.getText().toString();
         finalEventDescription = eventDescFieldOnScreen.getText().toString();
 
-        newStartDate.set(newStartYear, newStartMonth, newStartDay, newStartHour, newStartMinute);
-        newEndDate.set(newEndYear, newEndMonth, newEndDay, newEndHour, newEndMinute);
-
-        //prints out what each object currently holds, at this time DATE AND TIME OF new objects are in EST and originals are in UTC
-        //The data should be correct though and is ready to be converted to UTC
-        System.out.println("ORIG START DATETIME: " + origStartDateTime.get(Calendar.YEAR) + "-" + origStartDateTime.get(Calendar.MONTH) + "-" + origStartDateTime.get(Calendar.DAY_OF_MONTH) + " " + origStartDateTime.get(Calendar.HOUR_OF_DAY) + ":" + origStartDateTime.get(Calendar.MINUTE));
-        System.out.println("NEW START DATETIME : " + newStartDate.get(Calendar.YEAR) + "-" + newStartDate.get(Calendar.MONTH) + "-" + newStartDate.get(Calendar.DAY_OF_MONTH) + " " + newStartDate.get(Calendar.HOUR_OF_DAY) + ":" + newStartDate.get(Calendar.MINUTE));
-
-        System.out.println("ORIG END DATETIME: " + origEndDateTime.get(Calendar.YEAR) + "-" + origEndDateTime.get(Calendar.MONTH) + "-" + origEndDateTime.get(Calendar.DAY_OF_MONTH) + " " + origEndDateTime.get(Calendar.HOUR_OF_DAY) + ":" + origEndDateTime.get(Calendar.MINUTE));
-        System.out.println("NEW END DATETIME : " + newEndDate.get(Calendar.YEAR) + "-" + newEndDate.get(Calendar.MONTH) + "-" + newEndDate.get(Calendar.DAY_OF_MONTH) + " " + newEndDate.get(Calendar.HOUR_OF_DAY) + ":" + newEndDate.get(Calendar.MINUTE));
-
         //only do the UTC conversions if newStartTimeSetFlags were set to true
         if(newStartTimeSetFlag) {
-
-            //get original start datetime for comparison
-            DateFormat startDT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            startDateTime = Calendar.getInstance();
-            try {
-                origStartDateTime.setTime(startDT.parse(markerInformation.startTime));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
 
             //est -> utc
             int utcStartHour = newStartHour + 5;
@@ -403,61 +383,49 @@ public class EventDetailsActivity extends AppCompatActivity {
                 utcStartHour %= 24;
 
             //now we check for cases where we should roll days
-            int originalStartHour = origStartDateTime.get(Calendar.HOUR_OF_DAY);
+            int originalStartHour = originalStartDateTime.get(Calendar.HOUR_OF_DAY);
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             //START CHECK-------------------------------------------------------------------------------
             ////////////////////////////////////////////////////////////////////////////////////////////
             //if newStart < originalStart : newStart day++
             if(utcStartHour < originalStartHour) {
-                newStartDate.roll(Calendar.DAY_OF_MONTH, 1);
+                newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
             }
             //if newStart == original BUT newStartMinute < originalStartMinute : newStart day++
-            else if(utcStartHour == originalStartHour && newStartMinute < origStartDateTime.get(Calendar.MINUTE))
-                newStartDate.roll(Calendar.DAY_OF_MONTH, 1);
+            else if(utcStartHour == originalStartHour && newStartMinute < originalStartDateTime.get(Calendar.MINUTE))
+                newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
-            System.out.println("AFTER CHECKING ROLLS START:" + newStartDate);
+            //convert start calendar to string
+            finalEventStart = String.valueOf(newStartDateTime.get(Calendar.YEAR));
 
-            //correctly add 0's in front of date time fields that need them, anything < 10 needs a 0
-
-            //START-------------------------------------------------------------------------------------
-
-            finalEventStart = String.valueOf(newStartDate.get(Calendar.YEAR));
-
-            if(newStartDate.get(Calendar.MONTH) < 10)
-                finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDate.get(Calendar.MONTH)));
+            if(newStartDateTime.get(Calendar.MONTH) < 10)
+                finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
             else
-                finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDate.get(Calendar.MONTH)));
+                finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
 
-            if(newStartDate.get(Calendar.DAY_OF_MONTH) < 10)
-                finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDate.get(Calendar.DAY_OF_MONTH)));
+            if(newStartDateTime.get(Calendar.DAY_OF_MONTH) < 10)
+                finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDateTime.get(Calendar.DAY_OF_MONTH)));
             else
-                finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDate.get(Calendar.DAY_OF_MONTH)));
+                finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDateTime.get(Calendar.DAY_OF_MONTH)));
 
             if(utcStartHour < 10)
                 finalEventStart = finalEventStart.concat(" 0" + String.valueOf(utcStartHour));
             else
                 finalEventStart = finalEventStart.concat(" " + String.valueOf(utcStartHour));
 
-            if(newStartDate.get(Calendar.MINUTE) < 10)
-                finalEventStart = finalEventStart.concat(":0" + String.valueOf(newStartDate.get(Calendar.MINUTE)));
+            if(newStartDateTime.get(Calendar.MINUTE) < 10)
+                finalEventStart = finalEventStart.concat(":0" + String.valueOf(newStartDateTime.get(Calendar.MINUTE)));
             else
-                finalEventStart = finalEventStart.concat(":" + String.valueOf(newStartDate.get(Calendar.MINUTE)));
+                finalEventStart = finalEventStart.concat(":" + String.valueOf(newStartDateTime.get(Calendar.MINUTE)));
         }
+        //if no end time changes were made, then we simply send the original to the server
         else {
             finalEventStart = markerInformation.startTime;
         }
 
         //only do the UTC conversions if newEndTimeSetFlags were set to true
         if(newEndTimeFlag) {
-            //get original end datetime for comparison
-            DateFormat endDT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            endDateTime = Calendar.getInstance();
-            try {
-                origEndDateTime.setTime(endDT.parse(markerInformation.endTime));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
 
             //est->utc
             int utcEndHour = newEndHour + 5;
@@ -465,109 +433,97 @@ public class EventDetailsActivity extends AppCompatActivity {
                 utcEndHour %= 24;
 
             //original end hour
-            int originalEndHour = origEndDateTime.get(Calendar.HOUR_OF_DAY);
+            int originalEndHour = originalEndDateTime.get(Calendar.HOUR_OF_DAY);
 
             ////////////////////////////////////////////////////////////////////////////////////////////
             //END CHECK---------------------------------------------------------------------------------
             ////////////////////////////////////////////////////////////////////////////////////////////
             //if newEnd < originalEnd : newEnd day++
             if(utcEndHour < originalEndHour) {
-                newEndDate.roll(Calendar.DAY_OF_MONTH, 1);
+                newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
             }
             //if newEnd == original BUT newEndMinute < originalEndMinute : newEnd day++
-            else if(utcEndHour == originalEndHour && newEndMinute < origEndDateTime.get(Calendar.MINUTE))
-                newEndDate.roll(Calendar.DAY_OF_MONTH, 1);
+            else if(utcEndHour == originalEndHour && newEndMinute < originalEndDateTime.get(Calendar.MINUTE))
+                newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
             //start hour for comparison with end hour
             int utcStartHour = newStartHour + 5;
+
             //if converted hour is > 24, we need to roll it over
             if(utcStartHour >= 24)
                 utcStartHour %= 24;
 
             if(utcEndHour < utcStartHour)
-                newEndDate.roll(Calendar.DAY_OF_MONTH, 1);
+                newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
+            //convert end calendar to string
+            finalEventEnd = String.valueOf(newEndDateTime.get(Calendar.YEAR));
 
-            System.out.println("AFTER CHECKING ROLLS END  :" + newEndDate);
-
-            //END---------------------------------------------------------------------------------------
-
-            finalEventEnd = String.valueOf(newEndDate.get(Calendar.YEAR));
-
-            if(newEndDate.get(Calendar.MONTH) < 10)
-                finalEventEnd = finalEventEnd.concat("-0" + String.valueOf(newEndDate.get(Calendar.MONTH)));
+            if(newEndDateTime.get(Calendar.MONTH) < 10)
+                finalEventEnd = finalEventEnd.concat("-0" + String.valueOf(newEndDateTime.get(Calendar.MONTH)));
             else
-                finalEventEnd = finalEventEnd.concat("-" + String.valueOf(newEndDate.get(Calendar.MONTH)));
+                finalEventEnd = finalEventEnd.concat("-" + String.valueOf(newEndDateTime.get(Calendar.MONTH)));
 
-            if(newEndDate.get(Calendar.DAY_OF_MONTH) < 10)
-                finalEventEnd = finalEventEnd.concat("-0" + String.valueOf(newEndDate.get(Calendar.DAY_OF_MONTH)));
+            if(newEndDateTime.get(Calendar.DAY_OF_MONTH) < 10)
+                finalEventEnd = finalEventEnd.concat("-0" + String.valueOf(newEndDateTime.get(Calendar.DAY_OF_MONTH)));
             else
-                finalEventEnd = finalEventEnd.concat("-" + String.valueOf(newEndDate.get(Calendar.DAY_OF_MONTH)));
+                finalEventEnd = finalEventEnd.concat("-" + String.valueOf(newEndDateTime.get(Calendar.DAY_OF_MONTH)));
 
             if(utcEndHour < 10)
                 finalEventEnd = finalEventEnd.concat(" 0" + String.valueOf(utcEndHour));
             else
                 finalEventEnd = finalEventEnd.concat(" " + String.valueOf(utcEndHour));
 
-            if(newEndDate.get(Calendar.MINUTE) < 10)
-                finalEventEnd = finalEventEnd.concat(":0" + String.valueOf(newEndDate.get(Calendar.MINUTE)));
+            if(newEndDateTime.get(Calendar.MINUTE) < 10)
+                finalEventEnd = finalEventEnd.concat(":0" + String.valueOf(newEndDateTime.get(Calendar.MINUTE)));
             else
-                finalEventEnd = finalEventEnd.concat(":" + String.valueOf(newEndDate.get(Calendar.MINUTE)));
+                finalEventEnd = finalEventEnd.concat(":" + String.valueOf(newEndDateTime.get(Calendar.MINUTE)));
         }
+        //if no end time changes were made, then we simply send the original to the server
         else {
             finalEventEnd = markerInformation.endTime;
         }
 
-        System.out.println(finalEventStart);
-        System.out.println(finalEventEnd);
-
-        System.out.println("eventID: " + markerInformation.eventID);
-        System.out.println("eventName: " + finalEventName);
-        System.out.println("startTime: " + finalEventStart);
-        System.out.println("latitude: " + markerInformation.latitude);
-        System.out.println("endTime: " + finalEventEnd);
-        System.out.println("longitude: " + markerInformation.longitude);
-        System.out.println("description: " + finalEventDescription);
-
+        //call the server to update the event
         new UpdateEventInfo().execute();
     }
 
-    //CORRECT
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void showSetTimeDialog(final int whichField) {
         SetTimeDialog timeDialog = SetTimeDialog.newInstance(new SetTimeDialog.SetTimeDialogListener() {
             @Override
             public void onDialogPositiveClick(int hour, int minute) {
+
                 TextView timeView = null;
+
                 if(whichField == 1) {
 
                     newStartTimeSetFlag = true;     //new end time was input
+                    timeView = (TextView) findViewById(R.id.eStartTime); //select field to print time to
 
-                    timeView = (TextView) findViewById(R.id.eStartTime);
-                    startDateTime.set(startDateTime.get(Calendar.YEAR), startDateTime.get(Calendar.MONTH)+1, startDateTime.get(Calendar.DAY_OF_MONTH), hour, minute);
-                    System.out.println("AFTER SELECTING NEW START TIME: " + startDateTime);
+                    //set the new startDateTime to the newly selected start time with original start year, month, and day
+                    newStartDateTime.set(originalStartDateTime.get(Calendar.YEAR), originalStartDateTime.get(Calendar.MONTH), originalStartDateTime.get(Calendar.DAY_OF_MONTH), hour, minute, 00);
+                    System.out.println("AFTER SELECTING NEW START TIME: " + newStartDateTime);
 
-                    newStartYear = startDateTime.get(Calendar.YEAR);
-                    newStartMonth = startDateTime.get(Calendar.MONTH);
-                    newStartDay = startDateTime.get(Calendar.DAY_OF_MONTH);
-                    newStartHour = startDateTime.get(Calendar.HOUR_OF_DAY);
-                    newStartMinute = startDateTime.get(Calendar.MINUTE);
+                    //save the values for later use
+                    newStartHour = newStartDateTime.get(Calendar.HOUR_OF_DAY);
+                    newStartMinute = newStartDateTime.get(Calendar.MINUTE);
                 }
                 else if(whichField == 2) {
-                    timeView = (TextView) findViewById(R.id.eEndTime);
 
                     newEndTimeFlag = true;      //new time was input
+                    timeView = (TextView) findViewById(R.id.eEndTime);  //select field to print time to
 
-                    endDateTime.set(endDateTime.get(Calendar.YEAR), endDateTime.get(Calendar.MONTH)+1, endDateTime.get(Calendar.DAY_OF_MONTH), hour, minute);
-                    System.out.println("AFTER SELECTING NEW END TIME: " + endDateTime);
+                    //set the new endDateTime to the newly selected end time with original end year, month, and day
+                    newEndDateTime.set(originalEndDateTime.get(Calendar.YEAR), originalEndDateTime.get(Calendar.MONTH), originalEndDateTime.get(Calendar.DAY_OF_MONTH), hour, minute , 00);
+                    System.out.println("AFTER SELECTING NEW END TIME: " + newEndDateTime);
 
-                    newEndYear = endDateTime.get(Calendar.YEAR);
-                    newEndMonth = endDateTime.get(Calendar.MONTH);
-                    newEndDay = endDateTime.get(Calendar.DAY_OF_MONTH);
-                    newEndHour = endDateTime.get(Calendar.HOUR_OF_DAY);
-                    newEndMinute = endDateTime.get(Calendar.MINUTE);
+                    //save the values for later use
+                    newEndHour = newEndDateTime.get(Calendar.HOUR_OF_DAY);
+                    newEndMinute = newEndDateTime.get(Calendar.MINUTE);
                 }
 
-                //FOR SCREEN DISPLAY PURPOSE ONLY-------------------------------------------------------
+                //Display selected time to selected field
                 String tag;
                 if(hour < 12)
                     tag = " AM";
@@ -602,6 +558,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         timeDialog.show(getSupportFragmentManager(), "Set Time");
     }
 
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public class UpdateEventInfo extends AsyncTask<Void, Void, Void>
     {
         @Override
@@ -655,9 +612,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
-    //TODO://////////////////////////////////////////////////////////////////////////////////////
-    //TODO::*************************************************************************************
-    //TODO://////////////////////////////////////////////////////////////////////////////////////
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public class UpdateAttendance extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -698,7 +653,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
-    //CORRECT
+    //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     private class GetListOfAttendees extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -772,7 +727,4 @@ public class EventDetailsActivity extends AppCompatActivity {
             System.out.println("Done with post execute get attendees");
         }
     }
-    //TODO://////////////////////////////////////////////////////////////////////////////////////
-    //TODO::*************************************************************************************
-    //TODO://////////////////////////////////////////////////////////////////////////////////////
 }
