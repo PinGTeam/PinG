@@ -417,6 +417,8 @@ public class CreatePingActivity extends AppCompatActivity {
         new CreatePing().execute();
     }
 
+    //
+
     //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void showSetTimeDialog(final int whichField) {
         SetTimeDialog timeDialog = SetTimeDialog.newInstance(new SetTimeDialog.SetTimeDialogListener() {

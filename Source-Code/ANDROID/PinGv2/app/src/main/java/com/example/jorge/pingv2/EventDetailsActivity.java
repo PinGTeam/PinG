@@ -39,7 +39,6 @@ import okhttp3.Response;
 import static com.example.jorge.pingv2.R.drawable.edit_btn;
 import static java.lang.Math.abs;
 
-
 //TODO: CHANGE THIS TO MATCH THE EVENT DETAIL
 public class EventDetailsActivity extends AppCompatActivity {
 
