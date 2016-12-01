@@ -1,12 +1,12 @@
-USE `test_middle`;
+USE `ping`;
 
-DROP procedure IF EXISTS `GetEvents3`;
+DROP procedure IF EXISTS `GetEvents4`;
 
 
 
 DELIMITER $$
-USE `test_middle`$$
-CREATE PROCEDURE `GetEvents3`(paramLatitude double,  paramLongitude double)
+USE `ping`$$
+CREATE PROCEDURE `GetEvents4`(paramLatitude double,  paramLongitude double)
 BEGIN
 
 DECLARE distMiles INT;
@@ -38,7 +38,8 @@ users
 on
 eventtable.userid = users.userid
 where
-(endTime > NOW()) AND
+(endTime > NOW())
+AND
 
 (latitude <= topLatitude AND
         latitude >= bottomLatitude) AND

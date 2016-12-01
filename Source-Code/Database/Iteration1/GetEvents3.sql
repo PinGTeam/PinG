@@ -1,5 +1,8 @@
 USE `ping`;
+
 DROP procedure IF EXISTS `GetEvents3`;
+
+
 
 DELIMITER $$
 USE `ping`$$
@@ -14,6 +17,8 @@ DECLARE topLongitude DOUBLE;
 DECLARE bottomLatitude DOUBLE;
 DECLARE bottomLongitude DOUBLE;
 
+
+
 SET distMiles = 25;
 SET lon2miles = abs(cos(radians(paramLatitude))*69);
 SET lat2miles = 69;
@@ -21,6 +26,8 @@ SET topLongitude = paramLongitude-distMiles/lon2miles;
 SET topLatitude = paramLatitude+distMiles/lat2miles;
 SET bottomLongitude = paramLongitude+distMiles/lon2miles;
 SET bottomLatitude = paramLatitude-distMiles/lat2miles;
+
+
 
 SELECT
 longitude, latitude, eventtable.userID, eventID, firstName, lastName, eventName, startTime, endTime, description
@@ -50,5 +57,7 @@ ELSE
 0
 END) = 1;
 END$$
+
+
 
 DELIMITER ;

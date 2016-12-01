@@ -12,6 +12,7 @@ BEGIN
   VALUES
     (parmUserId, parmLatitude, parmLongitude, parmEventName, parmWhenStart, parmWhenEnd, parmDescription);
 
+  SELECT LAST_INSERT_ID();
 END$$
 
 DELIMITER ;
