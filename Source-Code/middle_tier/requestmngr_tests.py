@@ -10,13 +10,53 @@ from sqlalchemy import *
 #--Testing for Middle-Tier | Iteration TWO --
 #    Tests:
 #        1. Database is empty [EmptyDatabaseTestCase]
-#            - Tests getallevents and getnearevents
+#              - Tests getallevents and getnearevents
+#
 #        2. Database with some data [NonEmptyDatabaseTestCase]
-#            - Tests getallevents and getnearevents
+#              - Tests getallevents and getnearevents
+#
+#
 #        3. Adding with "adduser" and checking if users have been added [EmptyDatabaseWithAddUserTestCase]
-#            - Tests adduser
+#              - Tests adduser
+#
+#
 #        4. Adding with "addevent" and checking if event has been added [EmptyDatabaseWithAddEventTestCase]
-#            - Tests adduser, addevent, getallevents and getnearevents
+#              - Tests adduser, addevent, getallevents and getnearevents
+#
+#
+#        5. Creating an event and checking its blank attendance list with getattendance
+#        [EmptyAttendanceTestCase]
+#            - Tests adduser, addevent, and getattendance.
+#
+#
+#        6. Addings attendees with "attend" and toggling it with the same command, while viewing the results with getattendance
+#        [EmptyAttendanceTableWithAddTestCase]
+#            - Tests adduser, addevent, getattendnace, and attend, as well as the toggling nature of attend.
+#
+#
+#        7. Adding severals attendees to an event with "attend" on multiple users, and then viewing them with getattendance
+#        [EmptyAttendanceTableWithMultipleAddsTestCase]
+#            - Tests adduser, addevent, and getattendance with attend. Views the results of the array with getattendance.
+#
+#
+#        8. Removing several attendees from an event with "attend" on multiple users
+#        [RemovingFromAttendanceTableTestCase]
+#            - Tests attend and getattendance.
+#
+#
+#        9. Uses the alternate route for getnearevents by using getnearevents_alt
+#        [EmptyDatabaseGetNear_AltTestCase]
+#            - Tests getnearevents_alt
+#
+#
+#        10. Uses addevent's alternate route with addevent_alt
+#        [EmptyDatabaseWithAdds_AltTestCase]
+#            -  Tests adduser and addevent_alt
+#
+#
+#        11. Uses editevent's alternate route with editevent_alt
+#        [NonEmptyDatabaseEditEvent_AltTestCase]
+#            - Tests editevent_alt
 
 
 class EmptyDatabaseTestCase(unittest.TestCase):
