@@ -1,3 +1,7 @@
+/**
+ * Ammended and made right by Zach and Richard and Jorge Torres-Aldana*
+ **/
+
 package com.example.jorge.pingv2;
 
 import com.google.gson.Gson;
@@ -10,9 +14,6 @@ import java.util.ArrayList;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 
-/**
- * Created by Richard Hamm on 11/10/2016.
- */
 
 public class EventModel implements Serializable{
     public long eventID;

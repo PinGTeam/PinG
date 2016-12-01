@@ -1,3 +1,7 @@
+/**
+ * Ammended and made right by Zach and Richard and Jorge Torres-Aldana*
+ **/
+
 package com.example.jorge.pingv2;
 
 import android.app.Dialog;
@@ -15,6 +19,7 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertThat;
 
@@ -34,21 +39,21 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 /**
- * Originally introduced by Arthur and Jorge on 10/19/2016.
- * Ammended and made right by Zach, Jorge, and Richard on 11/15/2016 and
+ * Originally introduced by Arthur and Jorge on 10/19/2016. *
+ * Ammended and made right by Zach and Richard *
  **/
 
 public class UnitTests {
     @Before
     public void setUp() throws Exception {
-        //setUp();
+        //setUp(); not needed
         //this function is called before the invocation of
         //each test method in the class.
     }
 
     @After
     public void tearDown() throws Exception {
-        //tearDown();
+        //tearDown(); not needed
         //this function is called after the invocation of
         //each test method in the class.
     }
@@ -150,6 +155,22 @@ public class UnitTests {
         }
     }
 
+    // tests creating eventmodel class for storing event data
+    @Test
+    public void testEventModel()
+    {
+        EventModel model = new EventModel();
+        model.endTime = "2016-10-10 16:00:05";
+        model.startTime = "2016-10-10 15:30:05";
+        model.eventName = "Hello";
+        model.description="Mine";
+        model.latitude = -10.005;
+        model.longitude =  140.93838;
+        model.userID = 1;
+        RequestBody postData = model.getPostFormData();
+    }
+
+
     // test creating an event
     LatLng theCoords = new LatLng(30.4059723, -84.21904);
     String eName = "EventName" + System.currentTimeMillis()%99999;
@@ -160,32 +181,26 @@ public class UnitTests {
 
     @Test
     public void testAddEvent() {
-
-        System.out.println(eName + " " + eStartTime + " " +theCoords.longitude + " " +eEndTime +  " " +theCoords.latitude + " " +eDescription);
-        //create json object and stitch all data together
-        JSONObject markerInfo = new JSONObject();
-        try {
-            markerInfo.put("eventName", eName);
-            System.out.println(markerInfo);
-            markerInfo.put("startTime", eStartTime);
-            markerInfo.put("latitude", theCoords.latitude);
-            markerInfo.put("endTime", eEndTime);
-            markerInfo.put("userID", uID);
-            markerInfo.put("longitude", theCoords.longitude);
-            markerInfo.put("description", eDescription);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        EventModel model = new EventModel();
+        model.endTime = "2016-10-10 16:00:05";
+        model.startTime = "2016-10-10 15:30:05";
+        model.eventName = "Hello";
+        model.description="Mine";
+        model.latitude = -10.005;
+        model.longitude =  140.93838;
+        model.userID = 1;
+        RequestBody formBody = model.getPostFormData();
 
         OkHttpClient client = new OkHttpClient();
+        /*
         RequestBody formBody = new FormBody.Builder()
                 .add("event", markerInfo.toString())
                 .build();
+         */
+
 
         Request request = new Request.Builder()
-                .url("http://162.243.15.139:5000/addevent_alt")
+                .url("http://162.243.15.139/addevent_alt")
                 .post(formBody)
                 .build();
         try {
@@ -206,40 +221,4 @@ public class UnitTests {
             e.printStackTrace();
         }
     }
-
-    @Test
-    public void testEventModel()
-    {
-        EventModel model = new EventModel();
-        model.endTime = "2016-10-10 16:00:05";
-        model.startTime = "2016-10-10 15:30:05";
-        model.eventName = "Hello";
-        model.description="Mine";
-        model.latitude = -10.005;
-        model.longitude =  140.93838;
-        model.userID = 1;
-        RequestBody postData = model.getPostFormData();
-    }
-
-
-/*
-    @Test
-    //Check Google Play Services Availability
-    private boolean checkGoogleServices() {
-        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
-        int isAvailable = api.isGooglePlayServicesAvailable(this);
-        //is available
-        if (isAvailable == ConnectionResult.SUCCESS)
-            return true;
-            //not available, but can install
-        else if (api.isUserResolvableError(isAvailable)) {
-            Dialog box = api.getErrorDialog(this, isAvailable, 0);
-            box.show();
-            //is not available
-        } else {
-            Toast.makeText(this, "Cannot connect to Google Play Services", Toast.LENGTH_LONG).show();
-        }
-        return false;
-    }
-    */
 }

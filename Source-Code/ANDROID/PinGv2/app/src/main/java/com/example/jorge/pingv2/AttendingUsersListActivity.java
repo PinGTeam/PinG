@@ -1,3 +1,7 @@
+/**
+ * Ammended and made right by Zach and Richard and Jorge Torres-Aldana*
+ **/
+
 package com.example.jorge.pingv2;
 
 import android.os.Bundle;

@@ -15,7 +15,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="android.support.multidex.MultiDexApplication">
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -24,7 +25,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAbNLGa_u98l2fQSxQnrEK1_aLGcTTyZb8" />
 
-        <activity android:name=".LogInActivity">
+        <activity android:name=".LogInActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,25 +36,30 @@
 
         <activity
             android:name=".MapActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_map"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".SignUpActivity"
+            android:screenOrientation="portrait"
             android:label="Sign Up" />
 
         <activity
-            android:name=".AttendingUsersListActivity" />
+            android:name=".AttendingUsersListActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".EventDetailsActivity"
             android:label="Event Details"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".CreatePingActivity"
             android:label="Create Ping"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" />
 
     </application>
 </manifest>

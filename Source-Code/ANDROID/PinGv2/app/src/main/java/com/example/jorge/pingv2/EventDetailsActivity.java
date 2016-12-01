@@ -1,4 +1,6 @@
-/* Written by Zach and Jorge on 11/20/16 */
+/**
+ * Ammended and made right by Zach and Richard and Jorge Torres-Aldana*
+ **/
 
 package com.example.jorge.pingv2;
 

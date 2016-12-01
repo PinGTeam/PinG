@@ -1,3 +1,7 @@
+/**
+ * Ammended and made right by Zach and Richard and Jorge Torres-Aldana*
+ **/
+
 package com.example.jorge.pingv2;
 
 import android.app.Dialog;
@@ -9,9 +13,6 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
-/**
- * Created by Jorge on 11/15/2016.
- */
 
 public class SetTimeDialog extends DialogFragment
     implements TimePickerDialog.OnTimeSetListener {

@@ -1,3 +1,7 @@
+/**
+ * Ammended and made right by Zach and Richard and Jorge Torres-Aldana*
+ **/
+
 package com.example.jorge.pingv2;
 
 import android.util.Base64;
@@ -12,10 +16,6 @@ import java.util.ArrayList;
 
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
-
-/**
- * Created by Richard Hamm on 11/3/2016.
- */
 
 public class UserData implements Serializable{
 

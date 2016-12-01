@@ -10,6 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
     }
 
     testOptions{
@@ -34,6 +36,8 @@ dependencies {
 
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.google.code.gson:gson:2.6.2'
+
+    compile 'com.android.support:multidex:1.0.1'
 
     compile 'com.android.support:design:24.2.1'
     compile 'com.google.android.gms:play-services-maps:9.8.0'
