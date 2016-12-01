@@ -298,9 +298,50 @@ class NonEmptyGetNear_Alt(unittest.TestCase):
 
     def test_getnearevent_alt(self):
 	rv = self.app.get('/getnearevents_alt?longitude=120&latitude=12')
-	print rv.data
-        #assert '{"eventID": 1, "description": "testdesc", "attending": 0, "startTime": "2018-10-10 20:20:20", "attendance": 0, "firstName": "testing", "lastName": "test", "userID": 1, "longitude": 12.0, "eventName": "testevent", "latitude": 120.0, "endTime": "2018-10-10 20:20:20"}' in rv.data
-	assert '{"eventID": 1, "description": "testdesc", "attending": 0, "startTime": "2018-10-10 20:20:20", "attendance": 0, "firstName": "testing", "lastName": "test", "userID": 1, "longitude": 12.0, "eventName": "testevent", "latitude": 120.0, "endTime": "2018-10-10 20:20:20"}' in rv.data
+	assert "{'eventID': 1, 'description': 'testdesc', 'attending': 0, 'startTime': '2018-10-10 20:20:20', 'attendance': 0, 'firstName': 'testing', 'lastName': 'test', 'userID': 1, 'longitude': 12.0, 'eventName': 'testevent', 'latitude': 120.0, 'endTime': '2018-10-10 20:20:20'}" in rv.data
+
+class EmptyDatabaseWithAdds_Alt(unittest.TestCase):
+
+    def setUp(self):
+        requestmngr.app.config['TESTING'] = True
+        requestmngr.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/test_middle'
+        requestmngr.engine = create_engine('mysql://juan:alfaro@localhost/test_middle')
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+        self.app = requestmngr.app.test_client()
+        #with requestmngr.app.app_context():
+
+    def tearDown(self):
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+
+    def test_addevent_alt(self):
+        rv = self.app.post('/adduser', data=dict(userName='testUserName',firstName='testName',lastName='testLName',password='dGhlcGFzc3dvcmQ=',email='email@asd.com'))
+        rv = self.app.post('/addevent_alt', data=dict(event='{"eventName": "ToddlerGodParty", "startTime": "2018-10-10 02:20:20", "latitude": -84.281616, "endTime": "2018-10-10 10:20:20", "userID": 1, "longitude": 30.433234, "description": "worship Toddler Gods"}'))
+	assert '1' in rv.data
+
+class NonEmptyDatabaseEditEvent_Alt(unittest.TestCase):
+
+    def setUp(self):
+        requestmngr.app.config['TESTING'] = True
+        requestmngr.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://juan:alfaro@localhost/test_middle'
+        requestmngr.engine = create_engine('mysql://juan:alfaro@localhost/test_middle')
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+        requestmngr.db.session.add(requestmngr.users(userName='testname',firstName='testing',lastName='test',email='test@email.com',password='dGhlUGFzc3dvcmQ='))
+        requestmngr.db.session.commit()
+        requestmngr.db.session.add(requestmngr.eventtable(userID=1,latitude=12,longitude=120,eventName="testevent",startTime="2018-10-10 20:20:20",endTime="2018-10-10 20:20:20",description="testdesc"))
+        requestmngr.db.session.commit()
+        self.app = requestmngr.app.test_client()
+        #with requestmngr.app.app_context():
+
+    def tearDown(self):
+        requestmngr.db.drop_all()
+        requestmngr.db.create_all()
+
+    def test_editevent_alt(self):
+	rv = self.app.post('/editevent_alt', data=dict(event='{"eventID": 1, "eventName": "testevent", "startTime": "2018-10-10 02:20:20", "latitude": -84.281616, "endTime": "2018-10-10 10:20:20", "userID": 1, "longitude": 30.433243, "description": "This ought to be edited"}'))
+	assert '1' in rv.data
 
 
 if __name__ == '__main__':
