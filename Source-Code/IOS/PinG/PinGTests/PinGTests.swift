@@ -29,6 +29,7 @@ class PinGTests: XCTestCase {
         XCTAssert(true)
     }
     
+    /* Deprecated Method, testing the GET request is now performed in testAttendeesGet()
     func testGETRequest() {
         var succ = false
         print("Testing request")
@@ -80,6 +81,7 @@ class PinGTests: XCTestCase {
         }
         
     }
+    */
     
     func testLogin() {
         var done = false
@@ -164,7 +166,7 @@ class PinGTests: XCTestCase {
         }
     }
     
-    /* Legacy method
+    /* Deprecated method
     func testPOSTRequest() {
         var succ = false
         var request = URLRequest(url: URL(string: "http://162.243.15.139/adduser")!)
