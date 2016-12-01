@@ -3,6 +3,7 @@
 //  PinG
 //
 //  Created by Arthur Xenophon Karapateas on 11/8/16.
+//  Worked on by Koji and Arthur
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
@@ -12,10 +13,12 @@ class ProfileViewController: UIViewController {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var logoutButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //set lables upon loading the view. That's pretty much all this class does lol
         nameLabel.text = Shared.shared.firstname + " " + Shared.shared.lastname
         usernameLabel.text = Shared.shared.username
         
@@ -27,6 +30,18 @@ class ProfileViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    //Interface action for logout
+    @IBAction func logoutPressed(sender: UIButton) {
+        print("xd")
+        //Clear shared data
+        Shared.shared.username = nil
+        Shared.shared.firstname = nil
+        Shared.shared.lastname = nil
+        Shared.shared.userID = nil
+        //Present login view controller
+        let view = self.storyboard?.instantiateViewController(withIdentifier: "loginNav")
+        self.present(view as! UINavigationController, animated: true, completion: nil)
+    }
 
     /*
     // MARK: - Navigation

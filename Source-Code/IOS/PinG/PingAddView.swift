@@ -7,6 +7,8 @@
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
+// This code is legacy code used on an old iteration. This code is no longer used, but is there as a reference.
+
 import UIKit
 
 class PingAddView: UIView, UITextViewDelegate {

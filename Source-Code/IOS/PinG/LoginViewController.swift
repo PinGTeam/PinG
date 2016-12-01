@@ -3,7 +3,7 @@
 //  PinG
 //
 //  Created by Koji Tilley on 10/9/16.
-//  Worked on by Koji Tilley and Jordan Harlow
+//  Worked on by Koji Tilley, Jordan Harlow and Arthur Karapateas
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
@@ -16,12 +16,15 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var firstnameTextField: UITextField!
     @IBOutlet weak var lastnameTextField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var errorTextField: UITextView!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        // Clear the text field used to display errors upon loading the view
+        errorTextField.text = ""
     }
 
     override func didReceiveMemoryWarning() {
@@ -29,6 +32,7 @@ class LoginViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // called when showing map view upon login
     func switchView() {
         //Prepare for segue
         let view = self.storyboard?.instantiateViewController(withIdentifier: "nav")
@@ -42,11 +46,11 @@ class LoginViewController: UIViewController {
         
         //Verify fields
         
-        
+        //encode passowrd
         print("Login button pressed")
         let utf8str = passTextField.text?.data(using: String.Encoding.utf8)
         let base64Encoded = utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
-        print("password: \(base64Encoded!)")
+        //print("password: \(base64Encoded!)")
         activityIndicator.startAnimating()
         
         //HTTP Post method
@@ -67,6 +71,7 @@ class LoginViewController: UIViewController {
             }
         
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                // connection error
                 print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
                 print("response = \(response)")
                 done = true
@@ -86,15 +91,17 @@ class LoginViewController: UIViewController {
         while !done {
             Thread.sleep(forTimeInterval: 0.25)
         }
-        print("password: \(base64Encoded)")
         
         if succ {
+            //upon a successful login, a json object is returned
             print("Begin retrieving json")
             if resString == "-1" {
                 print("login failed xD")
+                errorTextField.text = "Login failed. The username or password is incorrect."
             }
             else {
                 do {
+                    //create json object form string
                     let json = try JSONSerialization.jsonObject(with: resData!, options: .allowFragments) as! [String:AnyObject]
                     
                     print(json)
@@ -103,11 +110,13 @@ class LoginViewController: UIViewController {
                     print("First name = \(json["firstName"]!)")
                     print("Last name = \(json["lastName"]!)")
                     
+                    //store login info into shared class
                     Shared.shared.userID = json["userID"]! as! Int
                     Shared.shared.username = json["userName"]! as! String
                     Shared.shared.firstname = json["firstName"]! as! String
                     Shared.shared.lastname = json["lastName"]! as! String
                     
+                    //replace current view with map view
                     self.switchView()
                     
                     

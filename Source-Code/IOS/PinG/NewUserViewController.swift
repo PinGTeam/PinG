@@ -3,6 +3,7 @@
 //  PinG
 //
 //  Created by Koji Tilley on 10/27/16.
+//  Worked on by Koji and Arthur
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
@@ -23,6 +24,7 @@ class NewUserViewController: UIViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        // clear error field
         errorTextView.text = ""
     }
 
@@ -33,6 +35,7 @@ class NewUserViewController: UIViewController {
     
     @IBAction func signUpPressed(sender: UIButton) {
         // Local var init
+        // error handler function that is called that changes border color to red
         func errorField(field: UITextField) {
             field.layer.borderColor = UIColor.red.cgColor
             field.layer.borderWidth = 0.8
@@ -40,6 +43,7 @@ class NewUserViewController: UIViewController {
             field.layer.masksToBounds = true
         }
         
+        // regex to verify valid emails
         func isValidEmail(testStr:String) -> Bool {
             let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
             
@@ -47,7 +51,7 @@ class NewUserViewController: UIViewController {
             return emailTest.evaluate(with: testStr)
         }
         
-        // default colors for each field
+        // default colors for each field (clears red borders)
         firstNameTextField.layer.borderColor = UIColor.clear.cgColor
         lastNameTextField.layer.borderColor = UIColor.clear.cgColor
         userNameTextField.layer.borderColor = UIColor.clear.cgColor
@@ -95,6 +99,7 @@ class NewUserViewController: UIViewController {
             return  //exit out of function
         }
         
+        //Use data in fields to prepare for post request
         //Encode password into base64
         let utf8str = confirmPassTextField.text?.data(using: String.Encoding.utf8)
         let base64Encoded = utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
@@ -122,6 +127,7 @@ class NewUserViewController: UIViewController {
             }
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                //unsuccessful connection
                 print("StatusCode should be 200, but it is \(httpStatus.statusCode)")
                 print("response = \(response)")
                 done = true
@@ -136,6 +142,7 @@ class NewUserViewController: UIViewController {
         }
         task.resume()
         
+        //block main thread until a response has been given
         while !done {
             Thread.sleep(forTimeInterval: 0.1)
         }
@@ -169,7 +176,7 @@ class NewUserViewController: UIViewController {
             }
         }
         
-        // Return to login view controller
+        // Return to login view controller by popping a view off from the navigation stack
         self.navigationController?.popViewController(animated: true)
         
         

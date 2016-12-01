@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E42E1DB31DDBC95C00F07E12 /* dirac.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DAE1DDBC95C00F07E12 /* dirac.gpx */; };
+		E42E1DB41DDBC95C00F07E12 /* landisFountain.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DAF1DDBC95C00F07E12 /* landisFountain.gpx */; };
+		E42E1DB51DDBC95C00F07E12 /* majorsLab.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DB01DDBC95C00F07E12 /* majorsLab.gpx */; };
+		E42E1DB61DDBC95C00F07E12 /* slc.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DB11DDBC95C00F07E12 /* slc.gpx */; };
+		E42E1DB71DDBC95C00F07E12 /* stroz.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E42E1DB21DDBC95C00F07E12 /* stroz.gpx */; };
+		E42E1DB91DDBD16A00F07E12 /* ViewEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42E1DB81DDBD16A00F07E12 /* ViewEventTableViewController.swift */; };
+		E44BD47C1DDA869600A65869 /* AddEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */; };
+		E44BD47E1DDA97CE00A65869 /* SegueFromLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */; };
+		E48E15B91DE295E900066963 /* EditEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E15B81DE295E900066963 /* EditEventTableViewController.swift */; };
+		E48E15BB1DE2AED900066963 /* AttendeesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48E15BA1DE2AED900066963 /* AttendeesTableViewController.swift */; };
 		E4A26F4C1DD3D66E0036484C /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */; };
 		E4A26F4E1DD3D7D70036484C /* AnnotationViewClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A26F4D1DD3D7D70036484C /* AnnotationViewClass.swift */; };
 		E4A26F501DD3D7F20036484C /* AnnotationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4A26F4F1DD3D7F20036484C /* AnnotationView.xib */; };
@@ -46,6 +56,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E42E1DAE1DDBC95C00F07E12 /* dirac.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = dirac.gpx; sourceTree = "<group>"; };
+		E42E1DAF1DDBC95C00F07E12 /* landisFountain.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = landisFountain.gpx; sourceTree = "<group>"; };
+		E42E1DB01DDBC95C00F07E12 /* majorsLab.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = majorsLab.gpx; sourceTree = "<group>"; };
+		E42E1DB11DDBC95C00F07E12 /* slc.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = slc.gpx; sourceTree = "<group>"; };
+		E42E1DB21DDBC95C00F07E12 /* stroz.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = stroz.gpx; sourceTree = "<group>"; };
+		E42E1DB81DDBD16A00F07E12 /* ViewEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewEventTableViewController.swift; sourceTree = "<group>"; };
+		E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventTableViewController.swift; sourceTree = "<group>"; };
+		E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueFromLeft.swift; sourceTree = "<group>"; };
+		E48E15B81DE295E900066963 /* EditEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditEventTableViewController.swift; sourceTree = "<group>"; };
+		E48E15BA1DE2AED900066963 /* AttendeesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttendeesTableViewController.swift; sourceTree = "<group>"; };
 		E4A26F4B1DD3D66E0036484C /* AnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
 		E4A26F4D1DD3D7D70036484C /* AnnotationViewClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationViewClass.swift; sourceTree = "<group>"; };
 		E4A26F4F1DD3D7F20036484C /* AnnotationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnnotationView.xib; sourceTree = "<group>"; };
@@ -113,6 +133,11 @@
 		EB0642791DAB20D400BDFEDC = {
 			isa = PBXGroup;
 			children = (
+				E42E1DAE1DDBC95C00F07E12 /* dirac.gpx */,
+				E42E1DAF1DDBC95C00F07E12 /* landisFountain.gpx */,
+				E42E1DB01DDBC95C00F07E12 /* majorsLab.gpx */,
+				E42E1DB11DDBC95C00F07E12 /* slc.gpx */,
+				E42E1DB21DDBC95C00F07E12 /* stroz.gpx */,
 				EB0642841DAB20D400BDFEDC /* PinG */,
 				EB0642991DAB20D500BDFEDC /* PinGTests */,
 				EB0642A41DAB20D500BDFEDC /* PinGUITests */,
@@ -141,8 +166,13 @@
 				EB8B84711DC2B1F700893744 /* NewUserViewController.swift */,
 				EB0642BC1DAB317600BDFEDC /* MapViewController.swift */,
 				E4D0A2D41DD2A8280045070B /* ProfileViewController.swift */,
+				E44BD47B1DDA869500A65869 /* AddEventTableViewController.swift */,
+				E42E1DB81DDBD16A00F07E12 /* ViewEventTableViewController.swift */,
+				E48E15B81DE295E900066963 /* EditEventTableViewController.swift */,
+				E48E15BA1DE2AED900066963 /* AttendeesTableViewController.swift */,
 				EB8B2DD21DAD943900920A81 /* Ping.swift */,
 				EB0642891DAB20D500BDFEDC /* Main.storyboard */,
+				E44BD47D1DDA97CE00A65869 /* SegueFromLeft.swift */,
 				EB06428C1DAB20D500BDFEDC /* Assets.xcassets */,
 				EB06428E1DAB20D500BDFEDC /* LaunchScreen.storyboard */,
 				EB0642911DAB20D500BDFEDC /* Info.plist */,
@@ -255,15 +285,18 @@
 				TargetAttributes = {
 					EB0642811DAB20D400BDFEDC = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = SZGU9Z4BRN;
 						ProvisioningStyle = Automatic;
 					};
 					EB0642951DAB20D500BDFEDC = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = SZGU9Z4BRN;
 						ProvisioningStyle = Automatic;
 						TestTargetID = EB0642811DAB20D400BDFEDC;
 					};
 					EB0642A01DAB20D500BDFEDC = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = SZGU9Z4BRN;
 						ProvisioningStyle = Automatic;
 						TestTargetID = EB0642811DAB20D400BDFEDC;
 					};
@@ -294,9 +327,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E42E1DB71DDBC95C00F07E12 /* stroz.gpx in Resources */,
+				E42E1DB61DDBC95C00F07E12 /* slc.gpx in Resources */,
 				EB0642901DAB20D500BDFEDC /* LaunchScreen.storyboard in Resources */,
+				E42E1DB31DDBC95C00F07E12 /* dirac.gpx in Resources */,
 				E4A26F501DD3D7F20036484C /* AnnotationView.xib in Resources */,
+				E42E1DB41DDBC95C00F07E12 /* landisFountain.gpx in Resources */,
 				EB06428D1DAB20D500BDFEDC /* Assets.xcassets in Resources */,
+				E42E1DB51DDBC95C00F07E12 /* majorsLab.gpx in Resources */,
 				EB066A851DB4709900FC8C93 /* PingAddView.xib in Resources */,
 				EB06428B1DAB20D500BDFEDC /* Main.storyboard in Resources */,
 			);
@@ -327,10 +365,15 @@
 				E4A26F4C1DD3D66E0036484C /* AnnotationView.swift in Sources */,
 				EB0642BB1DAB2B4100BDFEDC /* LoginViewController.swift in Sources */,
 				EB0642BD1DAB317600BDFEDC /* MapViewController.swift in Sources */,
+				E48E15B91DE295E900066963 /* EditEventTableViewController.swift in Sources */,
 				E4A26F4E1DD3D7D70036484C /* AnnotationViewClass.swift in Sources */,
 				EB0642861DAB20D500BDFEDC /* AppDelegate.swift in Sources */,
+				E48E15BB1DE2AED900066963 /* AttendeesTableViewController.swift in Sources */,
+				E44BD47E1DDA97CE00A65869 /* SegueFromLeft.swift in Sources */,
+				E44BD47C1DDA869600A65869 /* AddEventTableViewController.swift in Sources */,
 				EB066A871DB4710000FC8C93 /* PingAddView.swift in Sources */,
 				EB8B2DD31DAD943900920A81 /* Ping.swift in Sources */,
+				E42E1DB91DDBD16A00F07E12 /* ViewEventTableViewController.swift in Sources */,
 				E4D0A2D51DD2A8280045070B /* ProfileViewController.swift in Sources */,
 				EB8B84721DC2B1F700893744 /* NewUserViewController.swift in Sources */,
 			);
@@ -408,9 +451,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -430,6 +475,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_CODE_SIGN_FLAGS[sdk=iphonesimulator*]" = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphonesimulator*]" = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -458,9 +505,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -484,6 +533,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				INFOPLIST_FILE = PinG/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = PinGTeam.PinG;
@@ -496,6 +546,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				INFOPLIST_FILE = PinG/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = PinGTeam.PinG;
