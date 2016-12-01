@@ -3,12 +3,14 @@
 //  PinG
 //
 //  Created by Arthur Xenophon Karapateas on 11/14/16.
+//  Worked on by Koji and Arthur
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
 import UIKit
 import CoreLocation
 
+// static table view
 class AddEventTableViewController: UITableViewController, UITextViewDelegate, CLLocationManagerDelegate {
     
     @IBOutlet weak var nameTextField: UITextField!

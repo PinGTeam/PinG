@@ -3,6 +3,7 @@
 //  PinG
 //
 //  Created by Arthur Xenophon Karapateas on 11/8/16.
+//  Worked on by Koji and Arthur
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
@@ -17,6 +18,7 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //set lables upon loading the view. That's pretty much all this class does lol
         nameLabel.text = Shared.shared.firstname + " " + Shared.shared.lastname
         usernameLabel.text = Shared.shared.username
         
@@ -28,6 +30,7 @@ class ProfileViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    //Interface action for logout
     @IBAction func logoutPressed(sender: UIButton) {
         print("xd")
         //Clear shared data

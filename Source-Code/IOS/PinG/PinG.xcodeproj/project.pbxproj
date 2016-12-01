@@ -285,15 +285,18 @@
 				TargetAttributes = {
 					EB0642811DAB20D400BDFEDC = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = SZGU9Z4BRN;
 						ProvisioningStyle = Automatic;
 					};
 					EB0642951DAB20D500BDFEDC = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = SZGU9Z4BRN;
 						ProvisioningStyle = Automatic;
 						TestTargetID = EB0642811DAB20D400BDFEDC;
 					};
 					EB0642A01DAB20D500BDFEDC = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = SZGU9Z4BRN;
 						ProvisioningStyle = Automatic;
 						TestTargetID = EB0642811DAB20D400BDFEDC;
 					};
@@ -448,9 +451,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -470,6 +475,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_CODE_SIGN_FLAGS[sdk=iphonesimulator*]" = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphonesimulator*]" = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -498,9 +505,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -524,6 +533,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				INFOPLIST_FILE = PinG/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = PinGTeam.PinG;
@@ -536,6 +546,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SZGU9Z4BRN;
 				INFOPLIST_FILE = PinG/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = PinGTeam.PinG;

@@ -3,7 +3,7 @@
 //  PinG
 //
 //  Created by Koji Tilley on 10/9/16.
-//  Worked on by Koji Tilley and Jordan Harlow
+//  Worked on by Koji Tilley, Jordan Harlow, Arthur Karapateas, and Monica Lombraño
 //  Copyright © 2016 PinG Team. All rights reserved.
 //
 
@@ -11,6 +11,7 @@ import UIKit
 import MapKit
 import CoreLocation
 
+//constants to convert from metric to bad units
 let METERS_MILE = 1609.344
 let METERS_FEET = 3.28084
 
@@ -56,6 +57,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     override func viewDidAppear(_ animated: Bool) {
         print("View did appear haha")
         if isTracking {
+            //refresh map view upon seeing the view from a different view
             refresh()
         }
     }
@@ -65,8 +67,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Dispose of any resources that can be recreated.
     }
     
+    //refresh function that grabs pings from database
     func refresh() {
         if !isTracking{
+            //don't refresh if user doesn't have a location
             return
         }
         print("Refresh method called")
@@ -90,14 +94,17 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 fin = true
             }
             else {
-                //Parse jason
+                //Parse jason from data object, stored in "data"
                 print("Begin retrieving json")
                 do {
+                    //create json object from response string
                     let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
                     
                     if let features = json["features"] as? [[String: AnyObject]] {
+                        //clear all pings
                         self.pingMap.removeAll()
                         
+                        //add pings into pingmap for each geojson feature
                         for feature in features {
                             
                             let point = feature["geometry"]?["coordinates"] as? NSArray
@@ -117,7 +124,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             df.timeZone = TimeZone(abbreviation: "UTC")
                             
                             print("\(eventName) at (\((point?[1])!),\((point?[0])!) for uID \(userID)")
-                            //Populate local ping map
+                            //Populate local ping map from json
                             let ping = Ping(coordinate: CLLocationCoordinate2DMake(point?[1] as! CLLocationDegrees, point?[0] as! CLLocationDegrees))
                             ping.userID = userID
                             ping.eventID = eventID
@@ -130,6 +137,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                             ping.attending = attending
                             ping.attendance = attendance
                             if ping.toTime! > Date() {
+                                //clientside check to only add pings if the event hasn't ended yet
                                 self.pingMap[userID] = ping
                             }
                         }
@@ -163,6 +171,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         if !self.pingMap.isEmpty {
             print("Number of pings in local storage: \(pingMap.count)")
             for (ids, coordinates) in self.pingMap {
+                //deprecated check
                 if self.pingMap[ids]?.added == false {
                     //pingMap[ids]?.added = true
                     /*
@@ -172,7 +181,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                     annotation.eventDescription = self.pingMap[ids]?.eventDescription
                     */
                     let annotation = self.pingMap[ids]!
-                    
+                    //grab annotations from the pingmap and add them onto the mapview
                     self.mapView.addAnnotation(annotation)
                     print("Added ping at (\(annotation.coordinate.latitude), \(annotation.coordinate.longitude))")
                 }
@@ -184,6 +193,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
     }
     
+    //set view region to center around current location
     func centerView() {
         if isTracking {
             if currentCoordinate != nil {
@@ -195,6 +205,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
     }
     
+    //deprecated method used in older iterations
+    //now handled in AddEventTableViewController.swift
     func addPing() {
         print("Ping about to be added")
         
@@ -299,6 +311,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
     }
     
+    //returns currentCoordinate
     func getCurrentLocation() -> CLLocationCoordinate2D {
         return currentCoordinate
     }
@@ -309,6 +322,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         refresh()
     }
     
+    //old method no longer used; handled in another class
     @IBAction func pingButtonPressed(sender: UIBarButtonItem) {
         print("Ping add function entered")
         if pingMap[uID] == nil {
@@ -332,13 +346,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
     }
     
+    //push ViewEventTableViewController onto navigation stack
     @IBAction func viewButtonPressed(sender: UIBarButtonItem) {
         self.performSegue(withIdentifier: "viewPing", sender: sender)
     }
 
     //Delegate methods
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        //Grab current location
+        //Grab current location and store it in currentCoordinate
         let location: CLLocation = locations.last!
         currentCoordinate = location.coordinate
         Shared.shared.sharedLocation = currentCoordinate
@@ -350,6 +365,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
+    //define custom view for each annotation by replacing default view with AnnotationView.xib
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if annotation is MKUserLocation
         {
@@ -366,7 +382,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         return annotationView
     }
     
-    // Custom callout
+    // Custom callout info grabbed from each ping
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
     {
         if view.annotation is MKUserLocation
@@ -379,12 +395,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let pingAnnotation = view.annotation as! Ping
         let views = Bundle.main.loadNibNamed("AnnotationView", owner: nil, options: nil)
         let calloutView = views?[0] as! AnnotationViewClass
+        // set interface variables in the custom callout
         calloutView.eventNameLabel.text = pingAnnotation.eventName
         calloutView.nameLabel.text = "\(pingAnnotation.firstName!) \(pingAnnotation.lastName!)"
         calloutView.descriptionLabel.text = pingAnnotation.eventDescription
         calloutView.fromLabel.text = "From \(df.string(from: pingAnnotation.fromTime!))"
         calloutView.toLabel.text = "To \(df.string(from: pingAnnotation.toTime!))"
         
+        // center callout view on map
         calloutView.center = CGPoint(x: view.bounds.size.width / 2 - 8, y: -calloutView.bounds.size.height*0.52)
         view.addSubview(calloutView)
         let centerRegion = MKCoordinateRegionMake((view.annotation?.coordinate)!, mapView.region.span)
@@ -393,11 +411,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let newRegion = mapView.convert(newView, toRegionFrom: nil)
         mapView.setRegion(newRegion, animated: true)
         
+        // show if attending
         if pingAnnotation.attending != 1 {
             calloutView.checkImage.isHidden = true
         }
         
         //Prepare for possible view switch
+        //Info is stored in shared class per ping to populate table view upon view switch
         viewEventButton.isEnabled = true
         Shared.shared.eventName = pingAnnotation.eventName
         Shared.shared.eventDescription = pingAnnotation.eventDescription
@@ -411,6 +431,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         Shared.shared.eventAttendance = pingAnnotation.attendance
     }
     
+    //remove custom callout views upon deselected
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         if view.isKind(of: AnnotationView.self)
         {
@@ -422,6 +443,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
+    //method that never worked xD
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         let pingAnnotation = view.annotation as! Ping
         let views = Bundle.main.loadNibNamed("AnnotationView", owner: nil, options: nil)
