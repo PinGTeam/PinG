@@ -11,17 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.jorge.pingv2.LogInActivity">
 
-    <TextView
-        android:text="Don't have an account?"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="17sp"
-        android:id="@+id/textView"
-        android:layout_alignBaseline="@+id/signUpButton"
-        android:layout_alignBottom="@+id/signUpButton"
-        android:layout_toStartOf="@+id/signUpButton"
-        android:layout_marginEnd="13dp" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -38,8 +27,13 @@
             android:ellipsize="start"
             android:gravity="center_horizontal"
             android:hint="username"
+            android:fontFamily="sans-serif"
             android:ems="10"
             android:id="@+id/idInput" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="11dp" />
 
         <EditText
             android:layout_width="match_parent"
@@ -49,8 +43,13 @@
             android:ellipsize="start"
             android:gravity="center_horizontal"
             android:hint="password"
+            android:fontFamily="sans-serif"
             android:ems="10"
             android:id="@+id/passInput" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="13dp" />
 
         <Button
             android:text="LogIn"
@@ -59,25 +58,59 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/linearLayout7"
             android:layout_centerHorizontal="true" />
-    </LinearLayout>
 
-    <Button
-        android:text="Sign up"
-        android:layout_width="wrap_content"
-        android:id="@+id/signUpButton"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="79dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/imageView"
-        android:layout_marginEnd="15dp" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.13" />
+
+            <TextView
+                android:text="Don't have an account?"
+                android:fontFamily="sans-serif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:id="@+id/textView"
+                android:layout_above="@+id/signUpButton"
+                android:layout_alignStart="@+id/imageView" />
+
+            <Space
+                android:layout_width="32dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.40" />
+
+            <Button
+                android:text="Sign up"
+                android:layout_width="68dp"
+                android:id="@+id/signUpButton"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="65dp"
+                android:layout_marginEnd="18dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignEnd="@+id/imageView"
+                android:layout_weight="0.78" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/pinglogo"
-        android:layout_marginTop="52dp"
         android:id="@+id/imageView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp" />
 
 </RelativeLayout>

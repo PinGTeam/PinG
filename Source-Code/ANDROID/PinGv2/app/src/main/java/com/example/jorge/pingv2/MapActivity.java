@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -111,7 +111,6 @@ public class MapActivity extends AppCompatActivity
                 //send info to ping creation screen, carry userInfo with us
                 Bundle createPingInfo = new Bundle();
                 createPingInfo.putParcelable("theCoords", theCoords);
-                createPingInfo.putInt("theUser", theUserID);
                 startCreateEvent.putExtras(createPingInfo);
                 startCreateEvent.putExtra("userInformation", currentUserInfo);
 
@@ -139,15 +138,12 @@ public class MapActivity extends AppCompatActivity
         firstLoad = true;
     }
 
-    //TODO: WHEN I EDIT AN EVENT, THE NEW INFORMATION IS NOT BEING RETRIEVED AND MARKER DISAPPEARS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     //returning from another activity, if condition is met we refresh the map to add ping
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 2) {
-            System.out.println("WE ARE BACK");
             if(data != null) {
-                System.out.println("HERE v2");
                 new GetMarkers().execute();
             }
         }
@@ -319,6 +315,8 @@ public class MapActivity extends AppCompatActivity
         Bundle extras = new Bundle();
         extras.putInt("userID", theUserID);
         extras.putLong("eventID", clickedMarkerID);
+
+        marker.hideInfoWindow();
 
         Intent startEditActivity = new Intent(getApplicationContext(), EventDetailsActivity.class);
         startEditActivity.putExtras(extras);
@@ -526,7 +524,7 @@ public class MapActivity extends AppCompatActivity
             HttpUrl url = HttpUrl.parse("http://162.243.15.139/getevent_alt");
             HttpUrl.Builder myBuilder = url.newBuilder();
             myBuilder.addQueryParameter("eventID", String.valueOf(clickedMarkerID));
-            myBuilder.addQueryParameter("eventID", String.valueOf(theUserID));
+            myBuilder.addQueryParameter("userID", String.valueOf(theUserID));
 
             Request request = new Request.Builder()
                     .url(myBuilder.build())

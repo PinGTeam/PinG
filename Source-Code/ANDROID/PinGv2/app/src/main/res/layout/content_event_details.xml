@@ -133,8 +133,7 @@
             android:text="Attend"
             android:layout_width="297dp"
             android:layout_height="wrap_content"
-            android:id="@+id/attendingEventSwitch"
-            android:checked="false" />
+            android:id="@+id/attendingEventSwitch" />
 
         <Space
             android:layout_width="match_parent"

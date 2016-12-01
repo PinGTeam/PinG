@@ -39,6 +39,7 @@ import okhttp3.Response;
 import static com.example.jorge.pingv2.R.drawable.edit_btn;
 import static java.lang.Math.abs;
 
+
 //TODO: CHANGE THIS TO MATCH THE EVENT DETAIL
 public class EventDetailsActivity extends AppCompatActivity {
 
@@ -69,6 +70,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     private boolean newStartTimeSetFlag, newEndTimeFlag;
     private int newStartHour, newStartMinute, newEndHour, newEndMinute;
     private Calendar originalStartDateTime, originalEndDateTime, newStartDateTime, newEndDateTime;
+
+    private String convertedFinalEventEnd;
+
+    private boolean useThisFlag;
+    private int globalUTCSTART;
+
 
     //final extracted fields for server
     private String finalEventName, finalEventDescription, finalEventStart, finalEventEnd;
@@ -368,6 +375,12 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void CompleteEdit() {
+
+        useThisFlag = false;
+
+        eventNameFieldOnScreen = (EditText)findViewById(R.id.eNameField);
+        eventDescFieldOnScreen = (EditText)findViewById(R.id.eDescField);
+
         //extract input from name and description fields
         finalEventName = eventNameFieldOnScreen.getText().toString();
         finalEventDescription = eventDescFieldOnScreen.getText().toString();
@@ -377,6 +390,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
             //est -> utc
             int utcStartHour = newStartHour + 5;
+            globalUTCSTART = utcStartHour;
             //if converted hour is > 24, we need to roll it over
             if(utcStartHour >= 24)
                 utcStartHour %= 24;
@@ -387,6 +401,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             ////////////////////////////////////////////////////////////////////////////////////////////
             //START CHECK-------------------------------------------------------------------------------
             ////////////////////////////////////////////////////////////////////////////////////////////
+
             //if newStart < originalStart : newStart day++
             if(utcStartHour < originalStartHour) {
                 newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
@@ -395,11 +410,14 @@ public class EventDetailsActivity extends AppCompatActivity {
             else if(utcStartHour == originalStartHour && newStartMinute < originalStartDateTime.get(Calendar.MINUTE))
                 newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
+            System.out.println("After rolling, the startDate is: " + newStartDateTime);
+
             //convert start calendar to string
             finalEventStart = String.valueOf(newStartDateTime.get(Calendar.YEAR));
 
-            if(newStartDateTime.get(Calendar.MONTH) < 10)
+            if(newStartDateTime.get(Calendar.MONTH) < 10) {
                 finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
+            }
             else
                 finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
 
@@ -420,7 +438,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
         //if no end time changes were made, then we simply send the original to the server
         else {
-            finalEventStart = markerInformation.startTime;
+            //CHANGE THIS TO EXTRACTED START TIME ORIGINAL
+            SimpleDateFormat startForm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            finalEventStart = startForm.format(originalStartDateTime.getTime());
         }
 
         //only do the UTC conversions if newEndTimeSetFlags were set to true
@@ -455,6 +475,9 @@ public class EventDetailsActivity extends AppCompatActivity {
             if(utcEndHour < utcStartHour)
                 newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
+            System.out.println("After rolling, the endDate is: " + newEndDateTime);
+
+
             //convert end calendar to string
             finalEventEnd = String.valueOf(newEndDateTime.get(Calendar.YEAR));
 
@@ -480,10 +503,112 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
         //if no end time changes were made, then we simply send the original to the server
         else {
-            finalEventEnd = markerInformation.endTime;
+            //CHANGE THIS TO EXTRACTED END TIME ORIGINAL
+            SimpleDateFormat endForm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            finalEventEnd = endForm.format(originalEndDateTime.getTime());
+
+            System.out.println("END: " + originalEndDateTime.get(Calendar.HOUR_OF_DAY));
+            System.out.println("START: " + newStartDateTime.get(Calendar.HOUR_OF_DAY));
+
+            System.out.println(originalEndDateTime);
+
+            //if we set a new start time
+            if(newStartTimeSetFlag) {
+                //if original end is less than new start, original end day ++
+                if (originalEndDateTime.get(Calendar.HOUR_OF_DAY) < globalUTCSTART) {
+                    System.out.println("WE HERE");
+
+                    //IF WE ARE HERE< THEN ORIG END TIME HAS CHANGED SO WE NEED TO SEND A SIGNAL TO THE STUFF BELOW SAYING SO
+
+                    originalEndDateTime.add(Calendar.DAY_OF_MONTH, 2);
+                    originalEndDateTime.add(Calendar.HOUR_OF_DAY, 5);
+                    System.out.println(originalEndDateTime);
+
+                    convertedFinalEventEnd = endForm.format(originalEndDateTime.getTime());
+                    useThisFlag = true;
+
+                    newEndTimeFlag = true;
+                }
+            }
         }
 
-        //call the server to update the event
+        System.out.println("eventName: " + finalEventName);
+        System.out.println("startTime: " + finalEventStart);
+        System.out.println("latitude: " + markerInformation.latitude);
+        System.out.println("endTime: " + finalEventEnd);
+        System.out.println("userID: " + currentUserInformation.userID);
+        System.out.println("longitude: " + markerInformation.longitude);
+        System.out.println("description: " + finalEventDescription);
+
+        //SET THE CORRECT MONTHS TO THE STAR DATE
+        String delim = "-";                 //cut the string into bits
+        String correctedSMonth = "";
+        String FINALfinalStart = finalEventStart;
+
+        if(newStartTimeSetFlag) {
+            FINALfinalStart = "";
+            String[] tokens = finalEventStart.split(delim);
+            for (int i = 0; i < tokens.length; i++) {
+                System.out.println("Split Output: " + tokens[i]);
+                System.out.println("");
+                if (i == 1) {
+                    int currMonth = Integer.parseInt(tokens[i]);        //TAKE THE CURRENT MONTH, 1 OFF
+                    currMonth++;                                        //ADD ONE
+                    correctedSMonth = String.valueOf(currMonth);        //THIS NOW HAS THE CORRECT TIME
+                    FINALfinalStart = FINALfinalStart.concat(correctedSMonth + "-");
+                } else {
+                    if (i != 2) {
+                        FINALfinalStart = FINALfinalStart.concat(tokens[i]) + "-";
+                    } else
+                        FINALfinalStart = FINALfinalStart.concat(tokens[i]);
+                }
+            }
+        }
+
+        String FINALfinalEnd = finalEventEnd;
+        String correctedEMonth;
+
+        if(newEndTimeFlag) {
+            FINALfinalEnd = "";
+            String[] endTokens = null;
+            if(useThisFlag) {
+                endTokens = convertedFinalEventEnd.split(delim);
+            }
+            else
+                endTokens = finalEventEnd.split(delim);
+
+            for (int i = 0; i < endTokens.length; i++) {
+                System.out.println("Split Output: " + endTokens[i]);
+                System.out.println("");
+                if (i == 1) {
+                    if(!(Objects.equals(endTokens[i], "12"))) {
+                        int currMonth = Integer.parseInt(endTokens[i]);      //TAKE THE CURRENT MONTH, 1 OFF
+                        currMonth++;                                        //ADD ONE
+                        correctedEMonth = String.valueOf(currMonth);        //THIS NOW HAS THE CORRECT TIME
+                        FINALfinalEnd = FINALfinalEnd.concat(correctedEMonth + "-");
+                    }
+                    else {
+                        int currMonth = Integer.parseInt(endTokens[i]);
+                        FINALfinalEnd = FINALfinalEnd.concat(String.valueOf(currMonth) + "-");
+                    }
+                } else {
+                    if (i != 2) {
+                        FINALfinalEnd = FINALfinalEnd.concat(endTokens[i]) + "-";
+                    } else
+                        FINALfinalEnd = FINALfinalEnd.concat(endTokens[i]);
+                }
+            }
+        }
+
+        System.out.println("NOW THIS IS THE FINAL EVENT START: " + FINALfinalStart);
+        System.out.println("NOW THIS IS THE FINAL EVENT END: " + FINALfinalEnd);
+
+        finalEventStart = FINALfinalStart;
+        finalEventEnd = FINALfinalEnd;
+
+        //NOW THAT WE HAVE THE
+
+        //call the server to post
         new UpdateEventInfo().execute();
     }
 

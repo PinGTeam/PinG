@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,18 +22,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.TimeZone;
 
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -51,6 +45,7 @@ public class CreatePingActivity extends AppCompatActivity {
     private LatLng theCoords;
     private UserData currentUserInformation;
 
+    private int globalUTCSTART;
 
     //GIU stuff
     private FloatingActionButton fab;
@@ -64,7 +59,8 @@ public class CreatePingActivity extends AppCompatActivity {
     private Calendar originalStartDateTime, originalEndDateTime, newStartDateTime, newEndDateTime;
 
     //final extracted fields for server
-    private String finalEventName, finalEventDescription, finalEventStart, finalEventEnd;
+    private String finalEventName, finalEventDescription, finalEventStart, finalEventEnd, convertedFinalEventEnd;
+    private boolean useThisFlag;
 
     //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     @Override
@@ -73,6 +69,8 @@ public class CreatePingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_ping);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarCreatePing);
         setSupportActionBar(toolbar);
+
+        useThisFlag = false;
 
         fab = (FloatingActionButton) findViewById(R.id.createPingFab);
 
@@ -87,27 +85,18 @@ public class CreatePingActivity extends AppCompatActivity {
         newStartTimeSetFlag = false;         //will only be true if the user inputs a new start time
         newEndTimeFlag = false;              //will only be true if the user inputs a new end time
 
-        //TODO: SET TTWO GREGORIAN CALENDARS TO CURRENT DATE TIME AND USE THEM TO SET NEW END AND START DATE TIME
+        //TODO: SET TWO GREGORIAN CALENDARS TO CURRENT DATE TIME AND USE THEM TO SET NEW END AND START DATE TIME
         //TODO: THESE WILL BE USED IN CASE A NEW TIME IS NOT CHOSEN
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
         originalStartDateTime = GregorianCalendar.getInstance(timeZone);
         originalEndDateTime = GregorianCalendar.getInstance(timeZone);
 
-        //originalStartDateTime.roll(Calendar.MONTH, 1);
-        //originalEndDateTime.roll(Calendar.MONTH, 1);
-
-        //set new start and new end to original
+        //initialize newStartDateTime and newEndDateTime
         newStartDateTime = new GregorianCalendar();
-        //newStartDateTime = originalStartDateTime;
-
         newEndDateTime = new GregorianCalendar();
-        //newEndDateTime = originalEndDateTime;
 
-        //set to correct month because java's month start at 0 for some reason...
-        //originalStartDateTime.add(Calendar.MONTH, 1);
-        //originalEndDateTime.add(Calendar.MONTH, 1);
-
+        //ALL GOOD HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         System.out.println("GREGY S: " + originalStartDateTime);
         System.out.println("GREGY E: " + originalEndDateTime);
 
@@ -143,16 +132,16 @@ public class CreatePingActivity extends AppCompatActivity {
         startTimeFieldOnScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                whichField = 1;
-                showSetTimeDialog(whichField);
+                    whichField = 1;
+                    showSetTimeDialog(whichField);
             }
         });
         endTimeFieldOnScreen = (TextView) findViewById(R.id.createPingEndTimeClickable);
         endTimeFieldOnScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                whichField = 2;
-                showSetTimeDialog(whichField);
+                    whichField = 2;
+                    showSetTimeDialog(whichField);
             }
         });
     }
@@ -268,6 +257,8 @@ public class CreatePingActivity extends AppCompatActivity {
     //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void CompleteCreate() {
 
+        useThisFlag = false;
+
         eventNameFieldOnScreen = (EditText)findViewById(R.id.createPingEventNameInput);
         eventDescFieldOnScreen = (EditText)findViewById(R.id.createPingEventDescInput);
 
@@ -280,6 +271,7 @@ public class CreatePingActivity extends AppCompatActivity {
 
             //est -> utc
             int utcStartHour = newStartHour + 5;
+            globalUTCSTART = utcStartHour;
             //if converted hour is > 24, we need to roll it over
             if(utcStartHour >= 24)
                 utcStartHour %= 24;
@@ -290,7 +282,7 @@ public class CreatePingActivity extends AppCompatActivity {
             ////////////////////////////////////////////////////////////////////////////////////////////
             //START CHECK-------------------------------------------------------------------------------
             ////////////////////////////////////////////////////////////////////////////////////////////
-            //TODO:IF THE MONTH == 0, WE MUST EXPLICITLY SET IT TO 12
+
             //if newStart < originalStart : newStart day++
             if(utcStartHour < originalStartHour) {
                 newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
@@ -299,18 +291,13 @@ public class CreatePingActivity extends AppCompatActivity {
             else if(utcStartHour == originalStartHour && newStartMinute < originalStartDateTime.get(Calendar.MINUTE))
                 newStartDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
+            System.out.println("After rolling, the startDate is: " + newStartDateTime);
+
             //convert start calendar to string
             finalEventStart = String.valueOf(newStartDateTime.get(Calendar.YEAR));
 
-            newStartDateTime.roll(Calendar.MONTH, 1);
-
-            //if month is less than 10, but not 0
-            if(newStartDateTime.get(Calendar.MONTH) < 10 && !(Objects.equals(newStartDateTime.get(Calendar.MONTH), 0))) {
+            if(newStartDateTime.get(Calendar.MONTH) < 10) {
                 finalEventStart = finalEventStart.concat("-0" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
-            }
-            //if month is less than 10, but is 0, set month to december
-            else if(newStartDateTime.get(Calendar.MONTH) < 10 && (Objects.equals(newStartDateTime.get(Calendar.MONTH), 0))) {
-                finalEventStart = finalEventStart.concat("-12");
             }
             else
                 finalEventStart = finalEventStart.concat("-" + String.valueOf(newStartDateTime.get(Calendar.MONTH)));
@@ -369,17 +356,14 @@ public class CreatePingActivity extends AppCompatActivity {
             if(utcEndHour < utcStartHour)
                 newEndDateTime.add(Calendar.DAY_OF_MONTH, 1);
 
+            System.out.println("After rolling, the endDate is: " + newEndDateTime);
+
+
             //convert end calendar to string
             finalEventEnd = String.valueOf(newEndDateTime.get(Calendar.YEAR));
 
-            newEndDateTime.roll(Calendar.MONTH, 1);
-
-            //if end month < 10 and not 0
-            if(newEndDateTime.get(Calendar.MONTH) < 10 && !(Objects.equals(newEndDateTime.get(Calendar.MONTH),0)))
+            if(newEndDateTime.get(Calendar.MONTH) < 10)
                 finalEventEnd = finalEventEnd.concat("-0" + String.valueOf(newEndDateTime.get(Calendar.MONTH)));
-                //if end month < 10 and is 0, set month to december
-            else if(newEndDateTime.get(Calendar.MONTH) < 10 && (Objects.equals(newEndDateTime.get(Calendar.MONTH),0)))
-                finalEventEnd = finalEventEnd.concat("-12");
             else
                 finalEventEnd = finalEventEnd.concat("-" + String.valueOf(newEndDateTime.get(Calendar.MONTH)));
 
@@ -403,6 +387,30 @@ public class CreatePingActivity extends AppCompatActivity {
             //CHANGE THIS TO EXTRACTED END TIME ORIGINAL
             SimpleDateFormat endForm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             finalEventEnd = endForm.format(originalEndDateTime.getTime());
+
+            System.out.println("END: " + originalEndDateTime.get(Calendar.HOUR_OF_DAY));
+            System.out.println("START: " + newStartDateTime.get(Calendar.HOUR_OF_DAY));
+
+            System.out.println(originalEndDateTime);
+
+            //if we set a new start time
+            if(newStartTimeSetFlag) {
+                //if original end is less than new start, original end day ++
+                if (originalEndDateTime.get(Calendar.HOUR_OF_DAY) < globalUTCSTART) {
+                    System.out.println("WE HERE");
+
+                    //IF WE ARE HERE< THEN ORIG END TIME HAS CHANGED SO WE NEED TO SEND A SIGNAL TO THE STUFF BELOW SAYING SO
+
+                    originalEndDateTime.add(Calendar.DAY_OF_MONTH, 2);
+                    originalEndDateTime.add(Calendar.HOUR_OF_DAY, 5);
+                    System.out.println(originalEndDateTime);
+
+                    convertedFinalEventEnd = endForm.format(originalEndDateTime.getTime());
+                    useThisFlag = true;
+
+                    newEndTimeFlag = true;
+                }
+            }
         }
 
         System.out.println("eventName: " + finalEventName);
@@ -413,11 +421,77 @@ public class CreatePingActivity extends AppCompatActivity {
         System.out.println("longitude: " + theCoords.longitude);
         System.out.println("description: " + finalEventDescription);
 
+        //SET THE CORRECT MONTHS TO THE STAR DATE
+        String delim = "-";                 //cut the string into bits
+        String correctedSMonth = "";
+        String FINALfinalStart = finalEventStart;
+
+        if(newStartTimeSetFlag) {
+            FINALfinalStart = "";
+            String[] tokens = finalEventStart.split(delim);
+            for (int i = 0; i < tokens.length; i++) {
+                System.out.println("Split Output: " + tokens[i]);
+                System.out.println("");
+                if (i == 1) {
+                    int currMonth = Integer.parseInt(tokens[i]);        //TAKE THE CURRENT MONTH, 1 OFF
+                    currMonth++;                                        //ADD ONE
+                    correctedSMonth = String.valueOf(currMonth);        //THIS NOW HAS THE CORRECT TIME
+                    FINALfinalStart = FINALfinalStart.concat(correctedSMonth + "-");
+                } else {
+                    if (i != 2) {
+                        FINALfinalStart = FINALfinalStart.concat(tokens[i]) + "-";
+                    } else
+                        FINALfinalStart = FINALfinalStart.concat(tokens[i]);
+                }
+            }
+        }
+
+        String FINALfinalEnd = finalEventEnd;
+        String correctedEMonth;
+
+        if(newEndTimeFlag) {
+            FINALfinalEnd = "";
+            String[] endTokens = null;
+            if(useThisFlag) {
+                endTokens = convertedFinalEventEnd.split(delim);
+            }
+            else
+                endTokens = finalEventEnd.split(delim);
+
+            for (int i = 0; i < endTokens.length; i++) {
+                System.out.println("Split Output: " + endTokens[i]);
+                System.out.println("");
+                if (i == 1) {
+                    if(!(Objects.equals(endTokens[i], "12"))) {
+                        int currMonth = Integer.parseInt(endTokens[i]);      //TAKE THE CURRENT MONTH, 1 OFF
+                        currMonth++;                                        //ADD ONE
+                        correctedEMonth = String.valueOf(currMonth);        //THIS NOW HAS THE CORRECT TIME
+                        FINALfinalEnd = FINALfinalEnd.concat(correctedEMonth + "-");
+                    }
+                    else {
+                        int currMonth = Integer.parseInt(endTokens[i]);
+                        FINALfinalEnd = FINALfinalEnd.concat(String.valueOf(currMonth) + "-");
+                    }
+                } else {
+                    if (i != 2) {
+                        FINALfinalEnd = FINALfinalEnd.concat(endTokens[i]) + "-";
+                    } else
+                        FINALfinalEnd = FINALfinalEnd.concat(endTokens[i]);
+                }
+            }
+        }
+
+        System.out.println("NOW THIS IS THE FINAL EVENT START: " + FINALfinalStart);
+        System.out.println("NOW THIS IS THE FINAL EVENT END: " + FINALfinalEnd);
+
+        finalEventStart = FINALfinalStart;
+        finalEventEnd = FINALfinalEnd;
+
+        //NOW THAT WE HAVE THE
+
         //call the server to post
         new CreatePing().execute();
     }
-
-    //
 
     //THIS FUNCTION IS CORRECT AT THIS POINT : 11/30/2016 2:30am
     public void showSetTimeDialog(final int whichField) {
@@ -432,9 +506,6 @@ public class CreatePingActivity extends AppCompatActivity {
                     newStartTimeSetFlag = true;     //new end time was input
                     timeView = (TextView) findViewById(R.id.createPingStartTimeClickable); //select field to print time to
 
-                    //TODO: JAVA MONTH RANGE : 0 - 11, I INITIALLY ROLL THE MONTH OVER BY ONE TO ACCOUNT FOR THIS, SO JAN IS MONTH 1 AND NOT MONTH 0
-                    //TODO: WHEN THE MONTH == 12, WE NEED TO EXPLICITLY SET IT TO 12 IN THE CHECK
-                    //TODO: THIS PROBLEM WILL ALSO BE IN THE EDIT EVENT
                     //set the new startDateTime to the newly selected start time with original start year, month, and day
                     newStartDateTime.set(originalStartDateTime.get(Calendar.YEAR), originalStartDateTime.get(Calendar.MONTH), originalStartDateTime.get(Calendar.DAY_OF_MONTH), hour, minute, 00);
                     System.out.println("AFTER SELECTING NEW START TIME: " + newStartDateTime);
