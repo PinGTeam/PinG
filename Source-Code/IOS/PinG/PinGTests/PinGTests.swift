@@ -28,6 +28,7 @@ class PinGTests: XCTestCase {
         print("Testing testing")
         XCTAssert(true)
     }
+    
     /* Deprecated Method, testing the GET request is now performed in testAttendeesGet()
     func testGETRequest() {
         var succ = false
@@ -81,6 +82,7 @@ class PinGTests: XCTestCase {
         
     }
     */
+    
     func testLogin() {
         var done = false
         var succ = true
